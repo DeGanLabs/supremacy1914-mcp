@@ -1,0 +1,8330 @@
+{
+  "units": {
+    "wilhelm_von_thaden_s4@2x.png": {
+      "w": 58,
+      "h": 48,
+      "d": "083ba9"
+    },
+    "otto_hersing_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "591c30"
+    },
+    "lawrence_of_arabia_s4@2x.png": {
+      "w": 58,
+      "h": 48,
+      "d": "db9eb2"
+    },
+    "gibraltar_s4.png": {
+      "w": 29,
+      "h": 24,
+      "d": "d2ff54"
+    },
+    "cruiser_s4@2x.png": {
+      "w": 32,
+      "h": 46,
+      "d": "f5c78c"
+    },
+    "gibraltar_s1.png": {
+      "w": 58,
+      "h": 48,
+      "d": "892219"
+    },
+    "trench_s2@2x.png": {
+      "w": 72,
+      "h": 60,
+      "d": "3eef70"
+    },
+    "fiero_martello_s4.png": {
+      "w": 29,
+      "h": 24,
+      "d": "c6902c"
+    },
+    "johan_maes_s4@2x.png": {
+      "w": 58,
+      "h": 48,
+      "d": "7df5ba"
+    },
+    "car_s1.png": {
+      "w": 52,
+      "h": 42,
+      "d": "a88ce0"
+    },
+    "tatiana_minchakievich_s4@2x.png": {
+      "w": 58,
+      "h": 48,
+      "d": "df1c0e"
+    },
+    "airplane_s3@2x.png": {
+      "w": 84,
+      "h": 88,
+      "d": "5b9e47"
+    },
+    "bomber_s4.png": {
+      "w": 21,
+      "h": 22,
+      "d": "d8335f"
+    },
+    "tank_s4@2x.png": {
+      "w": 54,
+      "h": 40,
+      "d": "3ae423"
+    },
+    "railgun_s1.png": {
+      "w": 54,
+      "h": 48,
+      "d": "b08f3a"
+    },
+    "gibraltar_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "832041"
+    },
+    "otto_hersing_s1.png": {
+      "w": 58,
+      "h": 48,
+      "d": "591c30"
+    },
+    "artillery_s1.png": {
+      "w": 56,
+      "h": 46,
+      "d": "9500e6"
+    },
+    "artillery_s3.png": {
+      "w": 56,
+      "h": 46,
+      "d": "ee1b35"
+    },
+    "transport_ship_s1.png": {
+      "w": 56,
+      "h": 46,
+      "d": "e4be97"
+    },
+    "manfred_von_richthofen_s2@2x.png": {
+      "w": 72,
+      "h": 60,
+      "d": "d5ac33"
+    },
+    "cruiser_s3@2x.png": {
+      "w": 64,
+      "h": 92,
+      "d": "9668d6"
+    },
+    "henry_hank_callahan_s4.png": {
+      "w": 29,
+      "h": 24,
+      "d": "0c4353"
+    },
+    "artillery_s3@2x.png": {
+      "w": 112,
+      "h": 92,
+      "d": "eb43c1"
+    },
+    "submarine_s4@2x.png": {
+      "w": 32,
+      "h": 46,
+      "d": "f81911"
+    },
+    "bomber_s1.png": {
+      "w": 42,
+      "h": 44,
+      "d": "a403ef"
+    },
+    "mkiv_tank_s4@2x.png": {
+      "w": 58,
+      "h": 28,
+      "d": "d89a9a"
+    },
+    "manfred_von_richthofen_s4.png": {
+      "w": 29,
+      "h": 24,
+      "d": "75c24b"
+    },
+    "cruiser_s1.png": {
+      "w": 32,
+      "h": 46,
+      "d": "f5c78c"
+    },
+    "trench_s4@2x.png": {
+      "w": 58,
+      "h": 48,
+      "d": "2227ae"
+    },
+    "submarine_s2@2x.png": {
+      "w": 72,
+      "h": 104,
+      "d": "5477cc"
+    },
+    "submarine_s1.png": {
+      "w": 32,
+      "h": 46,
+      "d": "f81911"
+    },
+    "lawrence_of_arabia_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "fed182"
+    },
+    "balloon_s3@2x.png": {
+      "w": 80,
+      "h": 80,
+      "d": "2985e8"
+    },
+    "fiona_maeve_porter_s4.png": {
+      "w": 30,
+      "h": 25,
+      "d": "e68a6c"
+    },
+    "airplane_s4@2x.png": {
+      "w": 42,
+      "h": 44,
+      "d": "6ac874"
+    },
+    "battleship_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "f348bf"
+    },
+    "car_s4@2x.png": {
+      "w": 52,
+      "h": 42,
+      "d": "a88ce0"
+    },
+    "submarine_s3@2x.png": {
+      "w": 64,
+      "h": 92,
+      "d": "bb300e"
+    },
+    "wilhelm_von_thaden_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "f5223d"
+    },
+    "mkiv_tank_s1.png": {
+      "w": 58,
+      "h": 28,
+      "d": "d89a9a"
+    },
+    "wilhelm_von_thaden_s2@2x.png": {
+      "w": 72,
+      "h": 60,
+      "d": "78d6aa"
+    },
+    "lucien_laroche_s4.png": {
+      "w": 29,
+      "h": 24,
+      "d": "f285cd"
+    },
+    "alvin_york_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "ef5c35"
+    },
+    "aircraft_transport_s3.png": {
+      "w": 46,
+      "h": 52,
+      "d": "4a54e7"
+    },
+    "henry_hank_callahan_s4@2x.png": {
+      "w": 58,
+      "h": 48,
+      "d": "306eca"
+    },
+    "gibraltar_s4@2x.png": {
+      "w": 58,
+      "h": 48,
+      "d": "892219"
+    },
+    "balloon_s4.png": {
+      "w": 20,
+      "h": 20,
+      "d": "e02a5a"
+    },
+    "infantry_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "114ecb"
+    },
+    "togo_heihachiro_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "601d2d"
+    },
+    "mkiv_tank_s4.png": {
+      "w": 29,
+      "h": 14,
+      "d": "3bc3ec"
+    },
+    "balloon_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "16fde4"
+    },
+    "manfred_von_richthofen_s2.png": {
+      "w": 36,
+      "h": 30,
+      "d": "a0ae71"
+    },
+    "lucien_laroche_s1.png": {
+      "w": 58,
+      "h": 48,
+      "d": "86f145"
+    },
+    "orhan_kangal_demir_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "fa7099"
+    },
+    "alvin_york_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "7c036e"
+    },
+    "battleship_s1.png": {
+      "w": 46,
+      "h": 52,
+      "d": "9f12cb"
+    },
+    "light_artillery_s4.png": {
+      "w": 28,
+      "h": 23,
+      "d": "a72bb4"
+    },
+    "georg_bruchmuller_s3@2x.png": {
+      "w": 116,
+      "h": 96,
+      "d": "5b452a"
+    },
+    "bomber_s3.png": {
+      "w": 42,
+      "h": 44,
+      "d": "28af5a"
+    },
+    "light_artillery_s3.png": {
+      "w": 56,
+      "h": 46,
+      "d": "f8acf9"
+    },
+    "manfred_von_richthofen_s3@2x.png": {
+      "w": 116,
+      "h": 96,
+      "d": "babb07"
+    },
+    "infantry_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "30fbe9"
+    },
+    "lawrence_of_arabia_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "db9eb2"
+    },
+    "fiero_martello_s1.png": {
+      "w": 58,
+      "h": 48,
+      "d": "4f31a6"
+    },
+    "georg_bruchmuller_s4@2x.png": {
+      "w": 58,
+      "h": 48,
+      "d": "cee518"
+    },
+    "infantry_s4.png": {
+      "w": 29,
+      "h": 24,
+      "d": "f3c5de"
+    },
+    "henry_hank_callahan_s1.png": {
+      "w": 58,
+      "h": 48,
+      "d": "306eca"
+    },
+    "car_s3.png": {
+      "w": 52,
+      "h": 42,
+      "d": "a88ce0"
+    },
+    "transport_ship_s3@2x.png": {
+      "w": 92,
+      "h": 104,
+      "d": "49eece"
+    },
+    "alvin_york_s4.png": {
+      "w": 24,
+      "h": 20,
+      "d": "fae5cf"
+    },
+    "bomber_s3@2x.png": {
+      "w": 84,
+      "h": 88,
+      "d": "fdcbb0"
+    },
+    "orhan_kangal_demir_s4@2x.png": {
+      "w": 58,
+      "h": 48,
+      "d": "752242"
+    },
+    "alvin_york_s3@2x.png": {
+      "w": 116,
+      "h": 96,
+      "d": "7e36c5"
+    },
+    "cruiser_s4.png": {
+      "w": 16,
+      "h": 23,
+      "d": "52fb49"
+    },
+    "car_s2@2x.png": {
+      "w": 72,
+      "h": 58,
+      "d": "0415a9"
+    },
+    "cavalry_s2@2x.png": {
+      "w": 72,
+      "h": 69,
+      "d": "acbf14"
+    },
+    "fiona_maeve_porter_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "a16ccc"
+    },
+    "togo_heihachiro_s3@2x.png": {
+      "w": 116,
+      "h": 96,
+      "d": "32855c"
+    },
+    "infantry_s1.png": {
+      "w": 58,
+      "h": 48,
+      "d": "114ecb"
+    },
+    "johan_maes_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "4195d7"
+    },
+    "georg_bruchmuller_s1.png": {
+      "w": 58,
+      "h": 48,
+      "d": "163da9"
+    },
+    "togo_heihachiro_s4.png": {
+      "w": 29,
+      "h": 24,
+      "d": "a50142"
+    },
+    "gibraltar_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "892219"
+    },
+    "manfred_von_richthofen_s4@2x.png": {
+      "w": 58,
+      "h": 48,
+      "d": "bcfcb3"
+    },
+    "john_pershing_s4.png": {
+      "w": 30,
+      "h": 25,
+      "d": "aef472"
+    },
+    "lucien_laroche_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "65e3ce"
+    },
+    "mkiv_tank_s3@2x.png": {
+      "w": 116,
+      "h": 56,
+      "d": "f40e03"
+    },
+    "orhan_kangal_demir_s4.png": {
+      "w": 29,
+      "h": 24,
+      "d": "a0edc4"
+    },
+    "cavalry_s4.png": {
+      "w": 24,
+      "h": 23,
+      "d": "fde2a2"
+    },
+    "fiona_maeve_porter_s2.png": {
+      "w": 96,
+      "h": 96,
+      "d": "c8fba5"
+    },
+    "tank_s2@2x.png": {
+      "w": 72,
+      "h": 53,
+      "d": "c0765a"
+    },
+    "henry_hank_callahan_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "306eca"
+    },
+    "tank_s3@2x.png": {
+      "w": 108,
+      "h": 80,
+      "d": "59c0da"
+    },
+    "mkiv_tank_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "c2fe76"
+    },
+    "viscount_allenby_s1.png": {
+      "w": 58,
+      "h": 48,
+      "d": "5a2d6c"
+    },
+    "balloon_s4@2x.png": {
+      "w": 40,
+      "h": 40,
+      "d": "f77496"
+    },
+    "wilhelm_von_thaden_s1.png": {
+      "w": 58,
+      "h": 48,
+      "d": "ae81c4"
+    },
+    "john_pershing_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "4158d6"
+    },
+    "battleship_s2@2x.png": {
+      "w": 72,
+      "h": 81,
+      "d": "366ce3"
+    },
+    "cavalry_s3.png": {
+      "w": 48,
+      "h": 46,
+      "d": "5f4d6a"
+    },
+    "fiero_martello_s4@2x.png": {
+      "w": 58,
+      "h": 48,
+      "d": "87becd"
+    },
+    "artillery_s2.png": {
+      "w": 36,
+      "h": 30,
+      "d": "9fc998"
+    },
+    "togo_heihachiro_s2.png": {
+      "w": 96,
+      "h": 96,
+      "d": "2d0350"
+    },
+    "railgun_s3@2x.png": {
+      "w": 108,
+      "h": 96,
+      "d": "281c3d"
+    },
+    "stormtroopers_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "0244dc"
+    },
+    "zeppelin_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "9ffb0d"
+    },
+    "battleship_s4.png": {
+      "w": 23,
+      "h": 26,
+      "d": "e4edd5"
+    },
+    "johan_maes_s4.png": {
+      "w": 29,
+      "h": 24,
+      "d": "d95865"
+    },
+    "joseph_joffre_s1.png": {
+      "w": 58,
+      "h": 48,
+      "d": "3618e6"
+    },
+    "railgun_s2@2x.png": {
+      "w": 72,
+      "h": 64,
+      "d": "bd8369"
+    },
+    "zeppelin_s4@2x.png": {
+      "w": 54,
+      "h": 40,
+      "d": "ac2e57"
+    },
+    "wilhelm_von_thaden_s4.png": {
+      "w": 29,
+      "h": 24,
+      "d": "98c71f"
+    },
+    "tatiana_minchakievich_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "df1c0e"
+    },
+    "zeppelin_s4.png": {
+      "w": 27,
+      "h": 20,
+      "d": "e38d4c"
+    },
+    "joseph_joffre_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "5efbac"
+    },
+    "orhan_kangal_demir_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "752242"
+    },
+    "tank_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "c14a77"
+    },
+    "john_pershing_s2.png": {
+      "w": 96,
+      "h": 96,
+      "d": "53bf25"
+    },
+    "fiona_maeve_porter_s1.png": {
+      "w": 59,
+      "h": 49,
+      "d": "1bc9c4"
+    },
+    "submarine_s3.png": {
+      "w": 32,
+      "h": 46,
+      "d": "f81911"
+    },
+    "light_artillery_s3@2x.png": {
+      "w": 112,
+      "h": 92,
+      "d": "cf7e67"
+    },
+    "fiero_martello_s3@2x.png": {
+      "w": 116,
+      "h": 96,
+      "d": "ce207f"
+    },
+    "trench_s1.png": {
+      "w": 58,
+      "h": 48,
+      "d": "2227ae"
+    },
+    "fiero_martello_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "87becd"
+    },
+    "togo_heihachiro_s4@2x.png": {
+      "w": 59,
+      "h": 49,
+      "d": "0931a8"
+    },
+    "orhan_kangal_demir_s3@2x.png": {
+      "w": 116,
+      "h": 96,
+      "d": "111c8a"
+    },
+    "tatiana_minchakievich_s4.png": {
+      "w": 29,
+      "h": 24,
+      "d": "d52e09"
+    },
+    "infantry_s2@2x.png": {
+      "w": 72,
+      "h": 60,
+      "d": "62c49a"
+    },
+    "joseph_joffre_s3@2x.png": {
+      "w": 116,
+      "h": 96,
+      "d": "359538"
+    },
+    "mkiv_tank_s2@2x.png": {
+      "w": 72,
+      "h": 35,
+      "d": "e7d8e6"
+    },
+    "airplane_s3.png": {
+      "w": 42,
+      "h": 44,
+      "d": "c07638"
+    },
+    "cavalry_s1.png": {
+      "w": 48,
+      "h": 46,
+      "d": "5f4d6a"
+    },
+    "tank_s3.png": {
+      "w": 54,
+      "h": 40,
+      "d": "3ae423"
+    },
+    "artillery_s2@2x.png": {
+      "w": 72,
+      "h": 59,
+      "d": "c93668"
+    },
+    "cruiser_s2@2x.png": {
+      "w": 72,
+      "h": 104,
+      "d": "cf94b1"
+    },
+    "zeppelin_s3.png": {
+      "w": 54,
+      "h": 40,
+      "d": "ac2e57"
+    },
+    "car_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "4588e9"
+    },
+    "artillery_s4@2x.png": {
+      "w": 56,
+      "h": 46,
+      "d": "ee1b35"
+    },
+    "bomber_s2.png": {
+      "w": 36,
+      "h": 38,
+      "d": "d132d4"
+    },
+    "battleship_s4@2x.png": {
+      "w": 46,
+      "h": 52,
+      "d": "9f12cb"
+    },
+    "tatiana_minchakievich_s3@2x.png": {
+      "w": 116,
+      "h": 96,
+      "d": "4e4171"
+    },
+    "lawrence_of_arabia_s3@2x.png": {
+      "w": 116,
+      "h": 96,
+      "d": "b6653d"
+    },
+    "cavalry_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "854584"
+    },
+    "cavalry_s3@2x.png": {
+      "w": 96,
+      "h": 92,
+      "d": "7afc70"
+    },
+    "stormtroopers_s4.png": {
+      "w": 29,
+      "h": 24,
+      "d": "492efb"
+    },
+    "car_s3@2x.png": {
+      "w": 104,
+      "h": 84,
+      "d": "dfae4f"
+    },
+    "tatiana_minchakievich_s1.png": {
+      "w": 58,
+      "h": 48,
+      "d": "c0d8fc"
+    },
+    "light_artillery_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "bf0198"
+    },
+    "car_s4.png": {
+      "w": 26,
+      "h": 21,
+      "d": "079b97"
+    },
+    "railgun_s3.png": {
+      "w": 54,
+      "h": 48,
+      "d": "b08f3a"
+    },
+    "viscount_allenby_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "7ae79f"
+    },
+    "cruiser_s3.png": {
+      "w": 32,
+      "h": 46,
+      "d": "f5c78c"
+    },
+    "stormtroopers_s1.png": {
+      "w": 58,
+      "h": 48,
+      "d": "0244dc"
+    },
+    "lawrence_of_arabia_s4.png": {
+      "w": 29,
+      "h": 24,
+      "d": "cefbc8"
+    },
+    "balloon_s2@2x.png": {
+      "w": 72,
+      "h": 72,
+      "d": "52efd0"
+    },
+    "fiona_maeve_porter_s3@2x.png": {
+      "w": 116,
+      "h": 96,
+      "d": "f265be"
+    },
+    "zeppelin_s1.png": {
+      "w": 54,
+      "h": 40,
+      "d": "ac2e57"
+    },
+    "stormtroopers_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "a872a4"
+    },
+    "bomber_s4@2x.png": {
+      "w": 42,
+      "h": 44,
+      "d": "28af5a"
+    },
+    "georg_bruchmuller_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "cee518"
+    },
+    "fiero_martello_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "a02339"
+    },
+    "otto_hersing_s4@2x.png": {
+      "w": 58,
+      "h": 48,
+      "d": "591c30"
+    },
+    "joseph_joffre_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "3618e6"
+    },
+    "viscount_allenby_s4.png": {
+      "w": 29,
+      "h": 24,
+      "d": "186c1d"
+    },
+    "john_pershing_s4@2x.png": {
+      "w": 59,
+      "h": 49,
+      "d": "61a705"
+    },
+    "alvin_york_s1.png": {
+      "w": 58,
+      "h": 48,
+      "d": "7c036e"
+    },
+    "manfred_von_richthofen_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "3d47e9"
+    },
+    "viscount_allenby_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "105cde"
+    },
+    "trench_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "68cf30"
+    },
+    "airplane_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "50526f"
+    },
+    "railgun_s4@2x.png": {
+      "w": 54,
+      "h": 48,
+      "d": "b08f3a"
+    },
+    "transport_ship_s3.png": {
+      "w": 46,
+      "h": 52,
+      "d": "87439d"
+    },
+    "stormtroopers_s3@2x.png": {
+      "w": 80,
+      "h": 80,
+      "d": "034e45"
+    },
+    "submarine_s4.png": {
+      "w": 16,
+      "h": 23,
+      "d": "c6fd3b"
+    },
+    "tank_s1.png": {
+      "w": 54,
+      "h": 40,
+      "d": "3ae423"
+    },
+    "stormtroopers_s4@2x.png": {
+      "w": 58,
+      "h": 48,
+      "d": "b02294"
+    },
+    "submarine_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "eaff33"
+    },
+    "lucien_laroche_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "86f145"
+    },
+    "transport_ship_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "a1d4f2"
+    },
+    "aircraft_transport_s1.png": {
+      "w": 56,
+      "h": 46,
+      "d": "798243"
+    },
+    "trench_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "2227ae"
+    },
+    "lucien_laroche_s4@2x.png": {
+      "w": 58,
+      "h": 48,
+      "d": "86f145"
+    },
+    "light_artillery_s4@2x.png": {
+      "w": 56,
+      "h": 46,
+      "d": "f8acf9"
+    },
+    "airplane_s1.png": {
+      "w": 42,
+      "h": 44,
+      "d": "c07638"
+    },
+    "otto_hersing_s3@2x.png": {
+      "w": 116,
+      "h": 96,
+      "d": "1912e8"
+    },
+    "orhan_kangal_demir_s1.png": {
+      "w": 58,
+      "h": 48,
+      "d": "752242"
+    },
+    "aircraft_transport_s3@2x.png": {
+      "w": 92,
+      "h": 104,
+      "d": "049b6e"
+    },
+    "cruiser_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "0581b7"
+    },
+    "battleship_s3.png": {
+      "w": 46,
+      "h": 52,
+      "d": "9f12cb"
+    },
+    "airplane_s2@2x.png": {
+      "w": 72,
+      "h": 75,
+      "d": "da7a88"
+    },
+    "infantry_s4@2x.png": {
+      "w": 58,
+      "h": 48,
+      "d": "114ecb"
+    },
+    "railgun_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "5f8070"
+    },
+    "viscount_allenby_s3@2x.png": {
+      "w": 116,
+      "h": 96,
+      "d": "ee4ce3"
+    },
+    "airplane_s4.png": {
+      "w": 21,
+      "h": 22,
+      "d": "6a4540"
+    },
+    "tatiana_minchakievich_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "77fc0c"
+    },
+    "fiona_maeve_porter_s4@2x.png": {
+      "w": 59,
+      "h": 49,
+      "d": "b80bae"
+    },
+    "cavalry_s4@2x.png": {
+      "w": 48,
+      "h": 46,
+      "d": "5f4d6a"
+    },
+    "zeppelin_s3@2x.png": {
+      "w": 108,
+      "h": 80,
+      "d": "0962ac"
+    },
+    "otto_hersing_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "7605f6"
+    },
+    "henry_hank_callahan_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "83f942"
+    },
+    "henry_hank_callahan_s3@2x.png": {
+      "w": 116,
+      "h": 96,
+      "d": "71abff"
+    },
+    "john_pershing_s3@2x.png": {
+      "w": 116,
+      "h": 96,
+      "d": "8c6502"
+    },
+    "georg_bruchmuller_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "75efce"
+    },
+    "johan_maes_s1.png": {
+      "w": 58,
+      "h": 48,
+      "d": "4195d7"
+    },
+    "wilhelm_von_thaden_s3.png": {
+      "w": 58,
+      "h": 48,
+      "d": "3c5c9e"
+    },
+    "joseph_joffre_s4@2x.png": {
+      "w": 58,
+      "h": 48,
+      "d": "3618e6"
+    },
+    "georg_bruchmuller_s4.png": {
+      "w": 29,
+      "h": 24,
+      "d": "6b2ee3"
+    },
+    "balloon_s3.png": {
+      "w": 40,
+      "h": 40,
+      "d": "f77496"
+    },
+    "infantry_s3@2x.png": {
+      "w": 116,
+      "h": 96,
+      "d": "78d845"
+    },
+    "trench_s4.png": {
+      "w": 29,
+      "h": 24,
+      "d": "af7d18"
+    },
+    "artillery_s4.png": {
+      "w": 28,
+      "h": 23,
+      "d": "e3d434"
+    },
+    "johan_maes_s3@2x.png": {
+      "w": 116,
+      "h": 96,
+      "d": "cd91fc"
+    },
+    "battleship_s3@2x.png": {
+      "w": 92,
+      "h": 104,
+      "d": "51d7ba"
+    },
+    "joseph_joffre_s4.png": {
+      "w": 29,
+      "h": 24,
+      "d": "51dda3"
+    },
+    "lawrence_of_arabia_s1.png": {
+      "w": 58,
+      "h": 48,
+      "d": "db9eb2"
+    },
+    "alvin_york_s4@2x.png": {
+      "w": 58,
+      "h": 48,
+      "d": "7c036e"
+    },
+    "manfred_von_richthofen_s1.png": {
+      "w": 58,
+      "h": 48,
+      "d": "c0b8e8"
+    },
+    "bomber_s2@2x.png": {
+      "w": 72,
+      "h": 75,
+      "d": "eb8488"
+    },
+    "togo_heihachiro_s1.png": {
+      "w": 59,
+      "h": 49,
+      "d": "f6d2e6"
+    },
+    "viscount_allenby_s4@2x.png": {
+      "w": 58,
+      "h": 48,
+      "d": "7ae79f"
+    },
+    "wilhelm_von_thaden_s3@2x.png": {
+      "w": 116,
+      "h": 96,
+      "d": "ad5d03"
+    },
+    "lucien_laroche_s2@2x.png": {
+      "w": 72,
+      "h": 60,
+      "d": "0d0236"
+    },
+    "john_pershing_s1.png": {
+      "w": 59,
+      "h": 49,
+      "d": "87dda7"
+    },
+    "johan_maes_s2.png": {
+      "w": 96,
+      "h": 96,
+      "d": "c77725"
+    },
+    "alvin_york_s2@2x.png": {
+      "w": 72,
+      "h": 60,
+      "d": "01d94d"
+    },
+    "railgun_s4.png": {
+      "w": 27,
+      "h": 24,
+      "d": "d7a8b4"
+    },
+    "mkiv_tank_s3.png": {
+      "w": 58,
+      "h": 28,
+      "d": "d89a9a"
+    },
+    "trench_s3@2x.png": {
+      "w": 116,
+      "h": 96,
+      "d": "67b781"
+    },
+    "aircraft_transport_s2.png": {
+      "w": 36,
+      "h": 36,
+      "d": "cddf1e"
+    },
+    "balloon_s1.png": {
+      "w": 40,
+      "h": 40,
+      "d": "f77496"
+    },
+    "gibraltar_s3@2x.png": {
+      "w": 116,
+      "h": 96,
+      "d": "093dd3"
+    },
+    "tank_s4.png": {
+      "w": 27,
+      "h": 20,
+      "d": "e248c1"
+    },
+    "otto_hersing_s4.png": {
+      "w": 29,
+      "h": 24,
+      "d": "3c866b"
+    },
+    "lucien_laroche_s3@2x.png": {
+      "w": 116,
+      "h": 96,
+      "d": "646dbc"
+    },
+    "light_artillery_s1.png": {
+      "w": 56,
+      "h": 46,
+      "d": "f8acf9"
+    }
+  },
+  "units_portrait": {
+    "otto_hersing_s3.png": {
+      "w": 391,
+      "h": 518,
+      "d": "251380"
+    },
+    "tank_s3_legacy.png": {
+      "w": 430,
+      "h": 300,
+      "d": "c1fec9"
+    },
+    "fiero_martello_bg.jpg": {
+      "w": 580,
+      "h": 1034,
+      "d": "9e428a"
+    },
+    "gibraltar_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "83ae77"
+    },
+    "battleship_s3_legacy.png": {
+      "w": 430,
+      "h": 300,
+      "d": "9fd0ad"
+    },
+    "trench_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "aee281"
+    },
+    "transport_ship_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "39b267"
+    },
+    "car_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "fb5d06"
+    },
+    "gibraltar_bg.jpg": {
+      "w": 580,
+      "h": 1034,
+      "d": "690ac2"
+    },
+    "lawrence_of_arabia_bg.png": {
+      "w": 580,
+      "h": 1034,
+      "d": "7aa108"
+    },
+    "tatiana_minchakievich_bg.jpg": {
+      "w": 580,
+      "h": 1034,
+      "d": "dfd262"
+    },
+    "railgun_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "b8e37c"
+    },
+    "gibraltar_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "7cd778"
+    },
+    "otto_hersing_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "3cf9c1"
+    },
+    "artillery_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "a5bc84"
+    },
+    "zeppelin_s3.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "688765"
+    },
+    "transport_ship_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "8b9771"
+    },
+    "manfred_von_richthofen_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "4f949f"
+    },
+    "zeppelin_s3_legacy.png": {
+      "w": 430,
+      "h": 300,
+      "d": "284e61"
+    },
+    "tatiana_minchakievich_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "1f2217"
+    },
+    "bomber_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "d335ae"
+    },
+    "mkiv_tank_s3_legacy.png": {
+      "w": 430,
+      "h": 300,
+      "d": "79f08f"
+    },
+    "cruiser_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "ef2c19"
+    },
+    "balloon_s3.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "5d9a3c"
+    },
+    "submarine_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "84fd51"
+    },
+    "submarine_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "0b0ada"
+    },
+    "lawrence_of_arabia_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "a27ef3"
+    },
+    "battleship_s3.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "461802"
+    },
+    "battleship_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "6d39d6"
+    },
+    "orhan_kangal_demir_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "dddad3"
+    },
+    "bomber_s3_legacy.png": {
+      "w": 430,
+      "h": 300,
+      "d": "e45075"
+    },
+    "wilhelm_von_thaden_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "5d9bb2"
+    },
+    "mkiv_tank_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "89e7f3"
+    },
+    "wilhelm_von_thaden_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "9c4004"
+    },
+    "fiona_maeve_porter_bg.jpg": {
+      "w": 580,
+      "h": 1034,
+      "d": "59212e"
+    },
+    "alvin_york_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "26de10"
+    },
+    "otto_hersing_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "00f4f7"
+    },
+    "fiona_maeve_porter_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "7f5ad1"
+    },
+    "aircraft_transport_s3.png": {
+      "w": 580,
+      "h": 240,
+      "d": "e23cf4"
+    },
+    "aircraft_transport_s3_legacy.png": {
+      "w": 430,
+      "h": 300,
+      "d": "87744d"
+    },
+    "togo_heihachiro_s3.png": {
+      "w": 391,
+      "h": 518,
+      "d": "4f5383"
+    },
+    "balloon_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "85f6e5"
+    },
+    "artillery_s3_legacy.png": {
+      "w": 430,
+      "h": 300,
+      "d": "f16fac"
+    },
+    "viscount_allenby_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "082812"
+    },
+    "manfred_von_richthofen_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "1fddf8"
+    },
+    "lucien_laroche_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "f9c112"
+    },
+    "orhan_kangal_demir_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "23d697"
+    },
+    "alvin_york_s3.png": {
+      "w": 391,
+      "h": 518,
+      "d": "154e00"
+    },
+    "battleship_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "b7e8a0"
+    },
+    "georg_bruchmuller_s3@2x.png": {
+      "w": 782,
+      "h": 1036,
+      "d": "0fa0d3"
+    },
+    "wilhelm_von_thaden_bg.jpg": {
+      "w": 580,
+      "h": 1034,
+      "d": "96f139"
+    },
+    "manfred_von_richthofen_s3@2x.png": {
+      "w": 782,
+      "h": 1036,
+      "d": "288e90"
+    },
+    "infantry_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "9a863c"
+    },
+    "lawrence_of_arabia_s3.png": {
+      "w": 595,
+      "h": 518,
+      "d": "a2b00a"
+    },
+    "fiero_martello_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "dba16e"
+    },
+    "car_s3_legacy.png": {
+      "w": 430,
+      "h": 300,
+      "d": "36e12f"
+    },
+    "lawrence_of_arabia_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "6d0b17"
+    },
+    "henry_hank_callahan_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "7d957b"
+    },
+    "car_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "ae192b"
+    },
+    "cavalry_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "9768fb"
+    },
+    "fiona_maeve_porter_s3.png": {
+      "w": 391,
+      "h": 518,
+      "d": "c15844"
+    },
+    "light_artillery_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "695513"
+    },
+    "togo_heihachiro_s3@2x.png": {
+      "w": 782,
+      "h": 1036,
+      "d": "1a12f7"
+    },
+    "infantry_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "9f2c9b"
+    },
+    "johan_maes_s3.png": {
+      "w": 391,
+      "h": 518,
+      "d": "fca8b7"
+    },
+    "balloon_s3_legacy.png": {
+      "w": 430,
+      "h": 300,
+      "d": "04822d"
+    },
+    "georg_bruchmuller_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "60e2b0"
+    },
+    "gibraltar_s3.png": {
+      "w": 391,
+      "h": 518,
+      "d": "4ae024"
+    },
+    "lucien_laroche_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "5b2197"
+    },
+    "fiona_maeve_porter_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "09d47c"
+    },
+    "tank_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "bf06fa"
+    },
+    "henry_hank_callahan_s3.png": {
+      "w": 391,
+      "h": 518,
+      "d": "ba00d2"
+    },
+    "mkiv_tank_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "a314ab"
+    },
+    "cavalry_s3.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "19afa7"
+    },
+    "viscount_allenby_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "654675"
+    },
+    "wilhelm_von_thaden_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "74601f"
+    },
+    "john_pershing_s3.png": {
+      "w": 391,
+      "h": 518,
+      "d": "85eb60"
+    },
+    "battleship_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "7ef73d"
+    },
+    "henry_hank_callahan_bg.png": {
+      "w": 580,
+      "h": 1034,
+      "d": "9b0b14"
+    },
+    "artillery_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "8f559c"
+    },
+    "togo_heihachiro_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "06fe0f"
+    },
+    "infantry_s3_legacy.png": {
+      "w": 430,
+      "h": 300,
+      "d": "4514c2"
+    },
+    "airplane_s3_legacy.png": {
+      "w": 430,
+      "h": 300,
+      "d": "9fc0e4"
+    },
+    "zeppelin_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "d3e231"
+    },
+    "georg_bruchmuller_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "13fd35"
+    },
+    "joseph_joffre_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "596b0f"
+    },
+    "railgun_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "e8f19f"
+    },
+    "railgun_s3.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "291a83"
+    },
+    "tatiana_minchakievich_s3.png": {
+      "w": 391,
+      "h": 518,
+      "d": "845e4a"
+    },
+    "infantry_s3.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "ce2d58"
+    },
+    "joseph_joffre_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "21fcb1"
+    },
+    "submarine_s3_legacy.png": {
+      "w": 430,
+      "h": 300,
+      "d": "f5f622"
+    },
+    "john_pershing_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "85783e"
+    },
+    "orhan_kangal_demir_s3.png": {
+      "w": 391,
+      "h": 518,
+      "d": "0e7315"
+    },
+    "tank_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "569a78"
+    },
+    "light_artillery_s3.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "d37602"
+    },
+    "john_pershing_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "7d927c"
+    },
+    "fiona_maeve_porter_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "cbe442"
+    },
+    "trench_s3_legacy.png": {
+      "w": 430,
+      "h": 300,
+      "d": "18e51c"
+    },
+    "fiero_martello_s3@2x.png": {
+      "w": 782,
+      "h": 1036,
+      "d": "8f464a"
+    },
+    "trench_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "3787f3"
+    },
+    "fiero_martello_s3.png": {
+      "w": 391,
+      "h": 518,
+      "d": "a9701a"
+    },
+    "mkiv_tank_s3.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "bed476"
+    },
+    "railgun_s3_legacy.png": {
+      "w": 430,
+      "h": 300,
+      "d": "ab4fb5"
+    },
+    "orhan_kangal_demir_s3@2x.png": {
+      "w": 782,
+      "h": 1036,
+      "d": "083840"
+    },
+    "infantry_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "37cc72"
+    },
+    "joseph_joffre_s3@2x.png": {
+      "w": 782,
+      "h": 1036,
+      "d": "5bc96c"
+    },
+    "henry_hank_callahan_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "4eafe9"
+    },
+    "mkiv_tank_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "381d6a"
+    },
+    "georg_bruchmuller_bg.jpg": {
+      "w": 580,
+      "h": 1034,
+      "d": "3c4d21"
+    },
+    "fiero_martello_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "eba5b9"
+    },
+    "togo_heihachiro_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "00a141"
+    },
+    "cavalry_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "4997e0"
+    },
+    "artillery_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "e94006"
+    },
+    "cruiser_s3.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "cbb5fa"
+    },
+    "joseph_joffre_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "ebf572"
+    },
+    "cruiser_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "cf030e"
+    },
+    "car_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "4d6bc7"
+    },
+    "bomber_s3.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "e699da"
+    },
+    "stormtroopers_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "e37e8c"
+    },
+    "bomber_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "b3cf5a"
+    },
+    "tatiana_minchakievich_s3@2x.png": {
+      "w": 782,
+      "h": 1036,
+      "d": "aa3963"
+    },
+    "lawrence_of_arabia_s3@2x.png": {
+      "w": 1189,
+      "h": 1036,
+      "d": "6bcc04"
+    },
+    "cavalry_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "f74225"
+    },
+    "car_s3.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "86e51f"
+    },
+    "tatiana_minchakievich_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "8ff6c2"
+    },
+    "light_artillery_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "6c0147"
+    },
+    "otto_hersing_bg.jpg": {
+      "w": 580,
+      "h": 1034,
+      "d": "7fdca7"
+    },
+    "viscount_allenby_s3.png": {
+      "w": 391,
+      "h": 518,
+      "d": "aec563"
+    },
+    "artillery_s3.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "2700d9"
+    },
+    "gibraltar_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "320eb4"
+    },
+    "stormtroopers_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "30bc53"
+    },
+    "togo_heihachiro_bg.jpg": {
+      "w": 580,
+      "h": 1034,
+      "d": "ca6fc7"
+    },
+    "balloon_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "4f3c24"
+    },
+    "fiona_maeve_porter_s3@2x.png": {
+      "w": 782,
+      "h": 1036,
+      "d": "45aaa2"
+    },
+    "zeppelin_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "c473c7"
+    },
+    "stormtroopers_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "fe98b1"
+    },
+    "georg_bruchmuller_s3.png": {
+      "w": 391,
+      "h": 518,
+      "d": "54f65d"
+    },
+    "fiero_martello_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "a736f1"
+    },
+    "joseph_joffre_s3.png": {
+      "w": 391,
+      "h": 518,
+      "d": "1784cb"
+    },
+    "alvin_york_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "bd4852"
+    },
+    "manfred_von_richthofen_s3.png": {
+      "w": 391,
+      "h": 518,
+      "d": "4a7f8b"
+    },
+    "viscount_allenby_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "4bef79"
+    },
+    "trench_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "1df255"
+    },
+    "airplane_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "fe333e"
+    },
+    "stormtroopers_s3.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "d5355b"
+    },
+    "transport_ship_s3.png": {
+      "w": 580,
+      "h": 240,
+      "d": "81440a"
+    },
+    "viscount_allenby_bg.jpg": {
+      "w": 580,
+      "h": 1034,
+      "d": "d1c47d"
+    },
+    "tank_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "175629"
+    },
+    "submarine_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "b4fbc6"
+    },
+    "orhan_kangal_demir_bg.jpg": {
+      "w": 580,
+      "h": 1034,
+      "d": "626c47"
+    },
+    "lucien_laroche_s3.png": {
+      "w": 391,
+      "h": 518,
+      "d": "128fff"
+    },
+    "transport_ship_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "5e0adc"
+    },
+    "cavalry_s3_legacy.png": {
+      "w": 430,
+      "h": 300,
+      "d": "069724"
+    },
+    "john_pershing_bg.jpg": {
+      "w": 580,
+      "h": 1034,
+      "d": "ac3f32"
+    },
+    "aircraft_transport_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "03ecc7"
+    },
+    "airplane_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "c86583"
+    },
+    "otto_hersing_s3@2x.png": {
+      "w": 782,
+      "h": 1036,
+      "d": "3e8206"
+    },
+    "orhan_kangal_demir_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "a67fd1"
+    },
+    "cruiser_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "4a45c7"
+    },
+    "airplane_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "64d90c"
+    },
+    "johan_maes_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "e665eb"
+    },
+    "trench_s3.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "9abef5"
+    },
+    "railgun_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "78f2f9"
+    },
+    "viscount_allenby_s3@2x.png": {
+      "w": 782,
+      "h": 1036,
+      "d": "bdcb55"
+    },
+    "tank_s3.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "4d546d"
+    },
+    "tatiana_minchakievich_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "e81c6a"
+    },
+    "zeppelin_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "ed725b"
+    },
+    "otto_hersing_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "c77215"
+    },
+    "henry_hank_callahan_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "7d579c"
+    },
+    "cruiser_s3_legacy.png": {
+      "w": 430,
+      "h": 300,
+      "d": "562f4a"
+    },
+    "henry_hank_callahan_s3@2x.png": {
+      "w": 782,
+      "h": 1036,
+      "d": "5b0f16"
+    },
+    "john_pershing_s3@2x.png": {
+      "w": 782,
+      "h": 1036,
+      "d": "7b92ee"
+    },
+    "georg_bruchmuller_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "9fc494"
+    },
+    "johan_maes_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "d98ad3"
+    },
+    "light_artillery_s3_legacy.png": {
+      "w": 430,
+      "h": 300,
+      "d": "0401ff"
+    },
+    "wilhelm_von_thaden_s3.png": {
+      "w": 391,
+      "h": 518,
+      "d": "8048e9"
+    },
+    "transport_ship_s3_legacy.png": {
+      "w": 430,
+      "h": 300,
+      "d": "36bee7"
+    },
+    "johan_maes_bg.jpg": {
+      "w": 580,
+      "h": 1034,
+      "d": "347cfc"
+    },
+    "submarine_s3.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "9fe407"
+    },
+    "johan_maes_s3@2x.png": {
+      "w": 782,
+      "h": 1036,
+      "d": "7284a1"
+    },
+    "airplane_s3.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "7ed68b"
+    },
+    "lawrence_of_arabia_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "b31759"
+    },
+    "manfred_von_richthofen_bg.jpg": {
+      "w": 580,
+      "h": 1034,
+      "d": "afd189"
+    },
+    "aircraft_transport_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "d154be"
+    },
+    "manfred_von_richthofen_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "9e79be"
+    },
+    "joseph_joffre_bg.png": {
+      "w": 580,
+      "h": 1034,
+      "d": "12220e"
+    },
+    "bomber_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "592957"
+    },
+    "togo_heihachiro_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "cfc7f0"
+    },
+    "wilhelm_von_thaden_s3@2x.png": {
+      "w": 782,
+      "h": 1036,
+      "d": "9641cb"
+    },
+    "lucien_laroche_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "6f18fc"
+    },
+    "john_pershing_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "2824d6"
+    },
+    "johan_maes_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "b44ea9"
+    },
+    "alvin_york_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "35c268"
+    },
+    "lucien_laroche_bg.jpg": {
+      "w": 580,
+      "h": 1034,
+      "d": "5454b7"
+    },
+    "aircraft_transport_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "e70e72"
+    },
+    "alvin_york_bg.jpg": {
+      "w": 580,
+      "h": 1034,
+      "d": "1b6f8d"
+    },
+    "balloon_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "7c298d"
+    },
+    "gibraltar_s3@2x.png": {
+      "w": 782,
+      "h": 1036,
+      "d": "21543f"
+    },
+    "lucien_laroche_s3@2x.png": {
+      "w": 782,
+      "h": 1036,
+      "d": "f309ef"
+    },
+    "light_artillery_s1.png": {
+      "w": 250,
+      "h": 155,
+      "d": "3524ef"
+    }
+  },
+  "upgrades": {
+    "railway_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "2cf3de"
+    },
+    "workshop_s5@2x.png": {
+      "w": 178,
+      "h": 144,
+      "d": "db2543"
+    },
+    "capitol_s6@2x.png": {
+      "w": 120,
+      "h": 90,
+      "d": "69ca50"
+    },
+    "capitol_s5@2x.png": {
+      "w": 178,
+      "h": 134,
+      "d": "e7bb83"
+    },
+    "harbour_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "fa1975"
+    },
+    "airfield_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "92cf56"
+    },
+    "harbour_s5.png": {
+      "w": 89,
+      "h": 73,
+      "d": "7c533b"
+    },
+    "capitol_s3.png": {
+      "w": 36,
+      "h": 27,
+      "d": "4a3fec"
+    },
+    "airfield_s4.png": {
+      "w": 44,
+      "h": 40,
+      "d": "105826"
+    },
+    "recruiting_office_s6.png": {
+      "w": 60,
+      "h": 59,
+      "d": "7dbc45"
+    },
+    "capitol_s2.png": {
+      "w": 61,
+      "h": 46,
+      "d": "3a437e"
+    },
+    "capitol_s4@2x.png": {
+      "w": 88,
+      "h": 66,
+      "d": "399869"
+    },
+    "capitol_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "55c9fe"
+    },
+    "barracks_s4.png": {
+      "w": 44,
+      "h": 39,
+      "d": "3dcd6b"
+    },
+    "barracks_s2.png": {
+      "w": 57,
+      "h": 50,
+      "d": "e34826"
+    },
+    "airfield_s5@2x.png": {
+      "w": 178,
+      "h": 162,
+      "d": "b6a024"
+    },
+    "harbour_s2.png": {
+      "w": 55,
+      "h": 45,
+      "d": "66cfb3"
+    },
+    "airfield_s2.png": {
+      "w": 44,
+      "h": 40,
+      "d": "59dc30"
+    },
+    "barracks_s6.png": {
+      "w": 60,
+      "h": 53,
+      "d": "fcde44"
+    },
+    "factory_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "b60f10"
+    },
+    "railway_s6.png": {
+      "w": 60,
+      "h": 52,
+      "d": "4b0e6b"
+    },
+    "factory_s5.png": {
+      "w": 89,
+      "h": 78,
+      "d": "b91e0b"
+    },
+    "factory_s4@2x.png": {
+      "w": 88,
+      "h": 76,
+      "d": "8a5d10"
+    },
+    "workshop_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "619c61"
+    },
+    "barracks_s4@2x.png": {
+      "w": 88,
+      "h": 78,
+      "d": "462fd9"
+    },
+    "fortress_s2.png": {
+      "w": 60,
+      "h": 47,
+      "d": "9c60e6"
+    },
+    "workshop_s6@2x.png": {
+      "w": 120,
+      "h": 97,
+      "d": "5c0eea"
+    },
+    "fortress_s5@2x.png": {
+      "w": 178,
+      "h": 140,
+      "d": "168e07"
+    },
+    "capitol_s4.png": {
+      "w": 44,
+      "h": 33,
+      "d": "4b7931"
+    },
+    "railway_s6@2x.png": {
+      "w": 120,
+      "h": 104,
+      "d": "1d2e74"
+    },
+    "capitol_s5.png": {
+      "w": 89,
+      "h": 67,
+      "d": "78dfcd"
+    },
+    "workshop_s4.png": {
+      "w": 44,
+      "h": 36,
+      "d": "683d8d"
+    },
+    "harbour_s6.png": {
+      "w": 60,
+      "h": 49,
+      "d": "cb3319"
+    },
+    "workshop_s6.png": {
+      "w": 60,
+      "h": 49,
+      "d": "1fe137"
+    },
+    "barracks_s5.png": {
+      "w": 89,
+      "h": 78,
+      "d": "c3071e"
+    },
+    "barracks_s6@2x.png": {
+      "w": 120,
+      "h": 105,
+      "d": "0d37e9"
+    },
+    "barracks_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "4269c2"
+    },
+    "airfield_s6.png": {
+      "w": 60,
+      "h": 55,
+      "d": "2439b1"
+    },
+    "recruiting_office_s6@2x.png": {
+      "w": 120,
+      "h": 117,
+      "d": "1dd93e"
+    },
+    "railway_s5@2x.png": {
+      "w": 178,
+      "h": 154,
+      "d": "8fba1c"
+    },
+    "railway_s2.png": {
+      "w": 51,
+      "h": 44,
+      "d": "aa5ceb"
+    },
+    "fortress_s5.png": {
+      "w": 89,
+      "h": 70,
+      "d": "c1129e"
+    },
+    "railway_s5.png": {
+      "w": 89,
+      "h": 77,
+      "d": "fe34cb"
+    },
+    "factory_s3.png": {
+      "w": 36,
+      "h": 31,
+      "d": "e81aa5"
+    },
+    "harbour_s6@2x.png": {
+      "w": 120,
+      "h": 98,
+      "d": "7d765a"
+    },
+    "recruiting_office_s2.png": {
+      "w": 51,
+      "h": 50,
+      "d": "785fe9"
+    },
+    "airfield_s3.png": {
+      "w": 36,
+      "h": 33,
+      "d": "d44654"
+    },
+    "fortress_s4.png": {
+      "w": 44,
+      "h": 34,
+      "d": "0624ae"
+    },
+    "railway_s3@2x.png": {
+      "w": 72,
+      "h": 62,
+      "d": "d02c05"
+    },
+    "workshop_s5.png": {
+      "w": 89,
+      "h": 72,
+      "d": "e8f964"
+    },
+    "workshop_s4@2x.png": {
+      "w": 88,
+      "h": 72,
+      "d": "7f7e0e"
+    },
+    "recruiting_office_s5@2x.png": {
+      "w": 178,
+      "h": 174,
+      "d": "bda759"
+    },
+    "workshop_s3.png": {
+      "w": 36,
+      "h": 29,
+      "d": "12dd1b"
+    },
+    "workshop_s2.png": {
+      "w": 52,
+      "h": 42,
+      "d": "a21fb1"
+    },
+    "fortress_s4@2x.png": {
+      "w": 88,
+      "h": 68,
+      "d": "06d540"
+    },
+    "recruiting_office_s4@2x.png": {
+      "w": 88,
+      "h": 86,
+      "d": "f906b0"
+    },
+    "railway_s4.png": {
+      "w": 44,
+      "h": 38,
+      "d": "130b97"
+    },
+    "airfield_s4@2x.png": {
+      "w": 88,
+      "h": 80,
+      "d": "957f7e"
+    },
+    "harbour_s3.png": {
+      "w": 36,
+      "h": 29,
+      "d": "de7be5"
+    },
+    "fortress_s6@2x.png": {
+      "w": 120,
+      "h": 94,
+      "d": "fca8d8"
+    },
+    "fortress_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "dd103e"
+    },
+    "factory_s4.png": {
+      "w": 44,
+      "h": 38,
+      "d": "48b97f"
+    },
+    "railway_s3.png": {
+      "w": 36,
+      "h": 31,
+      "d": "a641c5"
+    },
+    "factory_s6.png": {
+      "w": 60,
+      "h": 53,
+      "d": "e3ee3f"
+    },
+    "harbour_s4@2x.png": {
+      "w": 88,
+      "h": 72,
+      "d": "6714d7"
+    },
+    "recruiting_office_s4.png": {
+      "w": 44,
+      "h": 43,
+      "d": "63eedb"
+    },
+    "recruiting_office_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "c7354e"
+    },
+    "factory_s5@2x.png": {
+      "w": 178,
+      "h": 156,
+      "d": "cbf7c8"
+    },
+    "fortress_s6.png": {
+      "w": 60,
+      "h": 47,
+      "d": "c7504c"
+    },
+    "recruiting_office_s3@2x.png": {
+      "w": 72,
+      "h": 70,
+      "d": "2efcc8"
+    },
+    "fortress_s3@2x.png": {
+      "w": 72,
+      "h": 56,
+      "d": "d09606"
+    },
+    "factory_s2.png": {
+      "w": 59,
+      "h": 52,
+      "d": "30315f"
+    },
+    "fortress_s3.png": {
+      "w": 36,
+      "h": 28,
+      "d": "cb9c20"
+    },
+    "barracks_s3.png": {
+      "w": 36,
+      "h": 32,
+      "d": "dba60c"
+    },
+    "recruiting_office_s3.png": {
+      "w": 36,
+      "h": 35,
+      "d": "7648d8"
+    },
+    "factory_s3@2x.png": {
+      "w": 72,
+      "h": 62,
+      "d": "2b27b3"
+    },
+    "factory_s6@2x.png": {
+      "w": 120,
+      "h": 105,
+      "d": "d0607a"
+    },
+    "airfield_s6@2x.png": {
+      "w": 120,
+      "h": 109,
+      "d": "01490a"
+    },
+    "workshop_s3@2x.png": {
+      "w": 72,
+      "h": 58,
+      "d": "263388"
+    },
+    "harbour_s3@2x.png": {
+      "w": 72,
+      "h": 58,
+      "d": "af3b80"
+    },
+    "harbour_s4.png": {
+      "w": 44,
+      "h": 36,
+      "d": "aa27f7"
+    },
+    "airfield_s3@2x.png": {
+      "w": 72,
+      "h": 66,
+      "d": "088ba6"
+    },
+    "harbour_s5@2x.png": {
+      "w": 178,
+      "h": 146,
+      "d": "3e41b6"
+    },
+    "recruiting_office_s5.png": {
+      "w": 89,
+      "h": 87,
+      "d": "3df35b"
+    },
+    "railway_s4@2x.png": {
+      "w": 88,
+      "h": 76,
+      "d": "9453b9"
+    },
+    "capitol_s6.png": {
+      "w": 60,
+      "h": 45,
+      "d": "98a23d"
+    },
+    "airfield_s5.png": {
+      "w": 89,
+      "h": 81,
+      "d": "ac7323"
+    },
+    "capitol_s3@2x.png": {
+      "w": 72,
+      "h": 54,
+      "d": "568cb8"
+    },
+    "barracks_s5@2x.png": {
+      "w": 178,
+      "h": 156,
+      "d": "a59134"
+    },
+    "barracks_s3@2x.png": {
+      "w": 72,
+      "h": 64,
+      "d": "de8b90"
+    }
+  },
+  "upgrades_portrait": {
+    "barracks_1_s3.png": {
+      "w": 430,
+      "h": 267,
+      "d": "8cae85"
+    },
+    "factory_1_s3.png": {
+      "w": 430,
+      "h": 267,
+      "d": "f5c0fa"
+    },
+    "capitol_s3.png": {
+      "w": 430,
+      "h": 267,
+      "d": "1221d3"
+    },
+    "fortress_2_s1.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "25d11c"
+    },
+    "workshop_1_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "3433b5"
+    },
+    "factory_2_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "3280c8"
+    },
+    "fortress_3_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "d0185e"
+    },
+    "capitol_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "234d3b"
+    },
+    "factory_3_s3.png": {
+      "w": 430,
+      "h": 267,
+      "d": "d6e19f"
+    },
+    "factory_4_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "9d3f7e"
+    },
+    "airfield_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "4798e1"
+    },
+    "workshop_2_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "3433b5"
+    },
+    "harbour_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "d67e5e"
+    },
+    "airfield_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "62928c"
+    },
+    "factory_3_s1.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "bd1a63"
+    },
+    "factory_3_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "564acb"
+    },
+    "factory_4_s1.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "3a1333"
+    },
+    "recruiting_office_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "7706cc"
+    },
+    "barracks_2_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "2f1315"
+    },
+    "factory_2_s1.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "ec09a5"
+    },
+    "factory_1_s1.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "72a596"
+    },
+    "workshop_2_s3.png": {
+      "w": 430,
+      "h": 267,
+      "d": "5f8a57"
+    },
+    "railway_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "681053"
+    },
+    "barracks_1_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "b360ce"
+    },
+    "airfield_s1.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "ae511f"
+    },
+    "fortress_2_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "d0185e"
+    },
+    "factory_2_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "82666b"
+    },
+    "factory_1_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "c593ff"
+    },
+    "barracks_1_s1.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "b98e68"
+    },
+    "workshop_3_s3.png": {
+      "w": 430,
+      "h": 267,
+      "d": "5f8a57"
+    },
+    "fortress_1_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "d49d1e"
+    },
+    "fortress_5_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "d49d1e"
+    },
+    "barracks_1_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "4a1a23"
+    },
+    "fortress_1_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "d0185e"
+    },
+    "fortress_3_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "d49d1e"
+    },
+    "capitol_s1.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "8e330f"
+    },
+    "railway_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "632b6a"
+    },
+    "fortress_1_s1.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "25d11c"
+    },
+    "fortress_4_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "d0185e"
+    },
+    "fortress_5_s3.png": {
+      "w": 430,
+      "h": 267,
+      "d": "d05f6a"
+    },
+    "harbour_s1.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "68a45d"
+    },
+    "factory_4_s3.png": {
+      "w": 430,
+      "h": 267,
+      "d": "66cbb4"
+    },
+    "recruiting_office_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "ac0551"
+    },
+    "factory_2_s3.png": {
+      "w": 430,
+      "h": 267,
+      "d": "6074c8"
+    },
+    "workshop_2_s1.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "09c481"
+    },
+    "airfield_s3.png": {
+      "w": 430,
+      "h": 267,
+      "d": "27a610"
+    },
+    "fortress_4_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "d49d1e"
+    },
+    "railway_s1.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "da205b"
+    },
+    "fortress_4_s1.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "25d11c"
+    },
+    "capitol_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "f2f88a"
+    },
+    "workshop_1_s3.png": {
+      "w": 430,
+      "h": 267,
+      "d": "f9b71f"
+    },
+    "workshop_2_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "0d46f8"
+    },
+    "fortress_2_s3.png": {
+      "w": 430,
+      "h": 267,
+      "d": "d05f6a"
+    },
+    "barracks_2_s1.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "703ca9"
+    },
+    "barracks_2_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "e7fa1a"
+    },
+    "fortress_5_s1.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "25d11c"
+    },
+    "fortress_3_s1.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "25d11c"
+    },
+    "workshop_3_s1.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "09c481"
+    },
+    "harbour_s3.png": {
+      "w": 430,
+      "h": 267,
+      "d": "071c08"
+    },
+    "workshop_1_s1.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "09c481"
+    },
+    "railway_s3.png": {
+      "w": 430,
+      "h": 267,
+      "d": "1aa662"
+    },
+    "barracks_2_s3.png": {
+      "w": 430,
+      "h": 267,
+      "d": "57f64d"
+    },
+    "fortress_3_s3.png": {
+      "w": 430,
+      "h": 267,
+      "d": "d05f6a"
+    },
+    "factory_3_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "2ba5cf"
+    },
+    "factory_4_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "6a4074"
+    },
+    "recruiting_office_s3.png": {
+      "w": 430,
+      "h": 267,
+      "d": "fcc216"
+    },
+    "fortress_4_s3.png": {
+      "w": 430,
+      "h": 267,
+      "d": "d05f6a"
+    },
+    "recruiting_office_s1.jpg": {
+      "w": 580,
+      "h": 240,
+      "d": "1199ab"
+    },
+    "workshop_3_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "3433b5"
+    },
+    "workshop_1_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "0d46f8"
+    },
+    "fortress_5_s2@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "d0185e"
+    },
+    "workshop_3_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "0d46f8"
+    },
+    "factory_1_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "5357e7"
+    },
+    "fortress_2_s2.png": {
+      "w": 200,
+      "h": 113,
+      "d": "d49d1e"
+    },
+    "harbours_4@2x.png": {
+      "w": 400,
+      "h": 226,
+      "d": "e69de9"
+    },
+    "fortress_1_s3.png": {
+      "w": 430,
+      "h": 267,
+      "d": "d05f6a"
+    }
+  },
+  "upgrade_levels": {
+    "2.png": {
+      "w": 16,
+      "h": 16,
+      "d": "196d2d"
+    },
+    "4.png": {
+      "w": 16,
+      "h": 16,
+      "d": "2548cd"
+    },
+    "5.png": {
+      "w": 16,
+      "h": 16,
+      "d": "c35e33"
+    },
+    "1.png": {
+      "w": 16,
+      "h": 16,
+      "d": "7efad5"
+    },
+    "6.png": {
+      "w": 16,
+      "h": 16,
+      "d": "d19e36"
+    },
+    "3.png": {
+      "w": 16,
+      "h": 16,
+      "d": "9e54ba"
+    }
+  },
+  "heroes": {
+    "inf_atk_def_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "42aff8"
+    },
+    "cav_atk_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "b265f4"
+    },
+    "storminf_hp_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "dca131"
+    },
+    "buff_generic_bg_locked.png": {
+      "w": 75,
+      "h": 75,
+      "d": "37bf5f"
+    },
+    "empty_grid.png": {
+      "w": 116,
+      "h": 150,
+      "d": "64f76a"
+    },
+    "locked@2x.png": {
+      "w": 76,
+      "h": 70,
+      "d": "2f7963"
+    },
+    "details_portrait_bg_obtained_rare.png": {
+      "w": 580,
+      "h": 442,
+      "d": "c16a50"
+    },
+    "details_portrait_bg_obtained_uncommon.png": {
+      "w": 580,
+      "h": 442,
+      "d": "dd1aca"
+    },
+    "inf_mspd_buff_own.png": {
+      "w": 75,
+      "h": 86,
+      "d": "3057cb"
+    },
+    "inf_mspd_buff_own_fio@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "f17fa2"
+    },
+    "zep_hp_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "a422ff"
+    },
+    "buff_spawn_bg_locked.png": {
+      "w": 75,
+      "h": 75,
+      "d": "e4de9b"
+    },
+    "stars_deco_silver_tiny@2x.png": {
+      "w": 26,
+      "h": 26,
+      "d": "ef8474"
+    },
+    "arrow_up@2x.png": {
+      "w": 40,
+      "h": 52,
+      "d": "597bfc"
+    },
+    "arrow_up.png": {
+      "w": 20,
+      "h": 26,
+      "d": "c16ed4"
+    },
+    "buff_unlock_level.png": {
+      "w": 20,
+      "h": 26,
+      "d": "5cfe93"
+    },
+    "bb_hp_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "cc90b5"
+    },
+    "ht_hp_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "fa7681"
+    },
+    "inf_ac_def_buff_own.png": {
+      "w": 75,
+      "h": 86,
+      "d": "ea021e"
+    },
+    "details_portrait_bg_obtained_epic.png": {
+      "w": 580,
+      "h": 442,
+      "d": "eace3c"
+    },
+    "arty_atk_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "746170"
+    },
+    "resurrection@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "a47cb9"
+    },
+    "t_atk_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "10c673"
+    },
+    "buff_spawn_bg@2x.png": {
+      "w": 150,
+      "h": 150,
+      "d": "d12558"
+    },
+    "inf_mspd_buff_own@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "f17fa2"
+    },
+    "gas_cloud_damage_active@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "69fda7"
+    },
+    "stars_deco_gold_tiny.png": {
+      "w": 13,
+      "h": 13,
+      "d": "a1a00e"
+    },
+    "hero_card_bottom_1_legendary.png": {
+      "w": 116,
+      "h": 44,
+      "d": "cd9509"
+    },
+    "t_atk_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "2bf32d"
+    },
+    "stars_deco_bronze_tiny@2x.png": {
+      "w": 26,
+      "h": 26,
+      "d": "c85b17"
+    },
+    "gas_cloud_damage_active.png": {
+      "w": 75,
+      "h": 86,
+      "d": "a688a2"
+    },
+    "buff_unlock_level@2x.png": {
+      "w": 40,
+      "h": 52,
+      "d": "5ae9d3"
+    },
+    "bb_dmg_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "ee3c48"
+    },
+    "rb_atk_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "cb321d"
+    },
+    "land_atk_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "9f46e2"
+    },
+    "doa_inactive.png": {
+      "w": 20,
+      "h": 26,
+      "d": "42b4a8"
+    },
+    "hero_card_bottom_1_uncommon@2x.png": {
+      "w": 232,
+      "h": 88,
+      "d": "535d56"
+    },
+    "star_big_2@2x.png": {
+      "w": 58,
+      "h": 56,
+      "d": "5796dd"
+    },
+    "inf_hp_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "b20284"
+    },
+    "hero_card_bottom_2.png": {
+      "w": 116,
+      "h": 44,
+      "d": "ea711f"
+    },
+    "double_rifle@2x.png": {
+      "w": 108,
+      "h": 100,
+      "d": "a6ab15"
+    },
+    "tat_view_buff_enemy@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "eb9481"
+    },
+    "hero_card_bottom_3@2x.png": {
+      "w": 232,
+      "h": 88,
+      "d": "e4dba4"
+    },
+    "new_background_2.png": {
+      "w": 92,
+      "h": 30,
+      "d": "48b55f"
+    },
+    "gas_cloud_deploy_range_active@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "022054"
+    },
+    "zep_spd_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "360f35"
+    },
+    "bomber_hp_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "0ea328"
+    },
+    "stars_deco_silver_tiny.png": {
+      "w": 13,
+      "h": 13,
+      "d": "94b035"
+    },
+    "hero_card_bottom_1_epic@2x.png": {
+      "w": 232,
+      "h": 88,
+      "d": "6ed663"
+    },
+    "zep_atk_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "8f7415"
+    },
+    "inf_atk_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "4c4203"
+    },
+    "bombardment_active.png": {
+      "w": 75,
+      "h": 86,
+      "d": "2335ae"
+    },
+    "trench_inf_def_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "79b02a"
+    },
+    "shield@2x.png": {
+      "w": 62,
+      "h": 80,
+      "d": "6bd699"
+    },
+    "shield_2@2x.png": {
+      "w": 30,
+      "h": 38,
+      "d": "6a6528"
+    },
+    "inf_mspd_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "f7a4af"
+    },
+    "trench_deploy_time_active@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "cef3ab"
+    },
+    "stars_deco_gold_tiny@2x.png": {
+      "w": 26,
+      "h": 26,
+      "d": "44bc5a"
+    },
+    "fio_view_buff_own.png": {
+      "w": 75,
+      "h": 86,
+      "d": "1b79c1"
+    },
+    "t_hp_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "031d09"
+    },
+    "trench_inf_def_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "1217b2"
+    },
+    "all_mspd_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "eed224"
+    },
+    "hero_shiny_border_animation_mask.png": {
+      "w": 116,
+      "h": 150,
+      "d": "5c5565"
+    },
+    "law_atk_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "861dea"
+    },
+    "buff_spawn_bg_locked@2x.png": {
+      "w": 150,
+      "h": 150,
+      "d": "d658b8"
+    },
+    "t_hp_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "bb4e59"
+    },
+    "bomber_atk_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "8f15d3"
+    },
+    "inf_deploy_amount_active.png": {
+      "w": 75,
+      "h": 86,
+      "d": "917d4d"
+    },
+    "buff_generic_bg_locked@2x.png": {
+      "w": 150,
+      "h": 150,
+      "d": "05f0fb"
+    },
+    "fighter_mspd_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "7e79fd"
+    },
+    "empty_grid@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "7ed002"
+    },
+    "hero_upgrade_currency@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "f5d396"
+    },
+    "hero_card_bottom_1_rare@2x.png": {
+      "w": 232,
+      "h": 88,
+      "d": "1413b2"
+    },
+    "info_portrait_name_frame@2x.png": {
+      "w": 664,
+      "h": 70,
+      "d": "b83b0b"
+    },
+    "new_background.png": {
+      "w": 47,
+      "h": 13,
+      "d": "fd3422"
+    },
+    "hero_card_bottom_1_rare.png": {
+      "w": 116,
+      "h": 44,
+      "d": "7d59ef"
+    },
+    "inf_ac_def_buff_own@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "7d557a"
+    },
+    "inf_mspd_buff_own_fio.png": {
+      "w": 75,
+      "h": 86,
+      "d": "3057cb"
+    },
+    "cav_atk_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "565645"
+    },
+    "sub_atk_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "c29f03"
+    },
+    "tat_atk_buff_enemy@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "1e3eff"
+    },
+    "shield_2.png": {
+      "w": 15,
+      "h": 19,
+      "d": "e9ac95"
+    },
+    "land_atk_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "790fae"
+    },
+    "zep_spd_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "24267c"
+    },
+    "hero_card_bottom_2@2x.png": {
+      "w": 232,
+      "h": 88,
+      "d": "9b3fad"
+    },
+    "hero_card_bottom_1_uncommon.png": {
+      "w": 116,
+      "h": 44,
+      "d": "1c3b20"
+    },
+    "sub_spd_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "75ddb7"
+    },
+    "hero_upgrade_currency.png": {
+      "w": 44,
+      "h": 44,
+      "d": "8581d8"
+    },
+    "stars_deco_diamond_tiny@2x.png": {
+      "w": 26,
+      "h": 26,
+      "d": "cd426b"
+    },
+    "own_hp_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "9fbb12"
+    },
+    "arty_geo_mspd_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "0bacc9"
+    },
+    "buff_generic_bg.png": {
+      "w": 75,
+      "h": 75,
+      "d": "1ff16d"
+    },
+    "info_portrait_bg.jpg": {
+      "w": 580,
+      "h": 1034,
+      "d": "d76925"
+    },
+    "bomber_atk_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "fe03b7"
+    },
+    "doa_inactive@2x.png": {
+      "w": 40,
+      "h": 52,
+      "d": "806f1c"
+    },
+    "star_big_1@2x.png": {
+      "w": 58,
+      "h": 56,
+      "d": "0ab6cd"
+    },
+    "storminf_dmg_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "b897ca"
+    },
+    "tat_atk_buff_enemy.png": {
+      "w": 75,
+      "h": 86,
+      "d": "e5bddd"
+    },
+    "onboarding_4.jpg": {
+      "w": 660,
+      "h": 660,
+      "d": "5b1643"
+    },
+    "locked.png": {
+      "w": 38,
+      "h": 35,
+      "d": "9ad625"
+    },
+    "gas_cloud_size_active.png": {
+      "w": 75,
+      "h": 86,
+      "d": "0ac344"
+    },
+    "zep_atk_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "de6296"
+    },
+    "ac_hp_buff_own.png": {
+      "w": 75,
+      "h": 86,
+      "d": "9ae71f"
+    },
+    "stars_deco_bronze_tiny.png": {
+      "w": 13,
+      "h": 13,
+      "d": "730b25"
+    },
+    "doa_active_2.jpg": {
+      "w": 28,
+      "h": 26,
+      "d": "205162"
+    },
+    "doa_active_2@2x.jpg": {
+      "w": 56,
+      "h": 52,
+      "d": "097617"
+    },
+    "gas_cloud_deploy_range_active.png": {
+      "w": 75,
+      "h": 86,
+      "d": "e45c9f"
+    },
+    "fighter_atk_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "f5fa0c"
+    },
+    "new_background_2@2x.png": {
+      "w": 184,
+      "h": 60,
+      "d": "84268d"
+    },
+    "buff_generic_bg@2x.png": {
+      "w": 150,
+      "h": 150,
+      "d": "e6e9ff"
+    },
+    "bomber_hp_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "95a041"
+    },
+    "doa_active@2x.png": {
+      "w": 40,
+      "h": 52,
+      "d": "20e56f"
+    },
+    "gas_cloud_size_active@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "adfecb"
+    },
+    "info_portrait_name_frame.png": {
+      "w": 332,
+      "h": 35,
+      "d": "b6b612"
+    },
+    "hero_card_bottom_3.png": {
+      "w": 116,
+      "h": 44,
+      "d": "46bc19"
+    },
+    "details_portrait_bg_unobtained.png": {
+      "w": 580,
+      "h": 442,
+      "d": "b3f0e2"
+    },
+    "details_portrait_bg_obtained_legendary.png": {
+      "w": 580,
+      "h": 442,
+      "d": "ecdf2f"
+    },
+    "ac_def_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "591fec"
+    },
+    "trench_inf_hp_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "7d312d"
+    },
+    "storminf_dmg_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "22bf5c"
+    },
+    "doa_inactive_2@2x.jpg": {
+      "w": 56,
+      "h": 52,
+      "d": "a80014"
+    },
+    "all_mspd_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "458f35"
+    },
+    "zep_hp_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "8c064d"
+    },
+    "deployed.png": {
+      "w": 38,
+      "h": 35,
+      "d": "c04dc8"
+    },
+    "trench_deploy_time_active.png": {
+      "w": 75,
+      "h": 86,
+      "d": "63c2d3"
+    },
+    "bb_dmg_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "5f8b82"
+    },
+    "own_hp_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "a8c40b"
+    },
+    "ac_hp_buff_own@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "9e05a1"
+    },
+    "fio_view_buff_own@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "eb9481"
+    },
+    "rb_atk_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "fefcee"
+    },
+    "doa_active.png": {
+      "w": 20,
+      "h": 26,
+      "d": "7485da"
+    },
+    "bb_hp_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "f17876"
+    },
+    "arty_geo_mspd_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "45d8e5"
+    },
+    "inf_mspd_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "ebf473"
+    },
+    "resurrection.png": {
+      "w": 44,
+      "h": 44,
+      "d": "84c86b"
+    },
+    "fighter_atk_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "5c4294"
+    },
+    "inf_deploy_amount_active@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "e065f4"
+    },
+    "onboarding_1.jpg": {
+      "w": 660,
+      "h": 660,
+      "d": "e4c7f3"
+    },
+    "ht_hp_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "68795c"
+    },
+    "hero_card_bottom_1_legendary@2x.png": {
+      "w": 232,
+      "h": 88,
+      "d": "ec3f13"
+    },
+    "tat_view_buff_enemy.png": {
+      "w": 75,
+      "h": 86,
+      "d": "1b79c1"
+    },
+    "inf_atk_def_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "604b56"
+    },
+    "trench_inf_hp_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "da27d1"
+    },
+    "deployed@2x.png": {
+      "w": 76,
+      "h": 70,
+      "d": "c1f098"
+    },
+    "new_background@2x.png": {
+      "w": 94,
+      "h": 26,
+      "d": "8e9c01"
+    },
+    "inf_hp_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "c5c695"
+    },
+    "shield.png": {
+      "w": 31,
+      "h": 40,
+      "d": "e0bf6b"
+    },
+    "onboarding_3.jpg": {
+      "w": 660,
+      "h": 660,
+      "d": "48922a"
+    },
+    "doa_inactive_2.jpg": {
+      "w": 28,
+      "h": 26,
+      "d": "f3405b"
+    },
+    "ac_def_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "172610"
+    },
+    "stars_deco_diamond_tiny.png": {
+      "w": 13,
+      "h": 13,
+      "d": "b9008d"
+    },
+    "double_rifle.png": {
+      "w": 54,
+      "h": 50,
+      "d": "dc5463"
+    },
+    "sub_spd_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "fc7bff"
+    },
+    "arty_atk_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "d9145d"
+    },
+    "storminf_hp_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "e6193e"
+    },
+    "fighter_mspd_buff@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "66d976"
+    },
+    "buff_spawn_bg.png": {
+      "w": 75,
+      "h": 75,
+      "d": "d33273"
+    },
+    "bombardment_active@2x.png": {
+      "w": 150,
+      "h": 172,
+      "d": "646c0a"
+    },
+    "sub_atk_buff.png": {
+      "w": 75,
+      "h": 86,
+      "d": "380c4e"
+    },
+    "hero_card_bottom_1_epic.png": {
+      "w": 116,
+      "h": 44,
+      "d": "3446d1"
+    },
+    "star_big_2.png": {
+      "w": 29,
+      "h": 28,
+      "d": "cee7fb"
+    },
+    "star_big_1.png": {
+      "w": 29,
+      "h": 28,
+      "d": "587b97"
+    },
+    "onboarding_2.jpg": {
+      "w": 660,
+      "h": 660,
+      "d": "4cefbe"
+    }
+  },
+  "heroes/border": {
+    "hero_card_border_uncommon@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "71a01c"
+    },
+    "hero_details_border_epic@2x.png": {
+      "w": 696,
+      "h": 496,
+      "d": "46111a"
+    },
+    "hero_details_border_rare.png": {
+      "w": 348,
+      "h": 248,
+      "d": "abaaf5"
+    },
+    "hero_details_border_legendary@2x.png": {
+      "w": 696,
+      "h": 496,
+      "d": "089dbf"
+    },
+    "hero_card_border_recovery.png": {
+      "w": 116,
+      "h": 150,
+      "d": "71a856"
+    },
+    "hero_card_border_rare.png": {
+      "w": 116,
+      "h": 150,
+      "d": "d1fe72"
+    },
+    "hero_details_border_uncommon.png": {
+      "w": 348,
+      "h": 248,
+      "d": "60e871"
+    },
+    "hero_card_border_recovery@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "0fe8ce"
+    },
+    "hero_card_border_rare@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "cce258"
+    },
+    "hero_card_border_epic.png": {
+      "w": 116,
+      "h": 150,
+      "d": "a8cb55"
+    },
+    "hero_details_border_rare@2x.png": {
+      "w": 696,
+      "h": 496,
+      "d": "5c5c66"
+    },
+    "hero_card_border_uncommon.png": {
+      "w": 116,
+      "h": 150,
+      "d": "cf6f0a"
+    },
+    "hero_details_border_epic.png": {
+      "w": 348,
+      "h": 248,
+      "d": "1619ca"
+    },
+    "hero_details_border_legendary.png": {
+      "w": 348,
+      "h": 248,
+      "d": "61a6eb"
+    },
+    "hero_card_border_legendary@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "d94a7a"
+    },
+    "hero_card_border_legendary.png": {
+      "w": 116,
+      "h": 150,
+      "d": "8ea450"
+    },
+    "hero_card_border_epic@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "96a032"
+    },
+    "hero_details_border_uncommon@2x.png": {
+      "w": 696,
+      "h": 496,
+      "d": "794283"
+    }
+  },
+  "heroes/levels": {
+    "lvl_banner_big_t1.png": {
+      "w": 180,
+      "h": 180,
+      "d": "427a0a"
+    },
+    "lvl_banner_small_t1_max@2x.png": {
+      "w": 110,
+      "h": 110,
+      "d": "982002"
+    },
+    "lvl_banner_t3_max.png": {
+      "w": 140,
+      "h": 140,
+      "d": "a64a99"
+    },
+    "lvl_banner_big_t1_max.png": {
+      "w": 180,
+      "h": 180,
+      "d": "80c262"
+    },
+    "lvl_banner_big_t3_max@2x.png": {
+      "w": 360,
+      "h": 360,
+      "d": "9bff00"
+    },
+    "lvl_banner_t2@2x.png": {
+      "w": 280,
+      "h": 280,
+      "d": "8047a4"
+    },
+    "lvl_banner_big_t4_max@2x.png": {
+      "w": 360,
+      "h": 360,
+      "d": "0247e9"
+    },
+    "lvl_banner_small_t4@2x.png": {
+      "w": 110,
+      "h": 110,
+      "d": "fd21ee"
+    },
+    "lvl_banner_t2_max.png": {
+      "w": 140,
+      "h": 140,
+      "d": "befed7"
+    },
+    "lvl_banner_big_t4_max.png": {
+      "w": 180,
+      "h": 180,
+      "d": "70c38c"
+    },
+    "lvl_banner_t3@2x.png": {
+      "w": 280,
+      "h": 280,
+      "d": "8e9b8d"
+    },
+    "lvl_banner_big_t1@2x.png": {
+      "w": 360,
+      "h": 360,
+      "d": "7a86a4"
+    },
+    "lvl_banner_small_t3_max@2x.png": {
+      "w": 110,
+      "h": 110,
+      "d": "a69baa"
+    },
+    "lvl_banner_big_t1_max@2x.png": {
+      "w": 360,
+      "h": 360,
+      "d": "dc6f6e"
+    },
+    "lvl_banner_big_t2_max@2x.png": {
+      "w": 360,
+      "h": 360,
+      "d": "46901d"
+    },
+    "lvl_banner_small_t4_max@2x.png": {
+      "w": 110,
+      "h": 110,
+      "d": "a31426"
+    },
+    "lvl_banner_t2.png": {
+      "w": 140,
+      "h": 140,
+      "d": "4e2dad"
+    },
+    "lvl_banner_t1.png": {
+      "w": 140,
+      "h": 140,
+      "d": "b8e1c0"
+    },
+    "lvl_banner_t4_max@2x.png": {
+      "w": 280,
+      "h": 280,
+      "d": "83d331"
+    },
+    "lvl_banner_t4.png": {
+      "w": 140,
+      "h": 140,
+      "d": "cdd7f6"
+    },
+    "lvl_banner_t1_max@2x.png": {
+      "w": 280,
+      "h": 280,
+      "d": "06e03e"
+    },
+    "lvl_banner_small_t3@2x.png": {
+      "w": 110,
+      "h": 110,
+      "d": "435085"
+    },
+    "lvl_banner_big_t2_max.png": {
+      "w": 180,
+      "h": 180,
+      "d": "5dbcdd"
+    },
+    "lvl_banner_t4@2x.png": {
+      "w": 280,
+      "h": 280,
+      "d": "8692ba"
+    },
+    "lvl_banner_t1@2x.png": {
+      "w": 280,
+      "h": 280,
+      "d": "8c1bab"
+    },
+    "lvl_banner_t3_max@2x.png": {
+      "w": 280,
+      "h": 280,
+      "d": "d4c2ce"
+    },
+    "lvl_banner_big_t4.png": {
+      "w": 180,
+      "h": 180,
+      "d": "abecbe"
+    },
+    "lvl_banner_small_t2@2x.png": {
+      "w": 110,
+      "h": 110,
+      "d": "70413e"
+    },
+    "lvl_banner_t1_max.png": {
+      "w": 140,
+      "h": 140,
+      "d": "06d845"
+    },
+    "lvl_banner_big_t2@2x.png": {
+      "w": 360,
+      "h": 360,
+      "d": "26e256"
+    },
+    "lvl_banner_big_t3.png": {
+      "w": 180,
+      "h": 180,
+      "d": "fe9ed7"
+    },
+    "lvl_banner_t3.png": {
+      "w": 140,
+      "h": 140,
+      "d": "1201fc"
+    },
+    "lvl_banner_small_t2_max@2x.png": {
+      "w": 110,
+      "h": 110,
+      "d": "77ead8"
+    },
+    "lvl_banner_big_t4@2x.png": {
+      "w": 360,
+      "h": 360,
+      "d": "5a5c4c"
+    },
+    "lvl_banner_big_t3@2x.png": {
+      "w": 360,
+      "h": 360,
+      "d": "42b35e"
+    },
+    "lvl_banner_big_t2.png": {
+      "w": 180,
+      "h": 180,
+      "d": "153a9b"
+    },
+    "lvl_banner_t2_max@2x.png": {
+      "w": 280,
+      "h": 280,
+      "d": "b4696f"
+    },
+    "lvl_banner_big_t3_max.png": {
+      "w": 180,
+      "h": 180,
+      "d": "4158ab"
+    },
+    "lvl_banner_small_t1@2x.png": {
+      "w": 110,
+      "h": 110,
+      "d": "5d69d4"
+    },
+    "lvl_banner_t4_max.png": {
+      "w": 140,
+      "h": 140,
+      "d": "c8a956"
+    }
+  },
+  "heroes/rarity": {
+    "legendary_icon.png": {
+      "w": 31,
+      "h": 40,
+      "d": "c2e782"
+    },
+    "epic@2x.png": {
+      "w": 160,
+      "h": 150,
+      "d": "9ac133"
+    },
+    "epic_icon@2x.png": {
+      "w": 62,
+      "h": 80,
+      "d": "f88d3f"
+    },
+    "rare.png": {
+      "w": 80,
+      "h": 75,
+      "d": "dec8d0"
+    },
+    "legendary@2x.png": {
+      "w": 160,
+      "h": 150,
+      "d": "ca74ff"
+    },
+    "uncommon_icon.png": {
+      "w": 31,
+      "h": 40,
+      "d": "ad005c"
+    },
+    "epic.png": {
+      "w": 80,
+      "h": 75,
+      "d": "f439b2"
+    },
+    "epic_icon.png": {
+      "w": 31,
+      "h": 40,
+      "d": "507809"
+    },
+    "rare_icon@2x.png": {
+      "w": 62,
+      "h": 80,
+      "d": "d72634"
+    },
+    "legendary.png": {
+      "w": 80,
+      "h": 76,
+      "d": "8902ae"
+    },
+    "uncommon_icon@2x.png": {
+      "w": 62,
+      "h": 80,
+      "d": "63df61"
+    },
+    "uncommon@2x.png": {
+      "w": 160,
+      "h": 150,
+      "d": "56f42a"
+    },
+    "rare_icon.png": {
+      "w": 31,
+      "h": 40,
+      "d": "f3de6d"
+    },
+    "rare@2x.png": {
+      "w": 160,
+      "h": 150,
+      "d": "c2ee4b"
+    },
+    "uncommon.png": {
+      "w": 80,
+      "h": 75,
+      "d": "a973c1"
+    },
+    "legendary_icon@2x.png": {
+      "w": 62,
+      "h": 80,
+      "d": "15cd3f"
+    }
+  },
+  "heroes/shards": {
+    "53159.png": {
+      "w": 88,
+      "h": 88,
+      "d": "e309bd"
+    },
+    "50679.png": {
+      "w": 88,
+      "h": 88,
+      "d": "830bc3"
+    },
+    "50623.png": {
+      "w": 88,
+      "h": 88,
+      "d": "dd8861"
+    },
+    "23133.png": {
+      "w": 88,
+      "h": 88,
+      "d": "1cb23f"
+    },
+    "50671.png": {
+      "w": 88,
+      "h": 88,
+      "d": "a4850c"
+    },
+    "50647.png": {
+      "w": 88,
+      "h": 88,
+      "d": "2bd9fa"
+    },
+    "23134.png": {
+      "w": 88,
+      "h": 88,
+      "d": "e73c0e"
+    },
+    "23136.png": {
+      "w": 88,
+      "h": 88,
+      "d": "45a6e1"
+    },
+    "50687.png": {
+      "w": 88,
+      "h": 88,
+      "d": "8a4461"
+    },
+    "23132.png": {
+      "w": 88,
+      "h": 88,
+      "d": "0d6d3b"
+    },
+    "53113.png": {
+      "w": 120,
+      "h": 120,
+      "d": "0703c9"
+    },
+    "50631.png": {
+      "w": 88,
+      "h": 88,
+      "d": "e245c8"
+    },
+    "53205.png": {
+      "w": 120,
+      "h": 120,
+      "d": "dd8127"
+    },
+    "23135.png": {
+      "w": 88,
+      "h": 88,
+      "d": "6aa0db"
+    },
+    "53136.png": {
+      "w": 120,
+      "h": 120,
+      "d": "c8b51c"
+    },
+    "50639.png": {
+      "w": 88,
+      "h": 88,
+      "d": "8e30cd"
+    },
+    "50663.png": {
+      "w": 88,
+      "h": 88,
+      "d": "6df1f4"
+    },
+    "50655.png": {
+      "w": 88,
+      "h": 88,
+      "d": "d16c4d"
+    }
+  },
+  "heroes/tutorial": {
+    "avatar.png": {
+      "w": 80,
+      "h": 80,
+      "d": "c227b3"
+    },
+    "avatar@2x.png": {
+      "w": 160,
+      "h": 160,
+      "d": "65cc94"
+    }
+  },
+  "heroes/unit": {
+    "otto_hersing@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "cbd54a"
+    },
+    "togo_heihachiro@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "322f5d"
+    },
+    "lucien_laroche.png": {
+      "w": 116,
+      "h": 150,
+      "d": "3aa4a6"
+    },
+    "gibraltar_bg.jpg": {
+      "w": 116,
+      "h": 150,
+      "d": "769a8e"
+    },
+    "lawrence_of_arabia_bg.png": {
+      "w": 116,
+      "h": 150,
+      "d": "461085"
+    },
+    "tatiana_minchakievich_bg.png": {
+      "w": 116,
+      "h": 150,
+      "d": "0293ff"
+    },
+    "johan_maes@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "8bc75e"
+    },
+    "gibraltar@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "8622db"
+    },
+    "henry_hank_callahan@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "ad5b0d"
+    },
+    "john_pershing.png": {
+      "w": 116,
+      "h": 150,
+      "d": "f271e6"
+    },
+    "wilhelm_von_thaden.png": {
+      "w": 116,
+      "h": 150,
+      "d": "566363"
+    },
+    "viscount_allenby_bg@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "ef9026"
+    },
+    "fiona_maeve_porter_bg.jpg": {
+      "w": 116,
+      "h": 150,
+      "d": "0a511b"
+    },
+    "georg_bruchmuller_bg.png": {
+      "w": 116,
+      "h": 150,
+      "d": "9e97a0"
+    },
+    "otto_hersing_bg.png": {
+      "w": 116,
+      "h": 150,
+      "d": "ec5143"
+    },
+    "fiero_martello@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "e9ef69"
+    },
+    "manfred_von_richthofen.png": {
+      "w": 116,
+      "h": 150,
+      "d": "ff6023"
+    },
+    "viscount_allenby_bg.png": {
+      "w": 116,
+      "h": 150,
+      "d": "3c7b9d"
+    },
+    "fiona_maeve_porter.png": {
+      "w": 116,
+      "h": 150,
+      "d": "58b6ee"
+    },
+    "tatiana_minchakievich_bg@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "0a6c1c"
+    },
+    "alvin_york_bg@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "6289a1"
+    },
+    "lucien_laroche@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "8dd3d6"
+    },
+    "joseph_joffre@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "ec1bd7"
+    },
+    "johan_maes_bg@2x.jpg": {
+      "w": 232,
+      "h": 300,
+      "d": "dd5299"
+    },
+    "georg_bruchmuller@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "cc4649"
+    },
+    "gibraltar_bg@2x.jpg": {
+      "w": 232,
+      "h": 300,
+      "d": "fe6511"
+    },
+    "tatiana_minchakievich@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "c7fedb"
+    },
+    "fiona_maeve_porter_bg@2x.jpg": {
+      "w": 232,
+      "h": 300,
+      "d": "a7d120"
+    },
+    "tatiana_minchakievich.png": {
+      "w": 116,
+      "h": 150,
+      "d": "64e7e2"
+    },
+    "joseph_joffre.png": {
+      "w": 116,
+      "h": 150,
+      "d": "859764"
+    },
+    "alvin_york.png": {
+      "w": 116,
+      "h": 150,
+      "d": "b3e184"
+    },
+    "henry_hank_callahan_bg.png": {
+      "w": 116,
+      "h": 150,
+      "d": "04a453"
+    },
+    "wilhelm_von_thaden_bg@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "c2f25c"
+    },
+    "orhan_kangal_demir_bg@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "d97874"
+    },
+    "fiona_maeve_porter@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "2eb29a"
+    },
+    "alvin_york@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "c2fac6"
+    },
+    "togo_heihachiro_bg@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "e6f1b9"
+    },
+    "johan_maes.png": {
+      "w": 116,
+      "h": 150,
+      "d": "f859dd"
+    },
+    "manfred_von_richthofen@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "6c6f0e"
+    },
+    "georg_bruchmuller_bg@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "9072f2"
+    },
+    "lawrence_of_arabia.png": {
+      "w": 116,
+      "h": 150,
+      "d": "009097"
+    },
+    "otto_hersing.png": {
+      "w": 116,
+      "h": 150,
+      "d": "c1e091"
+    },
+    "lucien_laroche_bg@2x.jpg": {
+      "w": 232,
+      "h": 300,
+      "d": "5d0fe0"
+    },
+    "alvin_york_bg.png": {
+      "w": 116,
+      "h": 150,
+      "d": "7c5a28"
+    },
+    "lawrence_of_arabia_bg@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "4f6d8b"
+    },
+    "henry_hank_callahan_bg@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "5d1403"
+    },
+    "john_pershing_bg@2x.jpg": {
+      "w": 232,
+      "h": 300,
+      "d": "afcfa3"
+    },
+    "togo_heihachiro.png": {
+      "w": 116,
+      "h": 150,
+      "d": "c95c94"
+    },
+    "lawrence_of_arabia@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "0ce9e7"
+    },
+    "john_pershing_bg.jpg": {
+      "w": 116,
+      "h": 150,
+      "d": "3d3345"
+    },
+    "henry_hank_callahan.png": {
+      "w": 116,
+      "h": 150,
+      "d": "d9c647"
+    },
+    "fiero_martello_bg.png": {
+      "w": 116,
+      "h": 150,
+      "d": "19e35b"
+    },
+    "wilhelm_von_thaden@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "3f87e6"
+    },
+    "manfred_von_richthofen_bg@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "eb663e"
+    },
+    "orhan_kangal_demir@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "67a8b4"
+    },
+    "gibraltar.png": {
+      "w": 116,
+      "h": 150,
+      "d": "4e5fdf"
+    },
+    "viscount_allenby@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "c2186e"
+    },
+    "georg_bruchmuller.png": {
+      "w": 116,
+      "h": 150,
+      "d": "d53bb8"
+    },
+    "fiero_martello_bg@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "a3c89f"
+    },
+    "johan_maes_bg.jpg": {
+      "w": 116,
+      "h": 150,
+      "d": "7296e9"
+    },
+    "fiero_martello.png": {
+      "w": 116,
+      "h": 150,
+      "d": "30921e"
+    },
+    "viscount_allenby.png": {
+      "w": 116,
+      "h": 150,
+      "d": "8f1dcf"
+    },
+    "wilhelm_von_thaden_bg.png": {
+      "w": 116,
+      "h": 150,
+      "d": "b119b6"
+    },
+    "orhan_kangal_demir_bg.png": {
+      "w": 116,
+      "h": 150,
+      "d": "ee041b"
+    },
+    "joseph_joffre_bg.png": {
+      "w": 116,
+      "h": 150,
+      "d": "c717ba"
+    },
+    "joseph_joffre_bg@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "139736"
+    },
+    "lucien_laroche_bg.jpg": {
+      "w": 116,
+      "h": 150,
+      "d": "3db79d"
+    },
+    "john_pershing@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "04fe05"
+    },
+    "manfred_von_richthofen_bg.png": {
+      "w": 116,
+      "h": 150,
+      "d": "32a777"
+    },
+    "orhan_kangal_demir.png": {
+      "w": 116,
+      "h": 150,
+      "d": "f55a51"
+    },
+    "otto_hersing_bg@2x.png": {
+      "w": 232,
+      "h": 300,
+      "d": "5b56a9"
+    },
+    "togo_heihachiro_bg.png": {
+      "w": 116,
+      "h": 150,
+      "d": "ca7f47"
+    }
+  },
+  "icons": {
+    "letter.png": {
+      "w": 36,
+      "h": 36,
+      "d": "c18e25"
+    },
+    "time_small.png": {
+      "w": 14,
+      "h": 14,
+      "d": "8f525f"
+    },
+    "construction_placeholder.png": {
+      "w": 124,
+      "h": 122,
+      "d": "da9ad3"
+    },
+    "unit_casualty.png": {
+      "w": 24,
+      "h": 24,
+      "d": "8a17e4"
+    },
+    "province.png": {
+      "w": 38,
+      "h": 35,
+      "d": "e759d5"
+    },
+    "bug.png": {
+      "w": 105,
+      "h": 80,
+      "d": "c79a57"
+    },
+    "construction_icon.png": {
+      "w": 38,
+      "h": 32,
+      "d": "98ff3f"
+    },
+    "icon_unlock.png": {
+      "w": 32,
+      "h": 32,
+      "d": "5a7de2"
+    },
+    "queue_amount.png": {
+      "w": 15,
+      "h": 15,
+      "d": "f4782e"
+    },
+    "army_status_arrival_time.png": {
+      "w": 14,
+      "h": 14,
+      "d": "dea235"
+    },
+    "army_action.png": {
+      "w": 29,
+      "h": 29,
+      "d": "a94052"
+    },
+    "arrow_up.png": {
+      "w": 11,
+      "h": 6,
+      "d": "20da90"
+    },
+    "account_settings.png": {
+      "w": 32,
+      "h": 32,
+      "d": "84a649"
+    },
+    "spy_mission_2.png": {
+      "w": 37,
+      "h": 32,
+      "d": "7687d6"
+    },
+    "province_2.png": {
+      "w": 38,
+      "h": 32,
+      "d": "23fa86"
+    },
+    "Air.png": {
+      "w": 38,
+      "h": 32,
+      "d": "4c633f"
+    },
+    "logo_newspaper.png": {
+      "w": 338,
+      "h": 70,
+      "d": "cc762d"
+    },
+    "comparison_arrow.png": {
+      "w": 14,
+      "h": 14,
+      "d": "a57d3b"
+    },
+    "message_reply_hover.png": {
+      "w": 10,
+      "h": 11,
+      "d": "d11f05"
+    },
+    "morale_stable.png": {
+      "w": 20,
+      "h": 20,
+      "d": "c20411"
+    },
+    "attacking.png": {
+      "w": 24,
+      "h": 24,
+      "d": "53319b"
+    },
+    "marker_red.png": {
+      "w": 11,
+      "h": 11,
+      "d": "a200bd"
+    },
+    "account_profile.png": {
+      "w": 32,
+      "h": 32,
+      "d": "fbc0e3"
+    },
+    "casualty_2.png": {
+      "w": 24,
+      "h": 24,
+      "d": "bc5b0e"
+    },
+    "unit_info_damage_0.png": {
+      "w": 38,
+      "h": 35,
+      "d": "996aea"
+    },
+    "ranking_state_down.png": {
+      "w": 14,
+      "h": 14,
+      "d": "12c030"
+    },
+    "message_delete_hover.png": {
+      "w": 9,
+      "h": 11,
+      "d": "71152c"
+    },
+    "game_timer.png": {
+      "w": 120,
+      "h": 120,
+      "d": "b74c00"
+    },
+    "spy_mission_4.png": {
+      "w": 37,
+      "h": 32,
+      "d": "ef0b62"
+    },
+    "peace_period.png": {
+      "w": 120,
+      "h": 120,
+      "d": "c59021"
+    },
+    "last_login.png": {
+      "w": 15,
+      "h": 15,
+      "d": "b3b642"
+    },
+    "production_amount.png": {
+      "w": 15,
+      "h": 15,
+      "d": "9c33bb"
+    },
+    "filter_nation.jpg": {
+      "w": 26,
+      "h": 29,
+      "d": "2d8fde"
+    },
+    "production_placeholder.png": {
+      "w": 124,
+      "h": 122,
+      "d": "5302a0"
+    },
+    "declare_war_icon.png": {
+      "w": 103,
+      "h": 118,
+      "d": "7961a8"
+    },
+    "ai_player.png": {
+      "w": 21,
+      "h": 20,
+      "d": "291fb8"
+    },
+    "time_big_positive.png": {
+      "w": 40,
+      "h": 40,
+      "d": "5830dc"
+    },
+    "checkbox.png": {
+      "w": 23,
+      "h": 32,
+      "d": "20abbe"
+    },
+    "army_status_current_position.png": {
+      "w": 14,
+      "h": 14,
+      "d": "9ca516"
+    },
+    "missing.png": {
+      "w": 32,
+      "h": 32,
+      "d": "67a738"
+    },
+    "time_big_negative.png": {
+      "w": 40,
+      "h": 40,
+      "d": "535958"
+    },
+    "disabled.png": {
+      "w": 20,
+      "h": 20,
+      "d": "20b32c"
+    },
+    "icon_error.png": {
+      "w": 32,
+      "h": 32,
+      "d": "feb3e7"
+    },
+    "infoicon_population_pro.png": {
+      "w": 6,
+      "h": 12,
+      "d": "fdaeee"
+    },
+    "icon_trade_province.png": {
+      "w": 15,
+      "h": 14,
+      "d": "fcf608"
+    },
+    "mapicon_revolt.png": {
+      "w": 18,
+      "h": 22,
+      "d": "762c1e"
+    },
+    "spy_mission_3.png": {
+      "w": 37,
+      "h": 32,
+      "d": "a01acc"
+    },
+    "production_icon.png": {
+      "w": 38,
+      "h": 32,
+      "d": "00d599"
+    },
+    "mobilization.png": {
+      "w": 38,
+      "h": 32,
+      "d": "761d80"
+    },
+    "resource.png": {
+      "w": 38,
+      "h": 32,
+      "d": "50a4ac"
+    },
+    "spy_icon.png": {
+      "w": 50,
+      "h": 50,
+      "d": "03d390"
+    },
+    "mobile_big.png": {
+      "w": 78,
+      "h": 78,
+      "d": "7cdafb"
+    },
+    "population.png": {
+      "w": 38,
+      "h": 35,
+      "d": "7da63d"
+    },
+    "new_feature_notification.png": {
+      "w": 28,
+      "h": 28,
+      "d": "155471"
+    },
+    "change_profile.png": {
+      "w": 24,
+      "h": 24,
+      "d": "46ea9c"
+    },
+    "army_name.png": {
+      "w": 38,
+      "h": 32,
+      "d": "6d79e7"
+    },
+    "capital.png": {
+      "w": 38,
+      "h": 35,
+      "d": "621464"
+    },
+    "recruitment_icon.png": {
+      "w": 20,
+      "h": 20,
+      "d": "7ccae6"
+    },
+    "newspaper_small.png": {
+      "w": 35,
+      "h": 32,
+      "d": "2fbdc6"
+    },
+    "construction_amount.png": {
+      "w": 15,
+      "h": 15,
+      "d": "e7b61e"
+    },
+    "rank_nochange.png": {
+      "w": 8,
+      "h": 9,
+      "d": "5693cc"
+    },
+    "army_status_relocating.png": {
+      "w": 14,
+      "h": 14,
+      "d": "1c49f8"
+    },
+    "upgradable_notification.png": {
+      "w": 28,
+      "h": 28,
+      "d": "422f66"
+    },
+    "hit_point.png": {
+      "w": 38,
+      "h": 32,
+      "d": "a559de"
+    },
+    "Rail.png": {
+      "w": 38,
+      "h": 32,
+      "d": "caf692"
+    },
+    "timer.png": {
+      "w": 60,
+      "h": 60,
+      "d": "24646e"
+    },
+    "arrow_down_big.png": {
+      "w": 24,
+      "h": 24,
+      "d": "88417e"
+    },
+    "army_status_size.png": {
+      "w": 14,
+      "h": 14,
+      "d": "260a7d"
+    },
+    "spy_icon_header.png": {
+      "w": 34,
+      "h": 34,
+      "d": "40d1c2"
+    },
+    "checkbox_checked.png": {
+      "w": 23,
+      "h": 32,
+      "d": "d0ae3c"
+    },
+    "tax.png": {
+      "w": 38,
+      "h": 32,
+      "d": "d1facf"
+    },
+    "province_morale_medal.png": {
+      "w": 94,
+      "h": 111,
+      "d": "aefe1f"
+    },
+    "clock.png": {
+      "w": 55,
+      "h": 56,
+      "d": "858c94"
+    },
+    "comparison_arrow_big.png": {
+      "w": 32,
+      "h": 32,
+      "d": "de99c6"
+    },
+    "army_status_attack_order.png": {
+      "w": 14,
+      "h": 14,
+      "d": "9a13e2"
+    },
+    "filter_unit.jpg": {
+      "w": 26,
+      "h": 29,
+      "d": "0cf57c"
+    },
+    "resize.png": {
+      "w": 24,
+      "h": 24,
+      "d": "fd24f1"
+    },
+    "casualty.png": {
+      "w": 24,
+      "h": 24,
+      "d": "a4dd2e"
+    },
+    "tooltip_arrow.png": {
+      "w": 26,
+      "h": 26,
+      "d": "fd54f1"
+    },
+    "army_status_attacking.png": {
+      "w": 14,
+      "h": 14,
+      "d": "f2d10a"
+    },
+    "army_size.png": {
+      "w": 38,
+      "h": 32,
+      "d": "fe5ba1"
+    },
+    "hint_icon.png": {
+      "w": 60,
+      "h": 60,
+      "d": "b57644"
+    },
+    "message_delete.png": {
+      "w": 9,
+      "h": 11,
+      "d": "4c305a"
+    },
+    "army_status_fighting.png": {
+      "w": 14,
+      "h": 14,
+      "d": "f2d10a"
+    },
+    "favorite.png": {
+      "w": 28,
+      "h": 28,
+      "d": "040fc1"
+    },
+    "marker_yellow.png": {
+      "w": 11,
+      "h": 11,
+      "d": "e06a53"
+    },
+    "army_status_no_airfield.png": {
+      "w": 14,
+      "h": 14,
+      "d": "6c84de"
+    },
+    "unit_info_damage_1.png": {
+      "w": 38,
+      "h": 32,
+      "d": "4c633f"
+    },
+    "player_info.png": {
+      "w": 24,
+      "h": 24,
+      "d": "1b61b4"
+    },
+    "ranking_state_up.png": {
+      "w": 14,
+      "h": 14,
+      "d": "12221d"
+    },
+    "player_count.png": {
+      "w": 15,
+      "h": 15,
+      "d": "a30553"
+    },
+    "morale_down.png": {
+      "w": 20,
+      "h": 20,
+      "d": "e7c77c"
+    },
+    "infoicon_building_hover.png": {
+      "w": 59,
+      "h": 59,
+      "d": "675923"
+    },
+    "army_defense.png": {
+      "w": 38,
+      "h": 32,
+      "d": "993313"
+    },
+    "unit_in_combat_dark.png": {
+      "w": 24,
+      "h": 24,
+      "d": "9e08e8"
+    },
+    "marker_blue.png": {
+      "w": 11,
+      "h": 11,
+      "d": "9b4c28"
+    },
+    "at_war_with.png": {
+      "w": 38,
+      "h": 35,
+      "d": "d854c8"
+    },
+    "alliance_icon_small.png": {
+      "w": 46,
+      "h": 46,
+      "d": "b2b593"
+    },
+    "stamp.png": {
+      "w": 120,
+      "h": 120,
+      "d": "f89264"
+    },
+    "warning.png": {
+      "w": 20,
+      "h": 20,
+      "d": "0c3a11"
+    },
+    "army.png": {
+      "w": 38,
+      "h": 35,
+      "d": "fbbdf8"
+    },
+    "comparison_arrow_dark.png": {
+      "w": 14,
+      "h": 14,
+      "d": "32b148"
+    },
+    "invite_friend.png": {
+      "w": 89,
+      "h": 84,
+      "d": "33a90d"
+    },
+    "infoicon_production.png": {
+      "w": 59,
+      "h": 59,
+      "d": "401847"
+    },
+    "exclamation_mark_small.png": {
+      "w": 20,
+      "h": 20,
+      "d": "e51874"
+    },
+    "army_attack.png": {
+      "w": 38,
+      "h": 32,
+      "d": "415a9c"
+    },
+    "alliance_icon.png": {
+      "w": 78,
+      "h": 78,
+      "d": "043f3d"
+    },
+    "diplomacy_small.png": {
+      "w": 35,
+      "h": 29,
+      "d": "75ae84"
+    },
+    "exclamation_mark_big.png": {
+      "w": 40,
+      "h": 40,
+      "d": "8f30d4"
+    },
+    "map_flame.png": {
+      "w": 48,
+      "h": 64,
+      "d": "bc5cb0"
+    },
+    "icon_trade_army.png": {
+      "w": 24,
+      "h": 14,
+      "d": "822b58"
+    },
+    "retreating_unit.png": {
+      "w": 24,
+      "h": 24,
+      "d": "2e83f0"
+    },
+    "time_big.png": {
+      "w": 40,
+      "h": 40,
+      "d": "1a66fd"
+    },
+    "army_status_patrolling.png": {
+      "w": 14,
+      "h": 14,
+      "d": "a96782"
+    },
+    "morale_up.png": {
+      "w": 20,
+      "h": 20,
+      "d": "e08383"
+    },
+    "blocked.png": {
+      "w": 53,
+      "h": 53,
+      "d": "ea105a"
+    },
+    "warning_3.png": {
+      "w": 15,
+      "h": 15,
+      "d": "eb51de"
+    },
+    "information.png": {
+      "w": 24,
+      "h": 24,
+      "d": "501ed0"
+    },
+    "rank_decreased.png": {
+      "w": 15,
+      "h": 13,
+      "d": "4de051"
+    },
+    "army_mobilization.png": {
+      "w": 38,
+      "h": 32,
+      "d": "761d80"
+    },
+    "infoicon_building.png": {
+      "w": 59,
+      "h": 59,
+      "d": "8ae12b"
+    },
+    "unit_info_speed.png": {
+      "w": 24,
+      "h": 24,
+      "d": "212706"
+    },
+    "army_speed.png": {
+      "w": 38,
+      "h": 32,
+      "d": "f7c1a3"
+    },
+    "army_status_bombarding.png": {
+      "w": 14,
+      "h": 14,
+      "d": "9d7f67"
+    },
+    "webgl_not_supported.png": {
+      "w": 120,
+      "h": 120,
+      "d": "1a2d8e"
+    },
+    "army_morale_medal.png": {
+      "w": 94,
+      "h": 111,
+      "d": "75ac35"
+    },
+    "unit_casualty_dark.png": {
+      "w": 24,
+      "h": 24,
+      "d": "ce9bc8"
+    },
+    "infoicon_revolt_small.png": {
+      "w": 10,
+      "h": 12,
+      "d": "f24e7e"
+    },
+    "unit_info_attacking.png": {
+      "w": 14,
+      "h": 14,
+      "d": "d7019b"
+    },
+    "info.png": {
+      "w": 20,
+      "h": 20,
+      "d": "3e045a"
+    },
+    "filter_map.jpg": {
+      "w": 26,
+      "h": 29,
+      "d": "73edb8"
+    },
+    "message_reply.png": {
+      "w": 10,
+      "h": 11,
+      "d": "ce7ccf"
+    },
+    "Land.png": {
+      "w": 38,
+      "h": 32,
+      "d": "2f1764"
+    },
+    "sms_payment.png": {
+      "w": 33,
+      "h": 42,
+      "d": "5adcb3"
+    },
+    "global_popularity.png": {
+      "w": 38,
+      "h": 35,
+      "d": "4168b4"
+    },
+    "marker_green.png": {
+      "w": 11,
+      "h": 11,
+      "d": "22191f"
+    },
+    "logout.png": {
+      "w": 32,
+      "h": 32,
+      "d": "269b8f"
+    },
+    "army_damage.png": {
+      "w": 38,
+      "h": 32,
+      "d": "d0da71"
+    },
+    "spy_mission_1.png": {
+      "w": 37,
+      "h": 32,
+      "d": "065b51"
+    },
+    "player_placeholder.png": {
+      "w": 155,
+      "h": 155,
+      "d": "ea0b52"
+    },
+    "morale.png": {
+      "w": 38,
+      "h": 32,
+      "d": "77abe0"
+    },
+    "rally_point_icon.png": {
+      "w": 38,
+      "h": 32,
+      "d": "1c404a"
+    },
+    "home_defense.png": {
+      "w": 38,
+      "h": 32,
+      "d": "123fe1"
+    },
+    "army_status_attacked_by.png": {
+      "w": 14,
+      "h": 14,
+      "d": "0c0673"
+    },
+    "infoicon_production_hover.png": {
+      "w": 59,
+      "h": 59,
+      "d": "6070c6"
+    },
+    "warning_2.png": {
+      "w": 20,
+      "h": 20,
+      "d": "7f0d05"
+    },
+    "event_icon.png": {
+      "w": 32,
+      "h": 32,
+      "d": "ee64ac"
+    },
+    "filter_army_info.jpg": {
+      "w": 26,
+      "h": 29,
+      "d": "a246ba"
+    },
+    "army_strength.png": {
+      "w": 38,
+      "h": 32,
+      "d": "99adcf"
+    },
+    "arrow_down.png": {
+      "w": 11,
+      "h": 6,
+      "d": "590045"
+    },
+    "unit_info_defending.png": {
+      "w": 14,
+      "h": 14,
+      "d": "e29996"
+    },
+    "army_status_travel_time.png": {
+      "w": 14,
+      "h": 14,
+      "d": "e94637"
+    },
+    "Sea.png": {
+      "w": 38,
+      "h": 32,
+      "d": "a4bb47"
+    },
+    "unit_info_damage_3.png": {
+      "w": 38,
+      "h": 32,
+      "d": "f8f24f"
+    },
+    "rank_overview.png": {
+      "w": 24,
+      "h": 24,
+      "d": "fe8be4"
+    },
+    "missing_small.png": {
+      "w": 16,
+      "h": 16,
+      "d": "9d78b9"
+    },
+    "ranking_state_stable.png": {
+      "w": 14,
+      "h": 14,
+      "d": "b07e74"
+    },
+    "army_status_waiting_for.png": {
+      "w": 14,
+      "h": 14,
+      "d": "9ca516"
+    },
+    "buildqueue_warning.png": {
+      "w": 22,
+      "h": 20,
+      "d": "563125"
+    },
+    "warning_4.png": {
+      "w": 15,
+      "h": 15,
+      "d": "67df48"
+    },
+    "army_protection.png": {
+      "w": 38,
+      "h": 32,
+      "d": "c0ef8f"
+    },
+    "lock.png": {
+      "w": 46,
+      "h": 46,
+      "d": "0012e8"
+    },
+    "army_info_fighting_icon.png": {
+      "w": 32,
+      "h": 32,
+      "d": "a95f3e"
+    },
+    "infoicon_population_contra.png": {
+      "w": 6,
+      "h": 12,
+      "d": "5c5ca0"
+    },
+    "completed.png": {
+      "w": 32,
+      "h": 32,
+      "d": "116f64"
+    },
+    "clock_big.png": {
+      "w": 78,
+      "h": 78,
+      "d": "3b0c1e"
+    },
+    "army_status_intelligence.png": {
+      "w": 14,
+      "h": 14,
+      "d": "ac6406"
+    },
+    "poi.png": {
+      "w": 120,
+      "h": 120,
+      "d": "facb19"
+    },
+    "unit_in_combat.png": {
+      "w": 24,
+      "h": 24,
+      "d": "cd7be9"
+    },
+    "infoicon_revolt.png": {
+      "w": 18,
+      "h": 22,
+      "d": "762c1e"
+    },
+    "rank_increased.png": {
+      "w": 15,
+      "h": 13,
+      "d": "eca0ba"
+    },
+    "update.png": {
+      "w": 14,
+      "h": 14,
+      "d": "ff679d"
+    },
+    "marker_grey.png": {
+      "w": 11,
+      "h": 11,
+      "d": "e44547"
+    },
+    "army_id.png": {
+      "w": 38,
+      "h": 32,
+      "d": "83d498"
+    }
+  },
+  "resources": {
+    "resource_group_0.png": {
+      "w": 76,
+      "h": 48,
+      "d": "2d71e1"
+    },
+    "resource_group_2.png": {
+      "w": 76,
+      "h": 48,
+      "d": "01ccc2"
+    },
+    "resource_group_1.png": {
+      "w": 76,
+      "h": 48,
+      "d": "db07ff"
+    },
+    "0_triple_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "fd30a8"
+    },
+    "5_triple_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "6dc308"
+    },
+    "3_double_s3.png": {
+      "w": 22,
+      "h": 22,
+      "d": "b21f02"
+    },
+    "2_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "472b15"
+    },
+    "5_double_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "043672"
+    },
+    "0_s2.png": {
+      "w": 46,
+      "h": 46,
+      "d": "ac7af6"
+    },
+    "3_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "82208c"
+    },
+    "1_double_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "464d8c"
+    },
+    "6_s5.png": {
+      "w": 46,
+      "h": 46,
+      "d": "3612ba"
+    },
+    "0_double_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "c66cee"
+    },
+    "3_triple_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "da5498"
+    },
+    "1_s6.png": {
+      "w": 22,
+      "h": 22,
+      "d": "29fc52"
+    },
+    "0_double_s6.png": {
+      "w": 22,
+      "h": 22,
+      "d": "4136d5"
+    },
+    "6_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "73a278"
+    },
+    "6_s3.png": {
+      "w": 22,
+      "h": 22,
+      "d": "829760"
+    },
+    "5_triple_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "e863a0"
+    },
+    "4_double_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "4bc426"
+    },
+    "3_double_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "d7a23b"
+    },
+    "1_double_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "864177"
+    },
+    "4_s2.png": {
+      "w": 46,
+      "h": 46,
+      "d": "bc415f"
+    },
+    "0_s3@2x.png": {
+      "w": 44,
+      "h": 44,
+      "d": "ea8835"
+    },
+    "5_quadruple_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "96ca7d"
+    },
+    "4_double_s3@2x.png": {
+      "w": 44,
+      "h": 44,
+      "d": "85e873"
+    },
+    "2_s3@2x.png": {
+      "w": 44,
+      "h": 44,
+      "d": "472b15"
+    },
+    "2_triple_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "9af651"
+    },
+    "1_double_s5.png": {
+      "w": 46,
+      "h": 46,
+      "d": "2d62be"
+    },
+    "3_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "79d82f"
+    },
+    "20_quadruple_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "0366c1"
+    },
+    "2_double_s3@2x.png": {
+      "w": 44,
+      "h": 44,
+      "d": "6294ea"
+    },
+    "2_s6.png": {
+      "w": 22,
+      "h": 22,
+      "d": "aaa59a"
+    },
+    "3_s3@2x.png": {
+      "w": 44,
+      "h": 44,
+      "d": "dbf7a4"
+    },
+    "2_double_s5.png": {
+      "w": 46,
+      "h": 46,
+      "d": "569a86"
+    },
+    "20_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "761f6e"
+    },
+    "1_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "21b773"
+    },
+    "2_double_s2.png": {
+      "w": 46,
+      "h": 46,
+      "d": "569a86"
+    },
+    "3_quadruple_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "46265e"
+    },
+    "1_triple_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "805754"
+    },
+    "4_double_s3.png": {
+      "w": 22,
+      "h": 22,
+      "d": "72c894"
+    },
+    "2_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "0e0dd7"
+    },
+    "0_quadruple_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "b94d34"
+    },
+    "4_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "8430de"
+    },
+    "5_quadruple_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "9af658"
+    },
+    "3_s2.png": {
+      "w": 46,
+      "h": 46,
+      "d": "ff516f"
+    },
+    "6_s2.png": {
+      "w": 46,
+      "h": 46,
+      "d": "3612ba"
+    },
+    "3_double_s5.png": {
+      "w": 46,
+      "h": 46,
+      "d": "f1f0da"
+    },
+    "5_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "7c3ec4"
+    },
+    "2_quadruple_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "253af2"
+    },
+    "4_s3@2x.png": {
+      "w": 44,
+      "h": 44,
+      "d": "55804c"
+    },
+    "6_double_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "836a6a"
+    },
+    "6_s3@2x.png": {
+      "w": 44,
+      "h": 44,
+      "d": "05bf35"
+    },
+    "1_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "c84249"
+    },
+    "2_double_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "7ec18c"
+    },
+    "3_s6.png": {
+      "w": 22,
+      "h": 22,
+      "d": "a6891f"
+    },
+    "6_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "b2a59b"
+    },
+    "20_double_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "d1c356"
+    },
+    "1_double_s3@2x.png": {
+      "w": 44,
+      "h": 44,
+      "d": "bf29e4"
+    },
+    "6_double_s5.png": {
+      "w": 46,
+      "h": 46,
+      "d": "d830bf"
+    },
+    "6_quadruple_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "29e0e3"
+    },
+    "2_double_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "4efeac"
+    },
+    "3_double_s6.png": {
+      "w": 22,
+      "h": 22,
+      "d": "b21f02"
+    },
+    "0_quadruple_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "dde626"
+    },
+    "3_double_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "af61a6"
+    },
+    "1_s3.png": {
+      "w": 22,
+      "h": 22,
+      "d": "29fc52"
+    },
+    "2_s2.png": {
+      "w": 46,
+      "h": 46,
+      "d": "e8e4b7"
+    },
+    "4_s5.png": {
+      "w": 46,
+      "h": 46,
+      "d": "bc415f"
+    },
+    "1_s5.png": {
+      "w": 46,
+      "h": 46,
+      "d": "761708"
+    },
+    "2_double_s6.png": {
+      "w": 22,
+      "h": 22,
+      "d": "40131e"
+    },
+    "2_s5.png": {
+      "w": 46,
+      "h": 46,
+      "d": "e8e4b7"
+    },
+    "3_double_s3@2x.png": {
+      "w": 44,
+      "h": 44,
+      "d": "4f6f29"
+    },
+    "20_triple_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "47fcc5"
+    },
+    "3_quadruple_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "28ffa8"
+    },
+    "4_triple_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "dfaa7a"
+    },
+    "0_s5.png": {
+      "w": 46,
+      "h": 46,
+      "d": "ac7af6"
+    },
+    "2_double_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "792d8d"
+    },
+    "6_s6.png": {
+      "w": 22,
+      "h": 22,
+      "d": "829760"
+    },
+    "5_s2.png": {
+      "w": 46,
+      "h": 46,
+      "d": "8c7a28"
+    },
+    "6_triple_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "90e450"
+    },
+    "5_s3.png": {
+      "w": 22,
+      "h": 22,
+      "d": "9e2662"
+    },
+    "5_double_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "353e94"
+    },
+    "6_double_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "9cda5f"
+    },
+    "20_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "53daf4"
+    },
+    "2_quadruple_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "82e4f7"
+    },
+    "1_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "d64c11"
+    },
+    "20_triple_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "b3e26f"
+    },
+    "6_double_s6.png": {
+      "w": 22,
+      "h": 22,
+      "d": "99247c"
+    },
+    "0_double_s3@2x.png": {
+      "w": 44,
+      "h": 44,
+      "d": "c4cc75"
+    },
+    "6_double_s3@2x.png": {
+      "w": 44,
+      "h": 44,
+      "d": "e5dac6"
+    },
+    "0_double_s5.png": {
+      "w": 46,
+      "h": 46,
+      "d": "86fe04"
+    },
+    "0_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "ea8835"
+    },
+    "1_s3@2x.png": {
+      "w": 44,
+      "h": 44,
+      "d": "21b773"
+    },
+    "5_s5.png": {
+      "w": 46,
+      "h": 46,
+      "d": "8c7a28"
+    },
+    "2_double_s3.png": {
+      "w": 22,
+      "h": 22,
+      "d": "40131e"
+    },
+    "6_triple_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "80167c"
+    },
+    "4_double_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "1fbe66"
+    },
+    "4_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "55804c"
+    },
+    "3_s5.png": {
+      "w": 46,
+      "h": 46,
+      "d": "ff516f"
+    },
+    "0_double_s3.png": {
+      "w": 22,
+      "h": 22,
+      "d": "4136d5"
+    },
+    "20_s3@2x.png": {
+      "w": 44,
+      "h": 44,
+      "d": "761f6e"
+    },
+    "5_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "8838e8"
+    },
+    "20_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "c28c19"
+    },
+    "1_s2.png": {
+      "w": 46,
+      "h": 46,
+      "d": "761708"
+    },
+    "1_triple_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "befd46"
+    },
+    "1_double_s2.png": {
+      "w": 46,
+      "h": 46,
+      "d": "2d62be"
+    },
+    "5_double_s5.png": {
+      "w": 46,
+      "h": 46,
+      "d": "db173e"
+    },
+    "20_s3.png": {
+      "w": 22,
+      "h": 22,
+      "d": "da47b1"
+    },
+    "2_triple_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "540264"
+    },
+    "4_quadruple_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "0e0656"
+    },
+    "4_double_s2.png": {
+      "w": 46,
+      "h": 46,
+      "d": "5c5d7b"
+    },
+    "4_triple_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "8cb61e"
+    },
+    "1_quadruple_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "841ec0"
+    },
+    "20_s2.png": {
+      "w": 46,
+      "h": 46,
+      "d": "765f39"
+    },
+    "4_double_s6.png": {
+      "w": 22,
+      "h": 22,
+      "d": "72c894"
+    },
+    "1_quadruple_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "c57537"
+    },
+    "5_double_s3.png": {
+      "w": 22,
+      "h": 22,
+      "d": "654797"
+    },
+    "1_double_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "37f9da"
+    },
+    "4_double_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "bd33b4"
+    },
+    "1_double_s6.png": {
+      "w": 22,
+      "h": 22,
+      "d": "6a90f6"
+    },
+    "2_s3.png": {
+      "w": 22,
+      "h": 22,
+      "d": "aaa59a"
+    },
+    "5_double_s3@2x.png": {
+      "w": 44,
+      "h": 44,
+      "d": "74410e"
+    },
+    "3_double_s2.png": {
+      "w": 46,
+      "h": 46,
+      "d": "f1f0da"
+    },
+    "20_double_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "5076c3"
+    },
+    "0_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "d34dd3"
+    },
+    "3_triple_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "a1c79a"
+    },
+    "0_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "525224"
+    },
+    "20_quadruple_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "d3d620"
+    },
+    "3_s3.png": {
+      "w": 22,
+      "h": 22,
+      "d": "a6891f"
+    },
+    "5_double_s6.png": {
+      "w": 22,
+      "h": 22,
+      "d": "654797"
+    },
+    "3_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "dbf7a4"
+    },
+    "3_double_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "25079d"
+    },
+    "0_s6.png": {
+      "w": 22,
+      "h": 22,
+      "d": "4b0b49"
+    },
+    "5_s3@2x.png": {
+      "w": 44,
+      "h": 44,
+      "d": "7c3ec4"
+    },
+    "6_double_s3.png": {
+      "w": 22,
+      "h": 22,
+      "d": "99247c"
+    },
+    "5_double_s2.png": {
+      "w": 46,
+      "h": 46,
+      "d": "db173e"
+    },
+    "6_double_s2.png": {
+      "w": 46,
+      "h": 46,
+      "d": "d830bf"
+    },
+    "0_s3.png": {
+      "w": 22,
+      "h": 22,
+      "d": "4b0b49"
+    },
+    "0_double_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "98da92"
+    },
+    "4_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "b5d9c6"
+    },
+    "0_triple_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "509166"
+    },
+    "5_s6.png": {
+      "w": 22,
+      "h": 22,
+      "d": "9e2662"
+    },
+    "4_quadruple_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "820195"
+    },
+    "4_s6.png": {
+      "w": 22,
+      "h": 22,
+      "d": "46cdfc"
+    },
+    "2_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "910231"
+    },
+    "5_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "b1fe83"
+    },
+    "0_double_s2.png": {
+      "w": 46,
+      "h": 46,
+      "d": "86fe04"
+    },
+    "5_double_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "f675cf"
+    },
+    "0_double_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "1ae13c"
+    },
+    "6_quadruple_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "84d17a"
+    },
+    "1_double_s3.png": {
+      "w": 22,
+      "h": 22,
+      "d": "6a90f6"
+    },
+    "6_double_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "5cbfb9"
+    },
+    "4_double_s5.png": {
+      "w": 46,
+      "h": 46,
+      "d": "5c5d7b"
+    },
+    "6_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "05bf35"
+    },
+    "4_s3.png": {
+      "w": 22,
+      "h": 22,
+      "d": "46cdfc"
+    }
+  },
+  "resources_button": {
+    "0_hover.png": {
+      "w": 61,
+      "h": 61,
+      "d": "2d7467"
+    },
+    "2.png": {
+      "w": 61,
+      "h": 61,
+      "d": "ea937a"
+    },
+    "6_hover.png": {
+      "w": 61,
+      "h": 61,
+      "d": "9a281c"
+    },
+    "5_hover.png": {
+      "w": 61,
+      "h": 61,
+      "d": "2eb7b0"
+    },
+    "4.png": {
+      "w": 61,
+      "h": 61,
+      "d": "edfc1c"
+    },
+    "5.png": {
+      "w": 61,
+      "h": 61,
+      "d": "70f790"
+    },
+    "1.png": {
+      "w": 61,
+      "h": 61,
+      "d": "fa48df"
+    },
+    "3_hover.png": {
+      "w": 61,
+      "h": 61,
+      "d": "a5153e"
+    },
+    "4_hover.png": {
+      "w": 61,
+      "h": 61,
+      "d": "ad7444"
+    },
+    "1_hover.png": {
+      "w": 61,
+      "h": 61,
+      "d": "5120ea"
+    },
+    "2_hover.png": {
+      "w": 61,
+      "h": 61,
+      "d": "9a958b"
+    },
+    "6.png": {
+      "w": 61,
+      "h": 61,
+      "d": "63f957"
+    },
+    "0.png": {
+      "w": 61,
+      "h": 61,
+      "d": "493045"
+    },
+    "3.png": {
+      "w": 61,
+      "h": 61,
+      "d": "cea7c7"
+    }
+  },
+  "diplomacy": {
+    "square_icon_small_01@2x.png": {
+      "w": 80,
+      "h": 80,
+      "d": "d775a7"
+    },
+    "square_icon_small_02@2x.png": {
+      "w": 80,
+      "h": 80,
+      "d": "f95ffc"
+    },
+    "square_icon_small_01.png": {
+      "w": 40,
+      "h": 40,
+      "d": "7b832b"
+    },
+    "trade_arrow_01.png": {
+      "w": 190,
+      "h": 24,
+      "d": "d69e1e"
+    },
+    "trade_arrow_02.png": {
+      "w": 190,
+      "h": 24,
+      "d": "8518ff"
+    },
+    "square_icon_02.png": {
+      "w": 70,
+      "h": 70,
+      "d": "a91a59"
+    },
+    "diamond_icon_small_02.png": {
+      "w": 40,
+      "h": 40,
+      "d": "1b8bae"
+    },
+    "square_icon_02@2x.png": {
+      "w": 140,
+      "h": 140,
+      "d": "2a60dd"
+    },
+    "square_icon_01.png": {
+      "w": 70,
+      "h": 70,
+      "d": "1d49f0"
+    },
+    "diamond_icon_small_01.png": {
+      "w": 40,
+      "h": 40,
+      "d": "a4ea37"
+    },
+    "square_icon_small_02.png": {
+      "w": 40,
+      "h": 40,
+      "d": "c870f8"
+    },
+    "square_icon_01@2x.png": {
+      "w": 140,
+      "h": 140,
+      "d": "7a3533"
+    }
+  },
+  "espionage": {
+    "spy_job_DamageUpgrade.png": {
+      "w": 59,
+      "h": 59,
+      "d": "ff8473"
+    },
+    "spy_job_DestroyResource.png": {
+      "w": 59,
+      "h": 59,
+      "d": "57a16c"
+    },
+    "spy_job_CountryInfo.png": {
+      "w": 59,
+      "h": 59,
+      "d": "44e8da"
+    },
+    "spy_mission_2.png": {
+      "w": 32,
+      "h": 32,
+      "d": "10d891"
+    },
+    "spy_mission_0.png": {
+      "w": 46,
+      "h": 36,
+      "d": "8ef6fd"
+    },
+    "spy_mission_4.png": {
+      "w": 32,
+      "h": 32,
+      "d": "7968d8"
+    },
+    "spy_job_DestroyResource_small.png": {
+      "w": 32,
+      "h": 32,
+      "d": "882751"
+    },
+    "spy_job_DecreaseMoral_small.png": {
+      "w": 32,
+      "h": 32,
+      "d": "1a00a6"
+    },
+    "spy_mission_3.png": {
+      "w": 32,
+      "h": 32,
+      "d": "d5a930"
+    },
+    "spy_job_RevealAllArmies.png": {
+      "w": 59,
+      "h": 59,
+      "d": "437b6d"
+    },
+    "spy_job_CountryInfo_small.png": {
+      "w": 32,
+      "h": 32,
+      "d": "4ce513"
+    },
+    "spy_job_DamageUpgrade_small.png": {
+      "w": 32,
+      "h": 32,
+      "d": "d668bc"
+    },
+    "spy_job_RevealAllArmies_small.png": {
+      "w": 32,
+      "h": 32,
+      "d": "60ed07"
+    },
+    "spy_job_DecreaseMoral.png": {
+      "w": 59,
+      "h": 59,
+      "d": "281dc4"
+    },
+    "spy_job_RevealProvinceArmies.png": {
+      "w": 59,
+      "h": 59,
+      "d": "d77d45"
+    },
+    "spy_job_RevealProvinceArmies_small.png": {
+      "w": 32,
+      "h": 32,
+      "d": "2e83de"
+    },
+    "spy_mission_1.png": {
+      "w": 37,
+      "h": 32,
+      "d": "065b51"
+    }
+  },
+  "inventory": {
+    "hitpointboost_s3@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "585ad0"
+    },
+    "productionskip_s2.png": {
+      "w": 44,
+      "h": 44,
+      "d": "8ca295"
+    },
+    "productionskip_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "cbd91e"
+    },
+    "shop_bundle_background_1.png": {
+      "w": 652,
+      "h": 188,
+      "d": "3d98b3"
+    },
+    "item_bg_4@2x.jpg": {
+      "w": 160,
+      "h": 150,
+      "d": "c2ee4b"
+    },
+    "banner_red_2@2x.png": {
+      "w": 180,
+      "h": 36,
+      "d": "68a7f6"
+    },
+    "hitpointboost_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "616084"
+    },
+    "constructionskip_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "3a19b4"
+    },
+    "item_bg_4.jpg": {
+      "w": 80,
+      "h": 75,
+      "d": "dec8d0"
+    },
+    "inventory_onboarding_bg2.png": {
+      "w": 292,
+      "h": 292,
+      "d": "9e1be9"
+    },
+    "glow@2x.png": {
+      "w": 581,
+      "h": 588,
+      "d": "2dc09d"
+    },
+    "booster_bundle_icon_2.png": {
+      "w": 44,
+      "h": 44,
+      "d": "737c54"
+    },
+    "inventory_onboarding_bg2@2x.png": {
+      "w": 583,
+      "h": 583,
+      "d": "dd25b6"
+    },
+    "item_bg_2.jpg": {
+      "w": 80,
+      "h": 75,
+      "d": "d0f267"
+    },
+    "item_bg_5.jpg": {
+      "w": 80,
+      "h": 75,
+      "d": "f439b2"
+    },
+    "booster_bundle_icon_2@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "df1929"
+    },
+    "inventory_onboarding_bg@2x.png": {
+      "w": 631,
+      "h": 699,
+      "d": "240a0f"
+    },
+    "item_bg_5@2x.jpg": {
+      "w": 160,
+      "h": 150,
+      "d": "9ac133"
+    },
+    "booster_bundle_icon_3@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "095b0a"
+    },
+    "badge_bundle_2.png": {
+      "w": 76,
+      "h": 76,
+      "d": "9d0b89"
+    },
+    "productionskip_s1@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "986a08"
+    },
+    "hitpointboost_s2@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "ab0ebe"
+    },
+    "productionskip_s3.png": {
+      "w": 44,
+      "h": 44,
+      "d": "841a9d"
+    },
+    "badge_bundle_3.png": {
+      "w": 76,
+      "h": 76,
+      "d": "7e7bed"
+    },
+    "constructionskip_s2.png": {
+      "w": 44,
+      "h": 44,
+      "d": "0383af"
+    },
+    "constructionskip_s1.png": {
+      "w": 44,
+      "h": 44,
+      "d": "76f5d5"
+    },
+    "booster_bundle_icon_4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "fd899f"
+    },
+    "constructionskip_s2@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "85a620"
+    },
+    "hitpointboost_s1@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "806206"
+    },
+    "hitpointboost_s3.png": {
+      "w": 44,
+      "h": 44,
+      "d": "03580f"
+    },
+    "banner_red.png": {
+      "w": 375,
+      "h": 82,
+      "d": "feb851"
+    },
+    "banner_red_top_left@2x.png": {
+      "w": 129,
+      "h": 113,
+      "d": "853b49"
+    },
+    "item_bg_2@2x.jpg": {
+      "w": 160,
+      "h": 150,
+      "d": "0a6de7"
+    },
+    "hitpointboost_s1.png": {
+      "w": 44,
+      "h": 44,
+      "d": "75c6e8"
+    },
+    "constructionskip_s1@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "f6451a"
+    },
+    "hitpointboost_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "ab41f8"
+    },
+    "constructionskip_s3@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "b60b18"
+    },
+    "moraleboost_s2.png": {
+      "w": 44,
+      "h": 44,
+      "d": "84922f"
+    },
+    "badge_bundle_4.png": {
+      "w": 76,
+      "h": 76,
+      "d": "652399"
+    },
+    "moraleboost_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "b34a9b"
+    },
+    "moraleboost_s2@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "4d56f7"
+    },
+    "constructionskip_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "78093d"
+    },
+    "card_shiny_border_mask.png": {
+      "w": 100,
+      "h": 122,
+      "d": "138dca"
+    },
+    "shop_bundle_background_2.png": {
+      "w": 652,
+      "h": 188,
+      "d": "3f5dc4"
+    },
+    "moraleboost_s4@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "ffb638"
+    },
+    "constructionskip_s3.png": {
+      "w": 44,
+      "h": 44,
+      "d": "844ba3"
+    },
+    "productionskip_s4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "05f190"
+    },
+    "booster_bundle_icon_4.png": {
+      "w": 44,
+      "h": 44,
+      "d": "3115a6"
+    },
+    "moraleboost_s3.png": {
+      "w": 44,
+      "h": 44,
+      "d": "d157a6"
+    },
+    "shop_bundle_background_3.png": {
+      "w": 652,
+      "h": 188,
+      "d": "7e5439"
+    },
+    "gift_bg.jpg": {
+      "w": 375,
+      "h": 667,
+      "d": "8b439c"
+    },
+    "productionskip_s1.png": {
+      "w": 44,
+      "h": 44,
+      "d": "123219"
+    },
+    "productionskip_s3@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "3bedef"
+    },
+    "moraleboost_s1.png": {
+      "w": 44,
+      "h": 44,
+      "d": "81418b"
+    },
+    "booster_bundle_icon_3.png": {
+      "w": 44,
+      "h": 44,
+      "d": "66f6ea"
+    },
+    "productionskip_s2@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "8e4336"
+    },
+    "item_bg_3@2x.jpg": {
+      "w": 160,
+      "h": 150,
+      "d": "56f42a"
+    },
+    "badge_bundle_1.png": {
+      "w": 76,
+      "h": 76,
+      "d": "322283"
+    },
+    "glow.png": {
+      "w": 291,
+      "h": 294,
+      "d": "8eef31"
+    },
+    "glow_2.png": {
+      "w": 339,
+      "h": 335,
+      "d": "b319fb"
+    },
+    "moraleboost_s1@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "f62363"
+    },
+    "shop_bundle_background_free.png": {
+      "w": 652,
+      "h": 188,
+      "d": "c02273"
+    },
+    "hitpointboost_s2.png": {
+      "w": 44,
+      "h": 44,
+      "d": "e2a686"
+    },
+    "shop_bundle_background_4.png": {
+      "w": 652,
+      "h": 268,
+      "d": "d96f8d"
+    },
+    "banner_red_top_left.png": {
+      "w": 65,
+      "h": 56,
+      "d": "eabbc9"
+    },
+    "inventory_onboarding_bg.png": {
+      "w": 316,
+      "h": 350,
+      "d": "28cf4b"
+    },
+    "banner_red_2.png": {
+      "w": 90,
+      "h": 18,
+      "d": "3f2b0b"
+    },
+    "item_bg_3.jpg": {
+      "w": 80,
+      "h": 75,
+      "d": "a973c1"
+    },
+    "moraleboost_s3@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "c21f83"
+    },
+    "glow_2@2x.png": {
+      "w": 677,
+      "h": 670,
+      "d": "534505"
+    },
+    "banner_red@2x.png": {
+      "w": 750,
+      "h": 163,
+      "d": "e13263"
+    }
+  },
+  "unit_features": {
+    "canFly_s1@2x.png": {
+      "w": 180,
+      "h": 180,
+      "d": "0e4b77"
+    },
+    "usesMorale_s1@2x.png": {
+      "w": 180,
+      "h": 180,
+      "d": "f87ab4"
+    },
+    "isShip_s1.png": {
+      "w": 90,
+      "h": 90,
+      "d": "f326ec"
+    },
+    "exposes_s1@2x.png": {
+      "w": 180,
+      "h": 180,
+      "d": "52e321"
+    },
+    "canStorm_s1.png": {
+      "w": 90,
+      "h": 90,
+      "d": "7117b0"
+    },
+    "isStealthUnit_s1@2x.png": {
+      "w": 180,
+      "h": 180,
+      "d": "6d1522"
+    },
+    "canFly_s1.png": {
+      "w": 90,
+      "h": 90,
+      "d": "d6219d"
+    },
+    "isShip_s1@2x.png": {
+      "w": 180,
+      "h": 180,
+      "d": "ff5c68"
+    },
+    "canStorm_s1@2x.png": {
+      "w": 180,
+      "h": 180,
+      "d": "cdab2f"
+    },
+    "exposes_s1.png": {
+      "w": 90,
+      "h": 90,
+      "d": "ab8f8f"
+    },
+    "usesMorale_s1.png": {
+      "w": 90,
+      "h": 90,
+      "d": "2eb838"
+    },
+    "isStealthUnit_s1.png": {
+      "w": 90,
+      "h": 90,
+      "d": "9a5a91"
+    }
+  },
+  "premiums/unit_unlock": {
+    "57621@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "b4824c"
+    },
+    "61007@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "8a1332"
+    },
+    "57621.png": {
+      "w": 44,
+      "h": 44,
+      "d": "02c5ba"
+    },
+    "57998@2x.png": {
+      "w": 88,
+      "h": 88,
+      "d": "8cb913"
+    },
+    "57998.png": {
+      "w": 44,
+      "h": 44,
+      "d": "a26970"
+    },
+    "61007.png": {
+      "w": 44,
+      "h": 44,
+      "d": "3abcec"
+    }
+  },
+  "army_details": {
+    "bg_sea_1.jpg": {
+      "w": 448,
+      "h": 240,
+      "d": "24a118"
+    },
+    "bg_army_1.jpg": {
+      "w": 448,
+      "h": 240,
+      "d": "21f5c3"
+    },
+    "bg_army_1@2x.jpg": {
+      "w": 896,
+      "h": 480,
+      "d": "bf5ae5"
+    },
+    "bg_air_1@2x.jpg": {
+      "w": 896,
+      "h": 480,
+      "d": "151a72"
+    },
+    "bg_sea_1@2x.jpg": {
+      "w": 896,
+      "h": 480,
+      "d": "cf345a"
+    },
+    "bg_air_1.jpg": {
+      "w": 448,
+      "h": 240,
+      "d": "29b4f6"
+    }
+  },
+  "chat": {
+    "category_general_2.png": {
+      "w": 18,
+      "h": 22,
+      "d": "68d060"
+    },
+    "room_whisper.png": {
+      "w": 24,
+      "h": 24,
+      "d": "52951b"
+    },
+    "player.png": {
+      "w": 24,
+      "h": 24,
+      "d": "5a503a"
+    },
+    "context_start_whisper_icon.png": {
+      "w": 32,
+      "h": 32,
+      "d": "dd3a0c"
+    },
+    "context_diplomacy_message_icon.png": {
+      "w": 32,
+      "h": 32,
+      "d": "76e856"
+    },
+    "category_general.png": {
+      "w": 16,
+      "h": 22,
+      "d": "6b2f7b"
+    },
+    "room_game.png": {
+      "w": 24,
+      "h": 24,
+      "d": "e50507"
+    },
+    "room_global.png": {
+      "w": 24,
+      "h": 24,
+      "d": "a45a1f"
+    },
+    "category_alliance_2.png": {
+      "w": 18,
+      "h": 22,
+      "d": "c75e3c"
+    },
+    "category_game_2.png": {
+      "w": 18,
+      "h": 22,
+      "d": "c05480"
+    },
+    "category_whispers.png": {
+      "w": 16,
+      "h": 22,
+      "d": "9c7621"
+    },
+    "button_chat_minimize_hover.png": {
+      "w": 28,
+      "h": 28,
+      "d": "8ef6bf"
+    },
+    "context_service_record_icon.png": {
+      "w": 32,
+      "h": 32,
+      "d": "374432"
+    },
+    "room_alliance.png": {
+      "w": 24,
+      "h": 24,
+      "d": "a75f6d"
+    },
+    "context_reveal_on_map_icon.png": {
+      "w": 32,
+      "h": 32,
+      "d": "0eb7b7"
+    },
+    "room_game_2.png": {
+      "w": 24,
+      "h": 24,
+      "d": "e50507"
+    },
+    "room_frontline_2.png": {
+      "w": 24,
+      "h": 24,
+      "d": "7094da"
+    },
+    "context_nation_profile_icon.png": {
+      "w": 32,
+      "h": 32,
+      "d": "823a56"
+    },
+    "room_alliance_2.png": {
+      "w": 24,
+      "h": 24,
+      "d": "a75f6d"
+    },
+    "room_team.png": {
+      "w": 24,
+      "h": 24,
+      "d": "aadda7"
+    },
+    "room_frontline.png": {
+      "w": 24,
+      "h": 24,
+      "d": "7094da"
+    },
+    "room_highcommand.png": {
+      "w": 24,
+      "h": 24,
+      "d": "17540b"
+    },
+    "button_chat_overlay.png": {
+      "w": 28,
+      "h": 28,
+      "d": "c6610e"
+    },
+    "context_diplomacy_show_icon.png": {
+      "w": 32,
+      "h": 32,
+      "d": "403927"
+    },
+    "channel_locked_icon.png": {
+      "w": 16,
+      "h": 22,
+      "d": "61f82d"
+    },
+    "room_global_2.png": {
+      "w": 24,
+      "h": 24,
+      "d": "a45a1f"
+    },
+    "category_game.png": {
+      "w": 16,
+      "h": 22,
+      "d": "6cacd2"
+    },
+    "context_report_icon.png": {
+      "w": 32,
+      "h": 32,
+      "d": "c79a31"
+    },
+    "room_team_2.png": {
+      "w": 24,
+      "h": 24,
+      "d": "aadda7"
+    },
+    "button_chat_minimize.png": {
+      "w": 28,
+      "h": 28,
+      "d": "257d7d"
+    },
+    "room_help_2.png": {
+      "w": 24,
+      "h": 24,
+      "d": "a67e22"
+    },
+    "button_chat_overlay_hover.png": {
+      "w": 28,
+      "h": 28,
+      "d": "35934e"
+    },
+    "room_whisper_2.png": {
+      "w": 24,
+      "h": 24,
+      "d": "52951b"
+    },
+    "category_alliance.png": {
+      "w": 16,
+      "h": 22,
+      "d": "e9e36a"
+    },
+    "room_help.png": {
+      "w": 24,
+      "h": 24,
+      "d": "a67e22"
+    },
+    "alliance_member.png": {
+      "w": 24,
+      "h": 24,
+      "d": "f15cb5"
+    },
+    "room_highcommand_2.png": {
+      "w": 24,
+      "h": 24,
+      "d": "17540b"
+    }
+  },
+  "game_menu": {
+    "research_selected.png": {
+      "w": 80,
+      "h": 79,
+      "d": "c46abf"
+    },
+    "army_list.png": {
+      "w": 80,
+      "h": 79,
+      "d": "89d239"
+    },
+    "coalition_hover.png": {
+      "w": 80,
+      "h": 79,
+      "d": "eedfbb"
+    },
+    "game_events.png": {
+      "w": 80,
+      "h": 79,
+      "d": "3cba8e"
+    },
+    "newspaper_hover.png": {
+      "w": 80,
+      "h": 79,
+      "d": "109c2d"
+    },
+    "research_hover.png": {
+      "w": 80,
+      "h": 79,
+      "d": "4108e5"
+    },
+    "province_list.png": {
+      "w": 80,
+      "h": 79,
+      "d": "01cbe2"
+    },
+    "stockmarket_selected.png": {
+      "w": 80,
+      "h": 79,
+      "d": "b229c1"
+    },
+    "diplomacy.png": {
+      "w": 80,
+      "h": 79,
+      "d": "7b575b"
+    },
+    "army_list_hover.png": {
+      "w": 80,
+      "h": 79,
+      "d": "aa0f34"
+    },
+    "province_list_selected.png": {
+      "w": 80,
+      "h": 79,
+      "d": "02e690"
+    },
+    "resources_selected.png": {
+      "w": 80,
+      "h": 79,
+      "d": "e7d362"
+    },
+    "research.png": {
+      "w": 80,
+      "h": 79,
+      "d": "205343"
+    },
+    "resources_hover.png": {
+      "w": 80,
+      "h": 79,
+      "d": "32b832"
+    },
+    "spy.png": {
+      "w": 80,
+      "h": 79,
+      "d": "90794a"
+    },
+    "coalition_selected.png": {
+      "w": 80,
+      "h": 79,
+      "d": "9e8dcc"
+    },
+    "diplomacy_hover.png": {
+      "w": 80,
+      "h": 79,
+      "d": "65143e"
+    },
+    "coalition.png": {
+      "w": 80,
+      "h": 79,
+      "d": "e71b90"
+    },
+    "diplomacy_selected.png": {
+      "w": 80,
+      "h": 79,
+      "d": "e31f8d"
+    },
+    "stockmarket_hover.png": {
+      "w": 80,
+      "h": 79,
+      "d": "abd51b"
+    },
+    "army_list_selected.png": {
+      "w": 80,
+      "h": 79,
+      "d": "600b18"
+    },
+    "province_list_hover.png": {
+      "w": 80,
+      "h": 79,
+      "d": "041afa"
+    },
+    "game_events_selected.png": {
+      "w": 80,
+      "h": 79,
+      "d": "79d1a3"
+    },
+    "spy_selected.png": {
+      "w": 80,
+      "h": 79,
+      "d": "b142e2"
+    },
+    "stockmarket.png": {
+      "w": 80,
+      "h": 79,
+      "d": "a9e1be"
+    },
+    "newspaper.png": {
+      "w": 80,
+      "h": 79,
+      "d": "fe5233"
+    },
+    "newspaper_selected.png": {
+      "w": 80,
+      "h": 79,
+      "d": "adce49"
+    },
+    "spy_hover.png": {
+      "w": 80,
+      "h": 79,
+      "d": "663bcf"
+    },
+    "resources.png": {
+      "w": 80,
+      "h": 79,
+      "d": "e4bd01"
+    },
+    "game_events_hover.png": {
+      "w": 80,
+      "h": 79,
+      "d": "0a7bdd"
+    }
+  },
+  "notification": {
+    "join_frontline2.jpg": {
+      "w": 270,
+      "h": 360,
+      "d": "0cb74c"
+    },
+    "join_frontline1.jpg": {
+      "w": 240,
+      "h": 315,
+      "d": "eca351"
+    }
+  },
+  "points": {
+    "s7.png": {
+      "w": 32,
+      "h": 32,
+      "d": "ade36b"
+    },
+    "s8@2x.png": {
+      "w": 70,
+      "h": 70,
+      "d": "30e93e"
+    },
+    "s1.png": {
+      "w": 24,
+      "h": 29,
+      "d": "661ea0"
+    },
+    "s3.png": {
+      "w": 46,
+      "h": 55,
+      "d": "2ebfaa"
+    },
+    "s5.png": {
+      "w": 23,
+      "h": 28,
+      "d": "5e6afe"
+    },
+    "s9@2x.png": {
+      "w": 32,
+      "h": 32,
+      "d": "cc7a55"
+    },
+    "s7@2x.png": {
+      "w": 64,
+      "h": 64,
+      "d": "f997da"
+    },
+    "s4.png": {
+      "w": 400,
+      "h": 400,
+      "d": "931bad"
+    },
+    "s2.png": {
+      "w": 25,
+      "h": 30,
+      "d": "c01387"
+    },
+    "s9.png": {
+      "w": 16,
+      "h": 16,
+      "d": "60a604"
+    },
+    "s8.png": {
+      "w": 35,
+      "h": 35,
+      "d": "a7929c"
+    },
+    "s6.png": {
+      "w": 150,
+      "h": 150,
+      "d": "abe7c5"
+    },
+    "s6@2x.png": {
+      "w": 300,
+      "h": 300,
+      "d": "589c62"
+    }
+  },
+  "rank": {
+    "15_s3.png": {
+      "w": 183,
+      "h": 183,
+      "d": "e5abb3"
+    },
+    "2_s4.png": {
+      "w": 48,
+      "h": 48,
+      "d": "aceb6d"
+    },
+    "17_s5.png": {
+      "w": 144,
+      "h": 144,
+      "d": "e5ee8c"
+    },
+    "9_s4.png": {
+      "w": 48,
+      "h": 48,
+      "d": "963f37"
+    },
+    "3_s1.png": {
+      "w": 32,
+      "h": 32,
+      "d": "acb701"
+    },
+    "14_s2.png": {
+      "w": 80,
+      "h": 80,
+      "d": "dee9fd"
+    },
+    "6_s5.png": {
+      "w": 144,
+      "h": 144,
+      "d": "4cd1d4"
+    },
+    "10_s3@2x.png": {
+      "w": 366,
+      "h": 366,
+      "d": "ba982c"
+    },
+    "17_s3@2x.png": {
+      "w": 366,
+      "h": 366,
+      "d": "129f94"
+    },
+    "11_s2.png": {
+      "w": 80,
+      "h": 80,
+      "d": "9e5ab0"
+    },
+    "16_s2.png": {
+      "w": 80,
+      "h": 80,
+      "d": "fb1dc6"
+    },
+    "6_s2@2x.png": {
+      "w": 160,
+      "h": 160,
+      "d": "ae3cf1"
+    },
+    "1_s6.png": {
+      "w": 32,
+      "h": 32,
+      "d": "1f6630"
+    },
+    "11_s5.png": {
+      "w": 144,
+      "h": 144,
+      "d": "3e2cdd"
+    },
+    "6_s3.png": {
+      "w": 183,
+      "h": 183,
+      "d": "874df8"
+    },
+    "7_s3@2x.png": {
+      "w": 366,
+      "h": 366,
+      "d": "58d2f7"
+    },
+    "13_s6.png": {
+      "w": 32,
+      "h": 32,
+      "d": "8a1460"
+    },
+    "4_s2.png": {
+      "w": 80,
+      "h": 80,
+      "d": "bf3c3f"
+    },
+    "2_s3@2x.png": {
+      "w": 366,
+      "h": 366,
+      "d": "6f5b1a"
+    },
+    "18_s6.png": {
+      "w": 32,
+      "h": 32,
+      "d": "dd2a9e"
+    },
+    "7_s3.png": {
+      "w": 183,
+      "h": 183,
+      "d": "076b9a"
+    },
+    "4_s2@2x.png": {
+      "w": 160,
+      "h": 160,
+      "d": "32252e"
+    },
+    "15_s4.png": {
+      "w": 48,
+      "h": 48,
+      "d": "39b58c"
+    },
+    "8_s6.png": {
+      "w": 32,
+      "h": 32,
+      "d": "ceb265"
+    },
+    "3_s2@2x.png": {
+      "w": 160,
+      "h": 160,
+      "d": "c43130"
+    },
+    "12_s6.png": {
+      "w": 32,
+      "h": 32,
+      "d": "14f1a1"
+    },
+    "15_s2.png": {
+      "w": 80,
+      "h": 80,
+      "d": "c7be8f"
+    },
+    "2_s6.png": {
+      "w": 32,
+      "h": 32,
+      "d": "912539"
+    },
+    "9_s1.png": {
+      "w": 32,
+      "h": 32,
+      "d": "16a221"
+    },
+    "3_s3@2x.png": {
+      "w": 366,
+      "h": 366,
+      "d": "c56919"
+    },
+    "17_s2@2x.png": {
+      "w": 160,
+      "h": 160,
+      "d": "8c0de8"
+    },
+    "11_s3@2x.png": {
+      "w": 366,
+      "h": 366,
+      "d": "bc9ca9"
+    },
+    "1_s4.png": {
+      "w": 48,
+      "h": 48,
+      "d": "4b5b93"
+    },
+    "17_s6.png": {
+      "w": 32,
+      "h": 32,
+      "d": "9ba71d"
+    },
+    "12_s2.png": {
+      "w": 80,
+      "h": 80,
+      "d": "687e22"
+    },
+    "14_s4.png": {
+      "w": 48,
+      "h": 48,
+      "d": "4a7097"
+    },
+    "2_s1.png": {
+      "w": 32,
+      "h": 32,
+      "d": "e20639"
+    },
+    "4_s1.png": {
+      "w": 32,
+      "h": 32,
+      "d": "2f8c44"
+    },
+    "9_s5.png": {
+      "w": 144,
+      "h": 144,
+      "d": "46888f"
+    },
+    "16_s4.png": {
+      "w": 48,
+      "h": 48,
+      "d": "02a3a0"
+    },
+    "11_s1@2x.png": {
+      "w": 64,
+      "h": 64,
+      "d": "dda032"
+    },
+    "3_s2.png": {
+      "w": 80,
+      "h": 80,
+      "d": "32a690"
+    },
+    "6_s2.png": {
+      "w": 80,
+      "h": 80,
+      "d": "26791c"
+    },
+    "18_s3@2x.png": {
+      "w": 366,
+      "h": 366,
+      "d": "ec7355"
+    },
+    "8_s5.png": {
+      "w": 144,
+      "h": 144,
+      "d": "633799"
+    },
+    "12_s5.png": {
+      "w": 144,
+      "h": 144,
+      "d": "4696b3"
+    },
+    "5_s4.png": {
+      "w": 48,
+      "h": 48,
+      "d": "56b0cf"
+    },
+    "17_s1.png": {
+      "w": 32,
+      "h": 32,
+      "d": "839d0a"
+    },
+    "9_s6.png": {
+      "w": 32,
+      "h": 32,
+      "d": "b3c953"
+    },
+    "4_s3@2x.png": {
+      "w": 366,
+      "h": 366,
+      "d": "7a002d"
+    },
+    "6_s3@2x.png": {
+      "w": 366,
+      "h": 366,
+      "d": "2d645b"
+    },
+    "1_s1.png": {
+      "w": 32,
+      "h": 32,
+      "d": "baed92"
+    },
+    "3_s6.png": {
+      "w": 32,
+      "h": 32,
+      "d": "41c254"
+    },
+    "18_s4.png": {
+      "w": 48,
+      "h": 48,
+      "d": "c66113"
+    },
+    "3_s1@2x.png": {
+      "w": 64,
+      "h": 64,
+      "d": "a9faa6"
+    },
+    "10_s1@2x.png": {
+      "w": 64,
+      "h": 64,
+      "d": "dcbde8"
+    },
+    "6_s1.png": {
+      "w": 32,
+      "h": 32,
+      "d": "fafa96"
+    },
+    "18_s1@2x.png": {
+      "w": 64,
+      "h": 64,
+      "d": "9abf36"
+    },
+    "10_s2@2x.png": {
+      "w": 160,
+      "h": 160,
+      "d": "43a664"
+    },
+    "12_s2@2x.png": {
+      "w": 160,
+      "h": 160,
+      "d": "21188e"
+    },
+    "16_s2@2x.png": {
+      "w": 160,
+      "h": 160,
+      "d": "398464"
+    },
+    "17_s3.png": {
+      "w": 183,
+      "h": 183,
+      "d": "a829a9"
+    },
+    "2_s1@2x.png": {
+      "w": 64,
+      "h": 64,
+      "d": "2f013e"
+    },
+    "1_s3.png": {
+      "w": 183,
+      "h": 183,
+      "d": "7db72a"
+    },
+    "2_s2.png": {
+      "w": 80,
+      "h": 80,
+      "d": "fd013a"
+    },
+    "7_s1.png": {
+      "w": 32,
+      "h": 32,
+      "d": "a39662"
+    },
+    "13_s1.png": {
+      "w": 32,
+      "h": 32,
+      "d": "8e750a"
+    },
+    "4_s5.png": {
+      "w": 144,
+      "h": 144,
+      "d": "d266c6"
+    },
+    "17_s4.png": {
+      "w": 48,
+      "h": 48,
+      "d": "5e5d2c"
+    },
+    "8_s2@2x.png": {
+      "w": 160,
+      "h": 160,
+      "d": "0b4eef"
+    },
+    "12_s4.png": {
+      "w": 48,
+      "h": 48,
+      "d": "9193eb"
+    },
+    "11_s4.png": {
+      "w": 48,
+      "h": 48,
+      "d": "b7471f"
+    },
+    "1_s5.png": {
+      "w": 144,
+      "h": 144,
+      "d": "96cca0"
+    },
+    "8_s1.png": {
+      "w": 32,
+      "h": 32,
+      "d": "b56b8f"
+    },
+    "2_s5.png": {
+      "w": 144,
+      "h": 144,
+      "d": "74f194"
+    },
+    "14_s1.png": {
+      "w": 32,
+      "h": 32,
+      "d": "babcdc"
+    },
+    "11_s2@2x.png": {
+      "w": 160,
+      "h": 160,
+      "d": "5f1f76"
+    },
+    "10_s4.png": {
+      "w": 48,
+      "h": 48,
+      "d": "31c9a4"
+    },
+    "16_s3.png": {
+      "w": 183,
+      "h": 183,
+      "d": "b245b8"
+    },
+    "9_s2.png": {
+      "w": 80,
+      "h": 80,
+      "d": "f1a7df"
+    },
+    "6_s6.png": {
+      "w": 32,
+      "h": 32,
+      "d": "943aaa"
+    },
+    "5_s2.png": {
+      "w": 80,
+      "h": 80,
+      "d": "8b54a7"
+    },
+    "7_s6.png": {
+      "w": 32,
+      "h": 32,
+      "d": "268683"
+    },
+    "18_s2@2x.png": {
+      "w": 160,
+      "h": 160,
+      "d": "4deee5"
+    },
+    "1_s2@2x.png": {
+      "w": 160,
+      "h": 160,
+      "d": "48e7b1"
+    },
+    "7_s1@2x.png": {
+      "w": 64,
+      "h": 64,
+      "d": "1cdd84"
+    },
+    "5_s3.png": {
+      "w": 183,
+      "h": 183,
+      "d": "b789cf"
+    },
+    "16_s1@2x.png": {
+      "w": 64,
+      "h": 64,
+      "d": "585149"
+    },
+    "4_s1@2x.png": {
+      "w": 64,
+      "h": 64,
+      "d": "7bc986"
+    },
+    "12_s1@2x.png": {
+      "w": 64,
+      "h": 64,
+      "d": "d01247"
+    },
+    "10_s2.png": {
+      "w": 80,
+      "h": 80,
+      "d": "9c34ae"
+    },
+    "12_s3.png": {
+      "w": 183,
+      "h": 183,
+      "d": "49fa90"
+    },
+    "11_s1.png": {
+      "w": 32,
+      "h": 32,
+      "d": "a3248c"
+    },
+    "7_s5.png": {
+      "w": 144,
+      "h": 144,
+      "d": "4db6b4"
+    },
+    "8_s3@2x.png": {
+      "w": 366,
+      "h": 366,
+      "d": "b89a1c"
+    },
+    "16_s3@2x.png": {
+      "w": 366,
+      "h": 366,
+      "d": "6de7fd"
+    },
+    "7_s4.png": {
+      "w": 48,
+      "h": 48,
+      "d": "fd3160"
+    },
+    "8_s4.png": {
+      "w": 48,
+      "h": 48,
+      "d": "2aebde"
+    },
+    "17_s2.png": {
+      "w": 80,
+      "h": 80,
+      "d": "85fe26"
+    },
+    "1_s3@2x.png": {
+      "w": 366,
+      "h": 366,
+      "d": "479507"
+    },
+    "5_s5.png": {
+      "w": 144,
+      "h": 144,
+      "d": "e3d759"
+    },
+    "14_s3.png": {
+      "w": 183,
+      "h": 183,
+      "d": "150b86"
+    },
+    "13_s1@2x.png": {
+      "w": 64,
+      "h": 64,
+      "d": "5c383b"
+    },
+    "4_s4.png": {
+      "w": 48,
+      "h": 48,
+      "d": "9a2c0b"
+    },
+    "11_s6.png": {
+      "w": 32,
+      "h": 32,
+      "d": "310676"
+    },
+    "3_s5.png": {
+      "w": 144,
+      "h": 144,
+      "d": "5ca37e"
+    },
+    "5_s1.png": {
+      "w": 32,
+      "h": 32,
+      "d": "dead78"
+    },
+    "14_s5.png": {
+      "w": 144,
+      "h": 144,
+      "d": "9d9ad8"
+    },
+    "1_s2.png": {
+      "w": 80,
+      "h": 80,
+      "d": "93fa6d"
+    },
+    "15_s5.png": {
+      "w": 144,
+      "h": 144,
+      "d": "94562f"
+    },
+    "8_s2.png": {
+      "w": 80,
+      "h": 80,
+      "d": "83a2e7"
+    },
+    "2_s2@2x.png": {
+      "w": 160,
+      "h": 160,
+      "d": "5d0d4f"
+    },
+    "13_s2.png": {
+      "w": 80,
+      "h": 80,
+      "d": "1586ef"
+    },
+    "5_s2@2x.png": {
+      "w": 160,
+      "h": 160,
+      "d": "0e0a7b"
+    },
+    "15_s6.png": {
+      "w": 32,
+      "h": 32,
+      "d": "dd2dc8"
+    },
+    "9_s3@2x.png": {
+      "w": 366,
+      "h": 366,
+      "d": "ea225e"
+    },
+    "10_s1.png": {
+      "w": 32,
+      "h": 32,
+      "d": "f5bc4a"
+    },
+    "9_s3.png": {
+      "w": 183,
+      "h": 183,
+      "d": "a16a98"
+    },
+    "15_s1.png": {
+      "w": 32,
+      "h": 32,
+      "d": "6f8abb"
+    },
+    "15_s2@2x.png": {
+      "w": 160,
+      "h": 160,
+      "d": "efaff0"
+    },
+    "13_s5.png": {
+      "w": 144,
+      "h": 144,
+      "d": "9b7e47"
+    },
+    "17_s1@2x.png": {
+      "w": 64,
+      "h": 64,
+      "d": "39df20"
+    },
+    "18_s2.png": {
+      "w": 80,
+      "h": 80,
+      "d": "cbe443"
+    },
+    "6_s1@2x.png": {
+      "w": 64,
+      "h": 64,
+      "d": "8b55ac"
+    },
+    "16_s1.png": {
+      "w": 32,
+      "h": 32,
+      "d": "6085d9"
+    },
+    "8_s1@2x.png": {
+      "w": 64,
+      "h": 64,
+      "d": "2bfe5e"
+    },
+    "18_s1.png": {
+      "w": 32,
+      "h": 32,
+      "d": "507317"
+    },
+    "2_s3.png": {
+      "w": 183,
+      "h": 183,
+      "d": "42aa21"
+    },
+    "14_s1@2x.png": {
+      "w": 64,
+      "h": 64,
+      "d": "41db04"
+    },
+    "13_s4.png": {
+      "w": 48,
+      "h": 48,
+      "d": "0ed8cd"
+    },
+    "13_s2@2x.png": {
+      "w": 160,
+      "h": 160,
+      "d": "4adac1"
+    },
+    "3_s3.png": {
+      "w": 183,
+      "h": 183,
+      "d": "d6a3d2"
+    },
+    "12_s3@2x.png": {
+      "w": 366,
+      "h": 366,
+      "d": "0e75d7"
+    },
+    "10_s3.png": {
+      "w": 183,
+      "h": 183,
+      "d": "cac876"
+    },
+    "15_s1@2x.png": {
+      "w": 64,
+      "h": 64,
+      "d": "886921"
+    },
+    "3_s4.png": {
+      "w": 48,
+      "h": 48,
+      "d": "1a9b76"
+    },
+    "14_s3@2x.png": {
+      "w": 366,
+      "h": 366,
+      "d": "100524"
+    },
+    "14_s6.png": {
+      "w": 32,
+      "h": 32,
+      "d": "41bfb9"
+    },
+    "11_s3.png": {
+      "w": 183,
+      "h": 183,
+      "d": "2f10d6"
+    },
+    "15_s3@2x.png": {
+      "w": 366,
+      "h": 366,
+      "d": "388e73"
+    },
+    "5_s3@2x.png": {
+      "w": 366,
+      "h": 366,
+      "d": "64ce58"
+    },
+    "9_s1@2x.png": {
+      "w": 64,
+      "h": 64,
+      "d": "750212"
+    },
+    "14_s2@2x.png": {
+      "w": 160,
+      "h": 160,
+      "d": "b51aeb"
+    },
+    "8_s3.png": {
+      "w": 183,
+      "h": 183,
+      "d": "c8034a"
+    },
+    "12_s1.png": {
+      "w": 32,
+      "h": 32,
+      "d": "7aeb1f"
+    },
+    "9_s2@2x.png": {
+      "w": 160,
+      "h": 160,
+      "d": "226ad8"
+    },
+    "16_s6.png": {
+      "w": 32,
+      "h": 32,
+      "d": "de691f"
+    },
+    "13_s3@2x.png": {
+      "w": 366,
+      "h": 366,
+      "d": "b9910e"
+    },
+    "1_s1@2x.png": {
+      "w": 64,
+      "h": 64,
+      "d": "5cce23"
+    },
+    "10_s6.png": {
+      "w": 32,
+      "h": 32,
+      "d": "4a18f0"
+    },
+    "5_s6.png": {
+      "w": 32,
+      "h": 32,
+      "d": "389b38"
+    },
+    "18_s5.png": {
+      "w": 144,
+      "h": 144,
+      "d": "3df46b"
+    },
+    "13_s3.png": {
+      "w": 183,
+      "h": 183,
+      "d": "a80cf4"
+    },
+    "4_s6.png": {
+      "w": 32,
+      "h": 32,
+      "d": "c80e32"
+    },
+    "10_s5.png": {
+      "w": 144,
+      "h": 144,
+      "d": "2b4d66"
+    },
+    "5_s1@2x.png": {
+      "w": 64,
+      "h": 64,
+      "d": "c908b2"
+    },
+    "18_s3.png": {
+      "w": 183,
+      "h": 183,
+      "d": "ec5dea"
+    },
+    "7_s2@2x.png": {
+      "w": 160,
+      "h": 160,
+      "d": "1b9cc0"
+    },
+    "6_s4.png": {
+      "w": 48,
+      "h": 48,
+      "d": "785e35"
+    },
+    "7_s2.png": {
+      "w": 80,
+      "h": 80,
+      "d": "90fcca"
+    },
+    "4_s3.png": {
+      "w": 183,
+      "h": 183,
+      "d": "0784e8"
+    },
+    "16_s5.png": {
+      "w": 144,
+      "h": 144,
+      "d": "5dc697"
+    }
+  },
+  "ranking": {
+    "3_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "b1c2e5"
+    },
+    "2_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "06c63b"
+    },
+    "1_s1.png": {
+      "w": 36,
+      "h": 36,
+      "d": "9a45f3"
+    }
+  },
+  "supply_lines": {
+    "background.png": {
+      "w": 891,
+      "h": 297,
+      "d": "c1dc1c"
+    }
+  },
+  "map/warfare": {
+    "unit_sizefont_8px.png": {
+      "w": 66,
+      "h": 10,
+      "d": "154f0e"
+    }
+  }
+}
