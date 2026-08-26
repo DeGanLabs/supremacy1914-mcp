@@ -13,6 +13,7 @@ export interface HeroSnapshot {
   readonly cooldownSeconds: number;
   readonly limitReached: boolean;
   readonly locked: boolean;
+  readonly moraleThreshold?: number;
   /** Owned, not deployed, not on cooldown, not locked */
   readonly canDeploy: boolean;
 }
@@ -26,6 +27,9 @@ export interface DeployedHeroArmy {
     readonly unitTypeId: number;
     readonly name: string | null;
     readonly shortName: string | null;
+    readonly level?: number;
+    readonly rarity?: string | null;
+    readonly cooldownSeconds?: number;
   }[];
 }
 

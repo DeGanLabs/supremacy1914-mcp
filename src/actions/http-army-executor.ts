@@ -44,9 +44,22 @@ export class HttpArmyActionExecutor implements ArmyActionExecutor {
 
   async move(params: MoveArmyParams): Promise<ActionResult> {
     const session = await this.getSession();
-    const path = await this.pathProvider.buildMovePath(params);
     const ctx = await this.armyContext.getArmyWireContext(params.armyId);
-
+    if (ctx.ownerId !== session.playerID) {
+      return {
+        ok: false,
+        requestId: -1,
+        error: `army ${params.armyId} owner ${ctx.ownerId} is not session player ${session.playerID}`,
+      };
+    }
+    if (ctx.units.some((u) => u.typeId < 0)) {
+      return {
+        ok: false,
+        requestId: -1,
+        error: `army ${params.armyId} has unknown unit typeId — refuse HTTP wire`,
+      };
+    }
+    const path = await this.pathProvider.buildMovePath(params);
     const action = buildSignedArmyMoveAction({
       session,
       armyId: params.armyId,
@@ -78,11 +91,18 @@ export class HttpArmyActionExecutor implements ArmyActionExecutor {
       };
     }
     const session = await this.getSession();
+    const ctx = await this.armyContext.getArmyWireContext(params.armyId);
+    if (ctx.ownerId !== session.playerID) {
+      return {
+        ok: false,
+        requestId: -1,
+        error: `army ${params.armyId} owner ${ctx.ownerId} is not session player ${session.playerID}`,
+      };
+    }
     const path = await this.pathProvider.buildMovePath({
       armyId: params.armyId,
       target: params.targetPosition,
     });
-    const ctx = await this.armyContext.getArmyWireContext(params.armyId);
     const action = buildSignedArmyAttackAction({
       session,
       armyId: params.armyId,

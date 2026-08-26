@@ -68,4 +68,5 @@ export interface DiplomacyMatrixSnapshot {
   readonly enemies: readonly PlayerId[];
   readonly allies: readonly PlayerId[];
   readonly byRelationValue: Readonly<Record<string, number>>;
+  readonly neighborRelations?: Readonly<Record<string, Record<string, number>>>;
 }

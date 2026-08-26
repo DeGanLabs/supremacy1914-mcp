@@ -126,6 +126,7 @@ export function readDiplomacyMatrix(
     enemies: asIdList(fa.getEnemies?.(selfPlayerId)),
     allies: asIdList(fa.getAllies?.(selfPlayerId)),
     byRelationValue,
+    neighborRelations: fa.getRelations().neighborRelations,
   };
 }
 

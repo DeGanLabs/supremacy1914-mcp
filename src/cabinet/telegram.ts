@@ -1,0 +1,1717 @@
+import { Bot, InlineKeyboard, type Context } from "grammy";
+import type { CabinetChief } from "./chief.js";
+import type { CabinetMemory } from "./memory.js";
+import type { CabinetExecutor } from "./executor.js";
+import type { BrowserBridgeServer } from "../sensor/bridge-client.js";
+import type { SeatRegistry } from "./seats.js";
+import type { CabinetPlan } from "./types.js";
+import { assertPlanHash, classifyTasks } from "./policy.js";
+import type { NvidiaClient } from "./nvidia-client.js";
+import { redactSecrets } from "./redact.js";
+import { DEFAULT_SEAT_SCOPES, COST_CAPS } from "./cost-caps.js";
+import type { SensorToolName } from "./cost-caps.js";
+import { isSensorTool } from "../sensor/tools.js";
+import { formatHumanPlan, planHasExecutable } from "./plan-format.js";
+import {
+  parseApproveSelection,
+  selectExecutableTasks,
+  type ApproveSelection,
+} from "./approve-parse.js";
+import {
+  decorateMilitaryText,
+  formatMinisterLine,
+  formatStatusLines,
+  seatIcon,
+  seatLabel,
+} from "./telegram-format.js";
+import { normalizePlanTasks } from "./plan-normalize.js";
+import { unwrapWarPicture } from "./war-picture-util.js";
+import { formatThreadTranscript } from "./diplo-format.js";
+import { addHeroTask, rankHeroes, loadHeroTasks } from "./hero-tasks.js";
+import { expandSafeRetreatMoves } from "./safe-route.js";
+import {
+  applyConfirmedGoals,
+  detectGoalOverrideIntent,
+  formatProposedGoals,
+} from "./player-orders.js";
+import { mayAutoExecute, type HumanMode } from "./priority.js";
+import { getCommandQueue } from "./command-queue.js";
+import {
+  formatGroupsBrief,
+  loadGroups,
+  saveGroups,
+  seedDefaultGroups,
+  attachArmyToGroup,
+} from "./groups.js";
+import {
+  assignArmyToGeneral,
+  formatGeneralsBrief,
+  loadGenerals,
+  seedGeneralsFromPicture,
+  setGeneralMission,
+} from "./generals.js";
+import { loadFinanceState, formatFinanceBrief } from "./finance-model.js";
+import { formatMarketDigest } from "./market-engine.js";
+import { getEventBus } from "./events.js";
+import {
+  formatArmyBoard,
+  formatEconomyStrip,
+  formatRelationsTable,
+  formatSpyRoster,
+  formatStatsStrip,
+} from "./display-format.js";
+
+function formatPlan(
+  plan: CabinetPlan,
+  quiet: boolean,
+  picture?: import("./war-types.js").WarPictureRaw | null,
+): string {
+  return formatHumanPlan(plan, quiet, picture);
+}
+
+function approveTextFromCtx(ctx: Context): string {
+  const cmdArg = ((ctx.match as string | undefined) || "").trim();
+  if (cmdArg) return cmdArg;
+  const replyText = ctx.message?.text?.trim();
+  if (ctx.message?.reply_to_message && replyText) return replyText;
+  return "approve";
+}
+
+function advisorKeyboard(seats: SeatRegistry): InlineKeyboard {
+  const kb = new InlineKeyboard();
+  const list = seats.list();
+  for (let i = 0; i < list.length; i++) {
+    const s = list[i]!;
+    kb.text(seatLabel(s.id, s.name), `advisor:${s.id}`);
+    if (i % 2 === 1) kb.row();
+  }
+  if (list.length % 2 === 1) kb.row();
+  kb.text("🔇 Clear advisor", "advisor:clear");
+  return kb;
+}
+
+function homeKeyboard(autoOn: boolean, mode?: string): InlineKeyboard {
+  const modeLabel =
+    mode === "PAUSE"
+      ? "⏸ PAUSE"
+      : mode === "ABORT"
+        ? "🛑 STOP"
+        : mode === "SUGGEST"
+          ? "💡 SUGGEST"
+          : autoOn
+            ? "🟢 Auto ON"
+            : "⚪ Auto OFF";
+  return new InlineKeyboard()
+    .text("🏠 Home", "home:show")
+    .text("👥 Advisor", "home:advisor")
+    .row()
+    .text("🤝 Diplomacy", "home:diplo")
+    .text("🎖️ Heroes", "home:heroes")
+    .row()
+    .text("🪖 Groups", "home:groups")
+    .text("📈 Market", "home:market")
+    .row()
+    .text(modeLabel, "home:auto")
+    .text("⚔️ War", "home:war")
+    .row()
+    .text("📡 Status", "home:status")
+    .text("🛑 E-Stop", "home:estop");
+}
+
+function planKeyboard(planId: string): InlineKeyboard {
+  return new InlineKeyboard()
+    .text("✅ Approve all", `plan:approve:${planId}`)
+    .text("❌ Reject", `plan:reject:${planId}`)
+    .row()
+    .text("1️⃣", `plan:pick:${planId}:1`)
+    .text("2️⃣", `plan:pick:${planId}:2`)
+    .text("3️⃣", `plan:pick:${planId}:3`)
+    .text("4️⃣", `plan:pick:${planId}:4`);
+}
+
+/** Pending free-text for hero province assign (chatId → armyId+goal). */
+const pendingHeroAssign = new Map<
+  string,
+  { armyId: number; goal: "invade" | "hold" | "withdraw"; heroName?: string }
+>();
+
+/** Pending Confirm/Keep for player goal overrides. */
+const pendingGoalOverride = new Map<
+  string,
+  { proposed: Array<{ key: string; value: string }>; summary: string }
+>();
+
+class RateLimiter {
+  private timestamps: number[] = [];
+  private warned = false;
+  constructor(
+    private readonly maxPerWindow: number,
+    private readonly windowMs: number,
+  ) {}
+  tryTake(): boolean {
+    const now = Date.now();
+    this.timestamps = this.timestamps.filter((t) => now - t < this.windowMs);
+    if (this.timestamps.length >= this.maxPerWindow) return false;
+    this.timestamps.push(now);
+    this.warned = false;
+    return true;
+  }
+  shouldWarn(): boolean {
+    if (this.warned) return false;
+    this.warned = true;
+    return true;
+  }
+}
+
+export function startTelegramBot(input: {
+  readonly token: string;
+  readonly chatId: string;
+  readonly ownerUserId: number;
+  readonly quietApprove: boolean;
+  readonly chief: CabinetChief;
+  readonly memory: CabinetMemory;
+  readonly executor: CabinetExecutor;
+  readonly bridge: BrowserBridgeServer;
+  readonly seats: SeatRegistry;
+  readonly nvidia: NvidiaClient;
+  readonly dataDir?: string;
+  readonly ownerOnlySensors?: boolean;
+}): Bot {
+  const bot = new Bot(input.token);
+  const chatId = input.chatId;
+  const dataDir = input.dataDir || process.env.CABINET_DATA_DIR?.trim() || "data/cabinet";
+  const limiter = new RateLimiter(30, 60_000);
+
+  const isOwner = (ctx: Context) => ctx.from?.id === input.ownerUserId;
+  const inWarRoom = (ctx: Context) => String(ctx.chat?.id) === String(chatId);
+  const ownerOnlySensors = input.ownerOnlySensors !== false;
+  const autoExecLog: number[] = [];
+
+  async function requireOwner(ctx: Context): Promise<boolean> {
+    if (isOwner(ctx)) return true;
+    if (!ownerOnlySensors) return true;
+    await safeReply(ctx, "🔒 owner only — sensors and cabinet commands are locked");
+    return false;
+  }
+
+  function autoExecAllowed(): boolean {
+    const now = Date.now();
+    const windowMs = 60 * 60 * 1000;
+    while (autoExecLog.length && now - autoExecLog[0]! > windowMs) {
+      autoExecLog.shift();
+    }
+    return autoExecLog.length < COST_CAPS.maxAutoExecutesPerHour;
+  }
+
+  function noteAutoExec(): void {
+    autoExecLog.push(Date.now());
+  }
+
+  async function kbHome(): Promise<InlineKeyboard> {
+    const conv = await input.memory.loadConversationState();
+    return homeKeyboard(!!conv?.autoPilot, conv?.humanMode);
+  }
+
+  async function safeReply(
+    ctx: Context,
+    text: string,
+    extra?: { reply_markup?: InlineKeyboard; parse_mode?: "Markdown" },
+  ): Promise<void> {
+    if (!limiter.tryTake()) {
+      if (limiter.shouldWarn()) {
+        await ctx.reply("⏳ rate limited — wait a minute");
+      }
+      return;
+    }
+    try {
+      await ctx.reply(text.slice(0, 3500), {
+        parse_mode: extra?.parse_mode,
+        reply_markup: extra?.reply_markup,
+      });
+    } catch {
+      await ctx.reply(text.slice(0, 3500), {
+        reply_markup: extra?.reply_markup,
+      });
+    }
+  }
+
+  bot.command("start", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    await safeReply(
+      ctx,
+      [
+        "🏛️ *War Room*",
+        "",
+        "Server = brain · browser = actuator.",
+        "Tap *Menu* (/) or buttons below.",
+        "/home · /spies · /armies · /stats · /eco · /heroes · /diplo · /auto",
+      ].join("\n"),
+      {
+        parse_mode: "Markdown",
+        reply_markup: await kbHome(),
+      },
+    );
+  });
+
+  bot.command("home", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    await safeReply(ctx, "🏠 Home — pick an action:", {
+      reply_markup: await kbHome(),
+    });
+  });
+
+  bot.command("auto", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    if (!isOwner(ctx)) {
+      await safeReply(ctx, "🔒 owner only");
+      return;
+    }
+    const conv = await input.memory.loadConversationState();
+    const next = !conv?.autoPilot;
+    await input.memory.setAutoPilot(next);
+    const q = getCommandQueue(dataDir);
+    q.setPaused(false);
+    q.setEmergencyStop(false);
+    await safeReply(
+      ctx,
+      next
+        ? "🟢 *Auto ON* — low-risk Phase-1 runs without Approve. High-impact still Confirm.\nStanding orders still apply until you Confirm new goals."
+        : "⚪ *Auto OFF* — plans need your Approve again.",
+      {
+        parse_mode: "Markdown",
+        reply_markup: await kbHome(),
+      },
+    );
+  });
+
+  bot.command("mode", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    if (!isOwner(ctx)) {
+      await safeReply(ctx, "🔒 owner only");
+      return;
+    }
+    const arg = ((ctx.match as string) || "").trim().toUpperCase();
+    const modes = ["AUTO", "SUGGEST", "CONFIRM", "PAUSE", "ABORT"] as const;
+    if (!modes.includes(arg as (typeof modes)[number])) {
+      const conv = await input.memory.loadConversationState();
+      await safeReply(
+        ctx,
+        `Human mode: *${conv?.humanMode || (conv?.autoPilot ? "AUTO" : "CONFIRM")}*\nUsage: /mode AUTO|SUGGEST|CONFIRM|PAUSE|ABORT`,
+        { parse_mode: "Markdown", reply_markup: await kbHome() },
+      );
+      return;
+    }
+    await input.memory.setHumanMode(arg as HumanMode);
+    const q = getCommandQueue(dataDir);
+    if (arg === "PAUSE") q.setPaused(true);
+    else if (arg === "ABORT") {
+      q.setEmergencyStop(true);
+      q.setPaused(true);
+    } else {
+      q.setPaused(false);
+      q.setEmergencyStop(false);
+    }
+    await safeReply(ctx, `Mode → *${arg}*`, {
+      parse_mode: "Markdown",
+      reply_markup: await kbHome(),
+    });
+  });
+
+  bot.command("groups", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    if (!(await requireOwner(ctx))) return;
+    await showGroups(ctx);
+  });
+
+  bot.command("market", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    if (!(await requireOwner(ctx))) return;
+    await showMarket(ctx);
+  });
+
+  bot.command("diplo", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    if (!(await requireOwner(ctx))) return;
+    await showDiplo(ctx);
+  });
+
+  bot.command("advisor", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    if (!(await requireOwner(ctx))) return;
+    const conv = await input.memory.loadConversationState();
+    const current = conv?.activeAdvisor
+      ? `\nCurrently: ${seatLabel(conv.activeAdvisor, input.seats.get(conv.activeAdvisor)?.name ?? conv.activeAdvisor)}`
+      : "\nNo advisor selected yet.";
+    await safeReply(
+      ctx,
+      `👥 *Who do you want to talk to?*${current}\n\nPick one — then chat freely.`,
+      { parse_mode: "Markdown", reply_markup: advisorKeyboard(input.seats) },
+    );
+  });
+
+  bot.command("heroes", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    if (!(await requireOwner(ctx))) return;
+    await showHeroes(ctx);
+  });
+
+  bot.command("spies", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    if (!(await requireOwner(ctx))) return;
+    await showSpies(ctx);
+  });
+
+  bot.command("armies", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    if (!(await requireOwner(ctx))) return;
+    await showArmies(ctx);
+  });
+
+  bot.command("stats", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    if (!(await requireOwner(ctx))) return;
+    await showStats(ctx);
+  });
+
+  bot.command("eco", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    if (!(await requireOwner(ctx))) return;
+    await showEco(ctx);
+  });
+
+  bot.command("status", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    if (!(await requireOwner(ctx))) return;
+    const st = input.bridge.getStatus();
+    const plans = await input.memory.getPlans();
+    const open = plans.filter((p) => p.status === "proposed").length;
+    const conv = await input.memory.loadConversationState();
+    await safeReply(
+      ctx,
+      formatStatusLines({
+        bridgeUp: input.bridge.isHealthy(),
+        gameId: st.gameId,
+        playerId: st.playerId,
+        heartbeat: st.lastHeartbeatAt
+          ? new Date(st.lastHeartbeatAt).toISOString()
+          : null,
+        model: input.nvidia.model,
+        fast: input.nvidia.fastModel,
+        openPlans: open,
+        advisor: conv?.activeAdvisor ?? null,
+        busySeats: input.chief.busySeatIds(),
+        autoPilot: !!conv?.autoPilot,
+      }),
+      {
+        parse_mode: "Markdown",
+        reply_markup: await kbHome(),
+      },
+    );
+  });
+
+  bot.command("brief", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    if (!(await requireOwner(ctx))) return;
+    void runCabinetTurn(ctx, "@cabinet status brief", { fireAndForget: true });
+  });
+
+  bot.command("war", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    if (!(await requireOwner(ctx))) return;
+    const rest = ((ctx.match as string | undefined) || "").trim().toLowerCase();
+    const snap = await input.memory.loadWarPicture<{
+      takenAt?: string;
+      myNation?: string;
+      day?: number;
+      atWar?: { nation?: string; name?: string; id?: number }[];
+      zones?: {
+        level: string;
+        nation: string;
+        note: string;
+        provinces?: string[];
+        ownArmyIds?: number[];
+        hostileArmyIds?: number[];
+      }[];
+      fronts?: unknown[];
+      triggers?: { line: string }[];
+      sensorDegraded?: boolean;
+      gameId?: number;
+      myPlayerId?: number;
+    }>();
+    if (!snap) {
+      await safeReply(
+        ctx,
+        "📭 no war picture yet — wait for watch tick or reconnect bridge",
+      );
+      return;
+    }
+    if (rest === "board") {
+      const { formatWarBoard } = await import("./war-loop.js");
+      await safeReply(
+        ctx,
+        decorateMilitaryText(
+          formatWarBoard(snap as import("./war-types.js").WarWatchSnapshot),
+        ),
+      );
+      return;
+    }
+    const brief = await input.memory.loadWarBrief();
+    await safeReply(ctx, decorateMilitaryText(brief.slice(0, 3500)));
+  });
+
+  bot.command("goal", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    if (!isOwner(ctx)) {
+      await safeReply(ctx, "🔒 owner only");
+      return;
+    }
+    const rest = (ctx.match as string | undefined)?.trim() || "";
+    const m = rest.match(/^set\s+(\S+)\s+(.+)$/i);
+    if (!m) {
+      const goals = await input.memory.getGoals();
+      await safeReply(
+        ctx,
+        goals.length
+          ? goals.map((g) => `🎯 ${g.key}=${g.value}`).join("\n")
+          : "no goals — /goal set <key> <value>",
+      );
+      return;
+    }
+    await input.memory.setGoal(m[1]!, m[2]!);
+    await safeReply(ctx, `✅ goal set: ${m[1]}=${m[2]}`);
+  });
+
+  bot.command("seat", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    if (!isOwner(ctx)) {
+      await safeReply(ctx, "🔒 owner only");
+      return;
+    }
+    const rest = ((ctx.match as string | undefined) || "").trim();
+    if (!rest || rest === "list") {
+      await safeReply(
+        ctx,
+        input.seats
+          .list()
+          .map((s) => `${seatIcon(s.id)} ${s.id}: ${s.name}`)
+          .join("\n"),
+      );
+      return;
+    }
+    const rem = rest.match(/^remove\s+(\S+)$/i);
+    if (rem) {
+      input.seats.remove(rem[1]!);
+      await safeReply(ctx, `removed seat ${rem[1]}`);
+      return;
+    }
+    const add = rest.match(
+      /^add\s+(\S+)\s+"([^"]+)"(?:\s+scopes=([a-z0-9_,]+))?$/i,
+    );
+    if (add) {
+      const id = add[1]!.toLowerCase();
+      const name = add[2]!;
+      const scopes = (add[3]?.split(",") || [
+        "current_game",
+        "get_own_armies",
+      ]).filter((s): s is SensorToolName => isSensorTool(s));
+      if (!scopes.length) {
+        await safeReply(ctx, "no valid sensor scopes — use names from SENSOR_TOOLS");
+        return;
+      }
+      const base = DEFAULT_SEAT_SCOPES.war;
+      const dataScopes = scopes.length ? scopes : base;
+      input.seats.add({
+        id,
+        name,
+        role: name,
+        mentionAliases: [`@${id[0]!.toUpperCase()}${id.slice(1)}`],
+        dataScopes,
+        systemPromptPath: "war.md",
+      });
+      await safeReply(ctx, `added seat ${id} scopes=${dataScopes.join(",")}`);
+      return;
+    }
+    await safeReply(
+      ctx,
+      'usage: /seat list | /seat remove <id> | /seat add <id> "Name" scopes=tool,tool',
+    );
+  });
+
+  async function doApprove(
+    ctx: Context,
+    selection?: ApproveSelection | null,
+    planOverride?: CabinetPlan | null,
+  ): Promise<void> {
+    if (!isOwner(ctx)) {
+      await safeReply(ctx, "🔒 owner only");
+      return;
+    }
+    try {
+      const plan = planOverride ?? (await resolvePlan(ctx, input.memory));
+      if (!plan) {
+        await safeReply(
+          ctx,
+          "📭 no plan found — reply to a PLAN or /approve <plan_id>",
+        );
+        return;
+      }
+      if (plan.status === "rejected") {
+        await safeReply(ctx, "plan already rejected");
+        return;
+      }
+      assertPlanHash(plan);
+
+      const sel =
+        selection ??
+        parseApproveSelection(approveTextFromCtx(ctx)) ?? {
+          approveAll: true,
+          includeTasks: new Set<number>(),
+          excludeTasks: new Set<number>(),
+        };
+
+      const chosen = selectExecutableTasks(plan.tasks, sel);
+      const { executable, proposeOnly } = classifyTasks(plan.tasks);
+      if (!executable.length) {
+        await safeReply(
+          ctx,
+          proposeOnly.length
+            ? "Advice only — nothing to run. Ask for moves/builds if you want an executable PLAN."
+            : "approve refused — no executable Phase-1 tasks",
+        );
+        return;
+      }
+      if (!chosen.length) {
+        await safeReply(
+          ctx,
+          "nothing selected — try Approve all, or tap 1️⃣ 2️⃣ on the PLAN",
+        );
+        return;
+      }
+      if (!input.bridge.isHealthy()) {
+        await safeReply(ctx, "🔴 game not connected — cannot approve/execute");
+        return;
+      }
+      // Re-resolve coords from live war picture so lat/long invents never ship.
+      const picture = unwrapWarPicture(await input.memory.loadWarPicture());
+      const fixedChosen = expandSafeRetreatMoves(
+        normalizePlanTasks(chosen, picture, plan.goalSummary),
+        picture,
+      ).filter((t) => !t.proposeOnly);
+      if (!fixedChosen.length) {
+        await safeReply(
+          ctx,
+          "approve refused — move coords are off-map (e.g. lat/long) and could not resolve a province from the plan text. Ask @War for a new PLAN naming Whitehorse / Prince George.",
+        );
+        return;
+      }
+      plan.status = "approved";
+      await input.memory.savePlan(plan);
+      const result = await input.executor.executeApproved(plan, fixedChosen);
+      const q = getCommandQueue(dataDir);
+      await q.load();
+      for (const r of result.results) {
+        if (r.type === "moveArmy" && r.ok) {
+          await q.logVerified({
+            priority: 20,
+            commander: "telegram-approve",
+            action: "moveArmy",
+            risk: "medium",
+            detail: r.detail,
+          });
+        }
+      }
+      const skipped =
+        executable.length - chosen.length + result.skippedProposeOnly;
+      const summary = input.quietApprove
+        ? `✅ approved ${plan.id}: ran ${fixedChosen.length} · ${result.results.filter((r) => r.ok).length} ok${skipped ? ` · ${skipped} skipped` : ""}`
+        : `✅ approved ${plan.id} (${fixedChosen.length}/${executable.length})\n${result.results.map((r) => `${r.ok ? "✅" : "❌"} ${r.type}: ${r.detail}`).join("\n")}`;
+      await safeReply(ctx, decorateMilitaryText(summary));
+      if (!result.ok) {
+        await safeReply(
+          ctx,
+          "⚠️ some tasks failed — plan is retryable (not locked). Fix args or /approve again.",
+        );
+      }
+    } catch (err) {
+      await safeReply(
+        ctx,
+        redactSecrets(err instanceof Error ? err.message : String(err)),
+      );
+    }
+  }
+
+  async function showGroups(ctx: Context): Promise<void> {
+    const picture = unwrapWarPicture(await input.memory.loadWarPicture());
+    const existing = await loadGroups(dataDir);
+    const groups = seedDefaultGroups(picture, existing);
+    await saveGroups(dataDir, groups);
+    await seedGeneralsFromPicture(dataDir, picture);
+    const generals = await loadGenerals(dataDir);
+    const kb = new InlineKeyboard()
+      .text("Refresh", "home:groups")
+      .text("🏠 Home", "home:show");
+    await safeReply(
+      ctx,
+      `🪖 *Force groups*\n\n${formatGroupsBrief(groups)}\n\n*Generals*\n${formatGeneralsBrief(generals)}`,
+      { parse_mode: "Markdown", reply_markup: kb },
+    );
+  }
+
+  async function showMarket(ctx: Context): Promise<void> {
+    let state = await loadFinanceState(dataDir);
+    if (!state && input.bridge.isHealthy()) {
+      try {
+        const resources = await input.bridge.call("get_resources", {});
+        const market = await input.bridge.call("get_market", {});
+        const { refreshFinanceFromTools } = await import("./finance-model.js");
+        state = await refreshFinanceFromTools(dataDir, resources, market);
+      } catch (err) {
+        await safeReply(
+          ctx,
+          redactSecrets(err instanceof Error ? err.message : String(err)),
+        );
+        return;
+      }
+    }
+    if (!state) {
+      await safeReply(ctx, "📈 No finance model yet — ask @Finance or connect bridge.", {
+        reply_markup: await kbHome(),
+      });
+      return;
+    }
+    await safeReply(
+      ctx,
+      `📈 *Market*\n\n${formatMarketDigest(state)}\n\n${formatFinanceBrief(state)}`.slice(
+        0,
+        3500,
+      ),
+      { parse_mode: "Markdown", reply_markup: await kbHome() },
+    );
+  }
+
+  async function showSpies(ctx: Context): Promise<void> {
+    if (!input.bridge.isHealthy()) {
+      await safeReply(ctx, "🔴 game not connected");
+      return;
+    }
+    try {
+      const spies = await input.bridge.call("get_spies", {});
+      await safeReply(ctx, decorateMilitaryText(formatSpyRoster(spies)), {
+        reply_markup: await kbHome(),
+      });
+    } catch (err) {
+      await safeReply(
+        ctx,
+        redactSecrets(err instanceof Error ? err.message : String(err)),
+      );
+    }
+  }
+
+  async function showArmies(ctx: Context): Promise<void> {
+    const picture = unwrapWarPicture(await input.memory.loadWarPicture());
+    await safeReply(
+      ctx,
+      decorateMilitaryText(formatArmyBoard(picture, picture?.timeScale)),
+      { reply_markup: await kbHome() },
+    );
+  }
+
+  async function showStats(ctx: Context): Promise<void> {
+    if (!input.bridge.isHealthy()) {
+      await safeReply(ctx, "🔴 game not connected");
+      return;
+    }
+    try {
+      const stats = await input.bridge.call("get_stats", {});
+      await safeReply(ctx, formatStatsStrip(stats), {
+        reply_markup: await kbHome(),
+      });
+    } catch (err) {
+      await safeReply(
+        ctx,
+        redactSecrets(err instanceof Error ? err.message : String(err)),
+      );
+    }
+  }
+
+  async function showEco(ctx: Context): Promise<void> {
+    if (!input.bridge.isHealthy()) {
+      await safeReply(ctx, "🔴 game not connected");
+      return;
+    }
+    try {
+      const eco = await input.bridge.call("get_resources", {});
+      await safeReply(ctx, formatEconomyStrip(eco), {
+        reply_markup: await kbHome(),
+      });
+    } catch (err) {
+      await safeReply(
+        ctx,
+        redactSecrets(err instanceof Error ? err.message : String(err)),
+      );
+    }
+  }
+
+  async function showHeroes(ctx: Context): Promise<void> {
+    if (!input.bridge.isHealthy()) {
+      await safeReply(ctx, "🔴 game not connected");
+      return;
+    }
+    try {
+      const heroes = (await input.bridge.call("get_heroes", {})) as {
+        deployedOnMap?: Array<{
+          armyId: number;
+          province?: string | null;
+          heroes?: Array<{
+            name?: string;
+            shortName?: string;
+            level?: number;
+            rarity?: string;
+          }>;
+        }>;
+      };
+      const picture = unwrapWarPicture(await input.memory.loadWarPicture());
+      await seedGeneralsFromPicture(dataDir, picture);
+      const generals = await loadGenerals(dataDir);
+      const enriched = (heroes.deployedOnMap ?? []).map((d) => {
+        const army = picture?.ownArmies?.find((a) => a.id === d.armyId);
+        return {
+          ...d,
+          units: army?.units ? [...army.units] : undefined,
+          morale: army?.morale,
+        };
+      });
+      const ranked = rankHeroes(enriched);
+      if (!ranked.length) {
+        await safeReply(ctx, "🎖️ No heroes deployed on the map.", {
+          reply_markup: await kbHome(),
+        });
+        return;
+      }
+      const lines = ranked.slice(0, 12).map((h, i) => {
+        const gen = generals.find((g) => g.heroArmyId === h.armyId);
+        const status = gen ? `[${gen.status}] ${gen.role}` : "unassigned";
+        return `${i + 1}. ${h.heroName} L${h.level} — ${h.stackSize} @ ${h.province} mor ${Math.round(h.morale)}\n   ${status}${gen?.mission ? ` · ${gen.mission}` : ""}`;
+      });
+      const kb = new InlineKeyboard();
+      for (let i = 0; i < Math.min(ranked.length, 8); i++) {
+        const h = ranked[i]!;
+        kb.text(`${h.heroName.slice(0, 16)}`, `hero:view:${h.armyId}`);
+        if (i % 2 === 1) kb.row();
+      }
+      kb.row().text("🏠 Home", "home:show");
+      await safeReply(
+        ctx,
+        `🎖️ *Ops center* (generals)\n\n${lines.join("\n")}`,
+        { parse_mode: "Markdown", reply_markup: kb },
+      );
+    } catch (err) {
+      await safeReply(
+        ctx,
+        redactSecrets(err instanceof Error ? err.message : String(err)),
+      );
+    }
+  }
+
+  async function showDiplo(ctx: Context): Promise<void> {
+    if (!input.bridge.isHealthy()) {
+      await safeReply(ctx, "🔴 game not connected");
+      return;
+    }
+    try {
+      const msgs = (await input.bridge.call("get_messages", {})) as {
+        threads?: Array<{
+          otherPlayerId: number;
+          other?: { nation?: string; name?: string };
+          count?: number;
+          last?: { bodyText?: string };
+        }>;
+      };
+      let relBlock = "";
+      try {
+        const diplo = await input.bridge.call("get_relations", {});
+        relBlock = `${formatRelationsTable(diplo)}\n\n`;
+      } catch {
+        relBlock = "";
+      }
+      const threads = (msgs.threads ?? []).slice(0, 8);
+      if (!threads.length) {
+        await safeReply(
+          ctx,
+          relBlock ? `${relBlock}🤝 No diplomacy threads.` : "🤝 No diplomacy threads.",
+        );
+        return;
+      }
+      const kb = new InlineKeyboard();
+      const lines: string[] = [];
+      for (let i = 0; i < threads.length; i++) {
+        const t = threads[i]!;
+        const label =
+          t.other?.nation || t.other?.name || `p${t.otherPlayerId}`;
+        lines.push(
+          `${i + 1}. ${label} (${t.count ?? "?"} msgs) — ${(t.last?.bodyText ?? "").slice(0, 60)}`,
+        );
+        kb.text(label.slice(0, 28), `diplo:thread:${t.otherPlayerId}`);
+        if (i % 2 === 1) kb.row();
+      }
+      kb.row().text("🏠 Home", "home:show");
+      await input.memory.setActiveAdvisor("foreign");
+      await safeReply(
+        ctx,
+        `${relBlock}🤝 *Diplomacy threads*\n\n${lines.join("\n")}\n\nTap a thread for the full chat.`,
+        { parse_mode: "Markdown", reply_markup: kb },
+      );
+    } catch (err) {
+      await safeReply(
+        ctx,
+        redactSecrets(err instanceof Error ? err.message : String(err)),
+      );
+    }
+  }
+
+  bot.command("approve", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    await doApprove(ctx);
+  });
+
+  bot.command("reject", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    if (!isOwner(ctx)) {
+      await safeReply(ctx, "🔒 owner only");
+      return;
+    }
+    const plan = await resolvePlan(ctx, input.memory);
+    if (!plan) {
+      await safeReply(ctx, "📭 no plan found");
+      return;
+    }
+    plan.status = "rejected";
+    await input.memory.savePlan(plan);
+    await safeReply(ctx, `❌ rejected ${plan.id} — bridge not touched`);
+  });
+
+  bot.on("callback_query:data", async (ctx) => {
+    if (!inWarRoom(ctx)) {
+      await ctx.answerCallbackQuery();
+      return;
+    }
+    const data = ctx.callbackQuery.data;
+    if (
+      ownerOnlySensors &&
+      !isOwner(ctx) &&
+      data !== "home:show"
+    ) {
+      await ctx.answerCallbackQuery({ text: "owner only" });
+      return;
+    }
+    if (data.startsWith("advisor:")) {
+      const id = data.slice("advisor:".length);
+      if (id === "clear") {
+        await input.memory.setActiveAdvisor(null);
+        await ctx.answerCallbackQuery({ text: "Advisor cleared" });
+        await safeReply(
+          ctx,
+          "🔇 Advisor cleared. Use /advisor to pick someone.",
+          {
+            reply_markup: await kbHome(),
+          },
+        );
+        return;
+      }
+      const seat = input.seats.get(id);
+      if (!seat) {
+        await ctx.answerCallbackQuery({ text: "Unknown seat" });
+        return;
+      }
+      await input.memory.setActiveAdvisor(seat.id);
+      await ctx.answerCallbackQuery({ text: `Talking to ${seat.name}` });
+      await safeReply(
+        ctx,
+        [
+          `${seatIcon(seat.id)} *Now talking to ${seat.name}*`,
+          "",
+          "Type freely — no @tag needed.",
+          "Switch anytime with /advisor or Home.",
+        ].join("\n"),
+        {
+          parse_mode: "Markdown",
+          reply_markup: await kbHome(),
+        },
+      );
+      return;
+    }
+
+    if (data.startsWith("home:")) {
+      const action = data.slice("home:".length);
+      const conv = await input.memory.loadConversationState();
+      if (action === "show") {
+        await ctx.answerCallbackQuery({ text: "Home" });
+        await safeReply(ctx, "🏠 Home — pick an action:", {
+          reply_markup: await kbHome(),
+        });
+        return;
+      }
+      if (action === "advisor") {
+        await ctx.answerCallbackQuery();
+        await safeReply(ctx, "👥 Pick an advisor:", {
+          reply_markup: advisorKeyboard(input.seats),
+        });
+        return;
+      }
+      if (action === "diplo") {
+        await ctx.answerCallbackQuery({ text: "Diplomacy" });
+        await showDiplo(ctx);
+        return;
+      }
+      if (action === "heroes") {
+        await ctx.answerCallbackQuery({ text: "Heroes" });
+        await showHeroes(ctx);
+        return;
+      }
+      if (action === "groups") {
+        await ctx.answerCallbackQuery({ text: "Groups" });
+        await showGroups(ctx);
+        return;
+      }
+      if (action === "market") {
+        await ctx.answerCallbackQuery({ text: "Market" });
+        await showMarket(ctx);
+        return;
+      }
+      if (action === "estop") {
+        if (!isOwner(ctx)) {
+          await ctx.answerCallbackQuery({ text: "owner only" });
+          return;
+        }
+        await input.memory.setHumanMode("ABORT");
+        const q = getCommandQueue(dataDir);
+        q.setEmergencyStop(true);
+        q.setPaused(true);
+        await ctx.answerCallbackQuery({ text: "EMERGENCY STOP" });
+        await safeReply(
+          ctx,
+          "🛑 *EMERGENCY STOP* — queue cancelled; no browser actions until /mode CONFIRM or /auto.",
+          { parse_mode: "Markdown", reply_markup: await kbHome() },
+        );
+        return;
+      }
+      if (action === "auto") {
+        if (!isOwner(ctx)) {
+          await ctx.answerCallbackQuery({ text: "owner only" });
+          return;
+        }
+        const next = !conv?.autoPilot;
+        await input.memory.setAutoPilot(next);
+        const q = getCommandQueue(dataDir);
+        q.setPaused(false);
+        q.setEmergencyStop(false);
+        await ctx.answerCallbackQuery({
+          text: next ? "Auto ON" : "Auto OFF",
+        });
+        await safeReply(
+          ctx,
+          next
+            ? "🟢 *Auto ON* — low-risk Phase-1 executes without Approve."
+            : "⚪ *Auto OFF* — plans need your Approve again.",
+          {
+            parse_mode: "Markdown",
+            reply_markup: await kbHome(),
+          },
+        );
+        return;
+      }
+      if (action === "war") {
+        await ctx.answerCallbackQuery();
+        await input.memory.setActiveAdvisor("war");
+        if (!input.chief.busySeatIds().includes("war")) {
+          void runCabinetTurn(ctx, "@War quick sitrep", {
+            fireAndForget: true,
+          });
+        } else {
+          await safeReply(ctx, "⚔️ War is already working — sitrep folded.", {
+            reply_markup: await kbHome(),
+          });
+        }
+        return;
+      }
+      if (action === "status") {
+        await ctx.answerCallbackQuery();
+        const st = input.bridge.getStatus();
+        const plans = await input.memory.getPlans();
+        const open = plans.filter((p) => p.status === "proposed").length;
+        const c2 = await input.memory.loadConversationState();
+        await safeReply(
+          ctx,
+          formatStatusLines({
+            bridgeUp: input.bridge.isHealthy(),
+            gameId: st.gameId,
+            playerId: st.playerId,
+            heartbeat: st.lastHeartbeatAt
+              ? new Date(st.lastHeartbeatAt).toISOString()
+              : null,
+            model: input.nvidia.model,
+            fast: input.nvidia.fastModel,
+            openPlans: open,
+            advisor: c2?.activeAdvisor ?? null,
+            busySeats: input.chief.busySeatIds(),
+            autoPilot: !!c2?.autoPilot,
+          }),
+          {
+            parse_mode: "Markdown",
+            reply_markup: await kbHome(),
+          },
+        );
+        return;
+      }
+      if (action === "brief") {
+        await ctx.answerCallbackQuery();
+        void runCabinetTurn(ctx, "@cabinet status brief", {
+          fireAndForget: true,
+        });
+        return;
+      }
+    }
+
+    if (data.startsWith("goal:") && isOwner(ctx)) {
+      const gAction = data.slice("goal:".length);
+      const pending = pendingGoalOverride.get(String(ctx.chat?.id));
+      if (gAction === "keep") {
+        pendingGoalOverride.delete(String(ctx.chat?.id));
+        await ctx.answerCallbackQuery({ text: "Kept standing orders" });
+        await safeReply(
+          ctx,
+          "Keeping hold/no-invade/focus as-is.",
+          { reply_markup: await kbHome() },
+        );
+        return;
+      }
+      if (gAction === "confirm" && pending) {
+        pendingGoalOverride.delete(String(ctx.chat?.id));
+        const goals = await input.memory.getGoals();
+        await input.memory.replaceGoals(
+          applyConfirmedGoals(goals, pending.proposed),
+        );
+        await getEventBus(dataDir).publish("PLAYER_ORDER", {
+          source: "telegram",
+          payload: { confirmed: pending.proposed },
+        });
+        await ctx.answerCallbackQuery({ text: "Orders updated" });
+        await safeReply(
+          ctx,
+          `✅ New orders confirmed:\n${formatProposedGoals(pending.proposed)}`,
+          { reply_markup: await kbHome() },
+        );
+        return;
+      }
+      await ctx.answerCallbackQuery({ text: "nothing pending" });
+      return;
+    }
+
+    if (data.startsWith("diplo:thread:")) {
+      const pid = Number(data.slice("diplo:thread:".length));
+      await ctx.answerCallbackQuery({ text: "Loading thread…" });
+      if (!input.bridge.isHealthy()) {
+        await safeReply(ctx, "🔴 game not connected");
+        return;
+      }
+      try {
+        const thread = await input.bridge.call("get_thread", { playerId: pid });
+        await input.memory.setActiveAdvisor("foreign");
+        await safeReply(
+          ctx,
+          decorateMilitaryText(formatThreadTranscript(thread)).slice(0, 3500),
+          {
+            reply_markup: new InlineKeyboard()
+              .text("Ask @Foreign", "advisor:foreign")
+              .text("🏠 Home", "home:show"),
+          },
+        );
+      } catch (err) {
+        await safeReply(
+          ctx,
+          redactSecrets(err instanceof Error ? err.message : String(err)),
+        );
+      }
+      return;
+    }
+
+    if (data.startsWith("hero:") && isOwner(ctx)) {
+      const parts = data.split(":");
+      const action = parts[1];
+      const armyId = Number(parts[2]);
+      if (!Number.isFinite(armyId)) {
+        await ctx.answerCallbackQuery({ text: "bad hero" });
+        return;
+      }
+      if (action === "view") {
+        await ctx.answerCallbackQuery();
+        const tasks = await loadHeroTasks(input.memory);
+        const active = tasks.filter(
+          (t) =>
+            t.heroArmyId === armyId &&
+            (t.status === "queued" || t.status === "active"),
+        );
+        const generals = await loadGenerals(dataDir);
+        const gen = generals.find((g) => g.heroArmyId === armyId);
+        const q = getCommandQueue(dataDir);
+        await q.load();
+        const queued = q
+          .list(20)
+          .filter(
+            (c) =>
+              c.commander === gen?.id ||
+              c.army === armyId ||
+              (gen?.assignedArmyIds ?? []).includes(c.army ?? -1),
+          )
+          .slice(-5);
+        const kb = new InlineKeyboard()
+          .text("Invade…", `hero:task:${armyId}:invade`)
+          .text("Hold", `hero:task:${armyId}:hold`)
+          .row()
+          .text("Withdraw…", `hero:task:${armyId}:withdraw`)
+          .text("Air-bridge", `hero:mission:${armyId}:air-bridge`)
+          .row()
+          .text("Attach nearby", `hero:attach:${armyId}`)
+          .row()
+          .text("🎖️ Heroes", "home:heroes")
+          .text("🏠 Home", "home:show");
+        await safeReply(
+          ctx,
+          [
+            `🎖️ *General* army \`${armyId}\`${gen ? ` — ${gen.name}` : ""}`,
+            gen
+              ? `Status: ${gen.status} · ${gen.role}${gen.mission ? `\nMission: ${gen.mission}` : ""}\nArmies: ${gen.assignedArmyIds.slice(0, 10).join(", ")}`
+              : "Not seeded yet — open Groups after war-watch tick.",
+            `Hero tasks: ${active.length ? active.map((t) => `${t.goal} ${t.province ?? ""}`).join(", ") : "none"}`,
+            queued.length
+              ? `Queue: ${queued.map((c) => `${c.action}#${c.status}`).join(", ")}`
+              : "Queue: empty",
+          ].join("\n"),
+          { parse_mode: "Markdown", reply_markup: kb },
+        );
+        return;
+      }
+      if (action === "mission") {
+        const mission = parts.slice(3).join(":") || "hold";
+        await ctx.answerCallbackQuery({ text: "Mission set" });
+        await setGeneralMission(
+          dataDir,
+          `gen_${armyId}`,
+          mission,
+          mission === "hold" ? "DEFENDING" : "MOVING",
+        );
+        await addHeroTask(input.memory, {
+          heroArmyId: armyId,
+          goal: mission.includes("invade") ? "invade" : "hold",
+          note: mission,
+        });
+        await safeReply(
+          ctx,
+          `✅ Mission *${mission}* assigned to general ${armyId}.`,
+          { parse_mode: "Markdown", reply_markup: await kbHome() },
+        );
+        return;
+      }
+      if (action === "task") {
+        const goal = parts[3] as "invade" | "hold" | "withdraw";
+        if (goal === "hold") {
+          await ctx.answerCallbackQuery({ text: "Hold queued" });
+          await addHeroTask(input.memory, {
+            heroArmyId: armyId,
+            goal: "hold",
+            note: "hold position",
+          });
+          await safeReply(
+            ctx,
+            `✅ Hold task queued for hero army ${armyId}. Auto/War will work it task-by-task.`,
+            {
+              reply_markup: await kbHome(),
+            },
+          );
+          return;
+        }
+        await ctx.answerCallbackQuery({ text: "Reply with province" });
+        pendingHeroAssign.set(String(ctx.chat?.id), {
+          armyId,
+          goal,
+        });
+        await safeReply(
+          ctx,
+          `Type the target province for *${goal}* (e.g. Honolulu):`,
+          { parse_mode: "Markdown" },
+        );
+        return;
+      }
+      if (action === "attach") {
+        await ctx.answerCallbackQuery();
+        const picture = unwrapWarPicture(await input.memory.loadWarPicture());
+        const hero = picture?.ownArmies?.find((a) => a.id === armyId);
+        if (!hero?.pos) {
+          await safeReply(ctx, "Hero army not in war picture.");
+          return;
+        }
+        const nearby = (picture?.ownArmies ?? [])
+          .filter((a) => a.id !== armyId && a.pos)
+          .map((a) => ({
+            a,
+            d: Math.hypot(a.pos!.x - hero.pos!.x, a.pos!.y - hero.pos!.y),
+          }))
+          .filter((x) => x.d < 400)
+          .sort((x, y) => x.d - y.d)
+          .slice(0, 8);
+        const kb = new InlineKeyboard();
+        for (const { a } of nearby) {
+          kb.text(
+            `${a.province ?? a.id} (${a.id})`.slice(0, 28),
+            `hero:attachok:${armyId}:${a.id}`,
+          ).row();
+        }
+        kb.text("🏠 Home", "home:show");
+        await safeReply(
+          ctx,
+          nearby.length
+            ? "Tap armies/ships to attach to this hero’s next task:"
+            : "No nearby stacks found.",
+          { reply_markup: kb },
+        );
+        return;
+      }
+      if (action === "attachok") {
+        const attachId = Number(parts[3]);
+        await ctx.answerCallbackQuery({ text: "Attached" });
+        const tasks = await loadHeroTasks(input.memory);
+        let task = [...tasks]
+          .reverse()
+          .find(
+            (t) =>
+              t.heroArmyId === armyId &&
+              (t.status === "queued" || t.status === "active"),
+          );
+        if (!task) {
+          task = await addHeroTask(input.memory, {
+            heroArmyId: armyId,
+            goal: "hold",
+            attachedArmyIds: [attachId],
+          });
+        } else {
+          const { updateHeroTask } = await import("./hero-tasks.js");
+          await updateHeroTask(input.memory, task.id, {
+            attachedArmyIds: [
+              ...new Set([...task.attachedArmyIds, attachId]),
+            ],
+          });
+        }
+        await assignArmyToGeneral(dataDir, `gen_${armyId}`, attachId);
+        const generals = await loadGenerals(dataDir);
+        const gen = generals.find((g) => g.heroArmyId === armyId);
+        if (gen?.groupId) {
+          await attachArmyToGroup(dataDir, gen.groupId, attachId);
+        } else {
+          await attachArmyToGroup(dataDir, "grp_alaska_screen", attachId);
+        }
+        await safeReply(
+          ctx,
+          `✅ Attached army ${attachId} to general ${armyId} (group + ops ownership).`,
+        );
+        return;
+      }
+    }
+
+    if (data.startsWith("plan:") && isOwner(ctx)) {
+      const parts = data.split(":");
+      const action = parts[1];
+      const planId = parts[2];
+      if (!planId) {
+        await ctx.answerCallbackQuery({ text: "bad plan" });
+        return;
+      }
+      const plan = await input.memory.getPlan(planId);
+      if (!plan) {
+        await ctx.answerCallbackQuery({ text: "plan gone" });
+        return;
+      }
+      if (action === "reject") {
+        plan.status = "rejected";
+        await input.memory.savePlan(plan);
+        await ctx.answerCallbackQuery({ text: "Rejected" });
+        await safeReply(ctx, `❌ rejected ${plan.id}`);
+        return;
+      }
+      if (action === "approve") {
+        await ctx.answerCallbackQuery({ text: "Approving…" });
+        await doApprove(
+          ctx,
+          {
+            approveAll: true,
+            includeTasks: new Set(),
+            excludeTasks: new Set(),
+          },
+          plan,
+        );
+        return;
+      }
+      if (action === "pick") {
+        const n = Number(parts[3]);
+        if (!Number.isFinite(n) || n < 1) {
+          await ctx.answerCallbackQuery({ text: "bad task #" });
+          return;
+        }
+        await ctx.answerCallbackQuery({ text: `Approving task ${n}…` });
+        await doApprove(
+          ctx,
+          {
+            approveAll: false,
+            includeTasks: new Set([n]),
+            excludeTasks: new Set(),
+          },
+          plan,
+        );
+        return;
+      }
+    }
+
+    await ctx.answerCallbackQuery();
+  });
+
+  async function deliverTurn(
+    ctx: Context,
+    turn: Awaited<ReturnType<CabinetChief["handleUserMessage"]>>,
+  ): Promise<void> {
+    if (turn.bridgeDown) {
+      await safeReply(
+        ctx,
+        turn.publicLines[0] ||
+          "🔴 game not connected — open tab + paste bridge, then /status",
+      );
+      return;
+    }
+    if (turn.note) await safeReply(ctx, turn.note);
+    for (const line of turn.publicLines.slice(0, 6)) {
+      const m = line.match(/^@([^:]+):\s*([\s\S]*)$/);
+      if (m) {
+        const seat = input.seats
+          .list()
+          .find(
+            (s) =>
+              s.name === m[1] ||
+              s.id === m[1]!.toLowerCase() ||
+              m[1]!.toLowerCase().includes(s.id),
+          );
+        const formatted = seat
+          ? formatMinisterLine(seat.id, seat.name, m[2]!)
+          : decorateMilitaryText(line);
+        await safeReply(ctx, formatted, { parse_mode: "Markdown" });
+      } else {
+        await safeReply(ctx, decorateMilitaryText(line));
+      }
+    }
+    if (turn.plan && turn.plan.tasks.length > 0 && planHasExecutable(turn.plan)) {
+      const picture = unwrapWarPicture(await input.memory.loadWarPicture());
+      const conv = await input.memory.loadConversationState();
+      const mode = (conv?.humanMode as HumanMode) ||
+        (conv?.autoPilot ? "AUTO" : "CONFIRM");
+      const q = getCommandQueue(dataDir);
+      if (mode === "PAUSE" || mode === "ABORT" || q.isEmergencyStopped()) {
+        await safeReply(
+          ctx,
+          `⏸ Mode ${mode} — plan ${turn.plan.id} saved but not executed. /mode CONFIRM or /auto to resume.`,
+          { reply_markup: await kbHome() },
+        );
+        return;
+      }
+      const canAuto =
+        mode === "AUTO" &&
+        isOwner(ctx) &&
+        autoExecAllowed() &&
+        mayAutoExecute({
+          mode,
+          action: turn.plan.tasks.map((t) => t.type).join(","),
+          risk: turn.plan.tasks.some((t) =>
+            /attack|declare|strategic/i.test(t.type + (t.rationale ?? "")),
+          )
+            ? "high"
+            : "low",
+          emergencyStop: q.isEmergencyStopped(),
+          paused: q.isPaused(),
+        });
+      if (canAuto) {
+        noteAutoExec();
+        turn.plan.status = "approved";
+        await input.memory.savePlan(turn.plan);
+        const fixed = expandSafeRetreatMoves(
+          normalizePlanTasks(turn.plan.tasks, picture, turn.plan.goalSummary),
+          picture,
+        ).filter((t) => !t.proposeOnly);
+        try {
+          const result = await input.executor.executeApproved(turn.plan, fixed);
+          for (const r of result.results) {
+            if (r.ok && r.type === "moveArmy") {
+              await q.logVerified({
+                priority: 25,
+                commander: "auto",
+                action: "moveArmy",
+                risk: "low",
+                detail: r.detail,
+              });
+            }
+          }
+          const summary = result.results
+            .map((r) => `${r.ok ? "✅" : "❌"} ${r.type}: ${r.detail}`)
+            .join("\n");
+          await safeReply(
+            ctx,
+            decorateMilitaryText(
+              `🟢 Auto-ran ${turn.plan.id}\n${summary}${result.ok ? "" : "\n⚠️ retryable if failed"}`,
+            ),
+            { reply_markup: await kbHome() },
+          );
+        } catch (err) {
+          await safeReply(
+            ctx,
+            redactSecrets(err instanceof Error ? err.message : String(err)),
+          );
+        }
+        return;
+      }
+      // Auto ON but high-impact → Confirm UI still (never silent Approve spam for routine)
+      if (conv?.autoPilot && !canAuto) {
+        await safeReply(
+          ctx,
+          "⚠️ High-impact plan — Confirm required even with Auto ON:",
+        );
+      }
+      const body = decorateMilitaryText(
+        formatPlan(turn.plan, input.quietApprove, picture),
+      );
+      const msg = await ctx.reply(body.slice(0, 3500), {
+        reply_markup: planKeyboard(turn.plan.id),
+      });
+      turn.plan.telegramMessageId = msg.message_id;
+      await input.memory.savePlan(turn.plan);
+    } else if (turn.plan && !planHasExecutable(turn.plan)) {
+      // Should not happen (merge returns null) — never attach Approve.
+    } else if (!turn.publicLines.length) {
+      await safeReply(ctx, "📭 no plan this turn");
+    }
+  }
+
+  async function runCabinetTurn(
+    ctx: Context,
+    text: string,
+    opts: { fireAndForget?: boolean } = {},
+  ): Promise<void> {
+    if (!(await requireOwner(ctx))) return;
+    const conv = await input.memory.loadConversationState();
+    const mentions = input.seats.resolveMentions(text);
+    if (mentions.seats.length === 1) {
+      await input.memory.setActiveAdvisor(mentions.seats[0]!.id);
+    }
+    const sticky =
+      mentions.seats.length === 1
+        ? mentions.seats[0]!.id
+        : (conv?.activeAdvisor ?? null);
+    const forceSeatIds =
+      !mentions.seats.length && !mentions.all && sticky
+        ? [sticky]
+        : mentions.seats.length === 1
+          ? [mentions.seats[0]!.id]
+          : undefined;
+    const singleAdvisor =
+      !mentions.all &&
+      ((forceSeatIds?.length === 1 && !mentions.seats.length) ||
+        mentions.seats.length === 1);
+
+    const work = async () => {
+      try {
+        await input.memory.appendTranscript({ role: "user", text });
+        void ctx.replyWithChatAction("typing").catch(() => undefined);
+        const typing = setInterval(() => {
+          void ctx.replyWithChatAction("typing").catch(() => undefined);
+        }, 4000);
+        try {
+          const turn = await input.chief.handleUserMessage(text, {
+            continueConversation: true,
+            forceSeatIds,
+            singleAdvisor,
+          });
+          await deliverTurn(ctx, turn);
+        } finally {
+          clearInterval(typing);
+        }
+      } catch (err) {
+        await safeReply(
+          ctx,
+          redactSecrets(err instanceof Error ? err.message : String(err)),
+        );
+      }
+    };
+
+    if (opts.fireAndForget) {
+      void work();
+      return;
+    }
+    await work();
+  }
+
+  bot.on("message:text", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    const text = ctx.message.text;
+    if (text.startsWith("/")) return;
+
+    const pending = pendingHeroAssign.get(String(ctx.chat?.id));
+    if (pending && isOwner(ctx)) {
+      pendingHeroAssign.delete(String(ctx.chat?.id));
+      const province = text.trim().slice(0, 60);
+      await addHeroTask(input.memory, {
+        heroArmyId: pending.armyId,
+        heroName: pending.heroName,
+        goal: pending.goal,
+        province,
+        note: `${pending.goal} ${province}`,
+      });
+      await setGeneralMission(
+        dataDir,
+        `gen_${pending.armyId}`,
+        `${pending.goal} ${province}`,
+        pending.goal === "invade" ? "ATTACKING" : "MOVING",
+      );
+      await safeReply(
+        ctx,
+        `✅ Task queued: ${pending.goal} → ${province} (general ${pending.armyId}).`,
+        {
+          reply_markup: await kbHome(),
+        },
+      );
+      return;
+    }
+
+    // Player order vs standing goals — Confirm new vs Keep hold/no-invade
+    if (isOwner(ctx)) {
+      const override = detectGoalOverrideIntent(text);
+      if (override?.wantsOverride && !pendingGoalOverride.has(String(ctx.chat?.id))) {
+        pendingGoalOverride.set(String(ctx.chat?.id), {
+          proposed: override.proposed,
+          summary: override.summary,
+        });
+        await safeReply(
+          ctx,
+          `📋 *New orders detected* (conflicts with standing hold/no-invade?)\n\n${formatProposedGoals(override.proposed)}\n\nConfirm to update goals, or Keep standing orders.`,
+          {
+            parse_mode: "Markdown",
+            reply_markup: new InlineKeyboard()
+              .text("✅ Confirm new orders", "goal:confirm")
+              .text("🛡 Keep hold/no-invade", "goal:keep"),
+          },
+        );
+        // Continue to cabinet turn as well
+      }
+    }
+
+    if (ctx.message.reply_to_message && isOwner(ctx)) {
+      const low = text.trim().toLowerCase();
+      if (low === "reject") {
+        const plan = await resolvePlan(ctx, input.memory);
+        if (plan) {
+          plan.status = "rejected";
+          await input.memory.savePlan(plan);
+          await safeReply(ctx, `❌ rejected ${plan.id} — bridge not touched`);
+        }
+        return;
+      }
+      const sel = parseApproveSelection(text);
+      if (sel) {
+        await doApprove(ctx, sel);
+        return;
+      }
+    }
+
+    const mentions = input.seats.resolveMentions(text);
+    const conv = await input.memory.loadConversationState();
+    const sticky = !!conv?.activeAdvisor;
+    const approveLike = parseApproveSelection(text);
+
+    if (
+      !mentions.all &&
+      !mentions.cabinetOnly &&
+      !mentions.seats.length &&
+      !sticky &&
+      !approveLike &&
+      !/@cabinet|@all|@finance|@war|@defense|@defence|@foreign|@intel/i.test(
+        text,
+      )
+    ) {
+      await safeReply(ctx, "🏠 Pick an action — or choose an advisor to chat:", {
+        reply_markup: await kbHome(),
+      });
+      return;
+    }
+
+    // Instant ack — do not wait for LLM. Parallel turns OK across seats.
+    const who =
+      mentions.seats[0]?.id ||
+      conv?.activeAdvisor ||
+      (mentions.all ? "all" : null);
+    const ack =
+      who === "all"
+        ? "⏳ 🏛️ cabinet thinking… (you can keep chatting /status anytime)"
+        : who
+          ? `⏳ ${seatIcon(who)} thinking… (you can keep chatting /status anytime)`
+          : "⏳ thinking… (you can keep chatting)";
+    await safeReply(ctx, ack);
+
+    void runCabinetTurn(ctx, text, { fireAndForget: true });
+  });
+
+  // Slash-command menu (Telegram “/” button) for discoverability.
+  const menuCommands: { command: string; description: string }[] = [
+    { command: "home", description: "Home — Advisor, Heroes, Groups, Market…" },
+    { command: "advisor", description: "Pick who to talk to" },
+    { command: "heroes", description: "Ops center — generals & missions" },
+    { command: "groups", description: "Force groups (Alaska / air-bridge / reserve)" },
+    { command: "market", description: "Finance market digest" },
+    { command: "diplo", description: "Diplomacy threads + relation matrix" },
+    { command: "spies", description: "Spy roster and latest jobs" },
+    { command: "armies", description: "Own army board with ETA" },
+    { command: "stats", description: "Clock, rank, K/D, revolt" },
+    { command: "eco", description: "Stockpile and hours-to-zero" },
+    { command: "auto", description: "Toggle AI Auto mode ON/OFF" },
+    { command: "mode", description: "AUTO|SUGGEST|CONFIRM|PAUSE|ABORT" },
+    { command: "status", description: "Bridge, Auto, advisor status" },
+    { command: "war", description: "War board / sitrep" },
+    { command: "brief", description: "Quick cabinet brief" },
+    { command: "approve", description: "Approve latest / replied PLAN" },
+    { command: "reject", description: "Reject latest / replied PLAN" },
+    { command: "start", description: "Open War Room home" },
+  ];
+  void bot.api
+    .setMyCommands(menuCommands)
+    .then(() =>
+      bot.api.setMyCommands(menuCommands, {
+        scope: { type: "chat", chat_id: Number(chatId) || chatId },
+      }),
+    )
+    .then(() => console.log("telegram command menu registered"))
+    .catch((err) =>
+      console.warn(
+        "telegram setMyCommands failed:",
+        err instanceof Error ? err.message : String(err),
+      ),
+    );
+
+  return bot;
+}
+
+async function resolvePlan(
+  ctx: Context,
+  memory: CabinetMemory,
+): Promise<CabinetPlan | null> {
+  const arg = ((ctx.match as string | undefined) || "").trim();
+  if (arg) {
+    return memory.getPlan(arg);
+  }
+  const reply = ctx.message?.reply_to_message?.text || "";
+  const m = reply.match(/PLAN\s+(plan_[a-z0-9_]+)/i);
+  if (m) return memory.getPlan(m[1]!);
+  const plans = await memory.getPlans();
+  return [...plans].reverse().find((p) => p.status === "proposed") ?? null;
+}

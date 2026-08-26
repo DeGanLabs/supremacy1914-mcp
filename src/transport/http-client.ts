@@ -54,6 +54,22 @@ export class HttpGameTransport implements ActionTransport {
         // server sometimes returns plain text
       }
 
+      if (raw && typeof raw === "object") {
+        const o = raw as Record<string, unknown>;
+        const errMsg =
+          (typeof o.error === "string" && o.error) ||
+          (typeof o.message === "string" && o.ok === false ? o.message : "") ||
+          "";
+        if (o.ok === false || o.success === false || o.result === false || errMsg) {
+          return {
+            ok: false,
+            requestId: action.requestID,
+            error: errMsg || `game rejected action (${text.slice(0, 200)})`,
+            raw,
+          };
+        }
+      }
+
       return {
         ok: true,
         requestId: action.requestID,

@@ -68,7 +68,7 @@ function mapUnit(u: {
 }): UnitStack {
   const t = u.getEffectiveUnitType?.();
   return {
-    typeId: u.getTypeID?.() ?? t?.getItemID?.() ?? -1,
+    typeId: u.getTypeID?.() ?? t?.getItemID?.() ?? 0,
     size: u.getSize?.() ?? 0,
     name: t?.getName?.(),
     morale: u.getMorale?.(),

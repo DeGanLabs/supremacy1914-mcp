@@ -17,8 +17,59 @@ src/
   actions/        # UltArmyAction builders + HTTP executor
   state/          # army / resource / diplomacy readers
   services/       # ArmyService / DiplomacyService / ResourceService / GameService
-  examples/       # smoke + DevTools console helper
+  cabinet/        # AI war cabinet (feat/ai-cabinet) — Telegram + NVIDIA + approve gate
+  sensor/         # browser WS bridge protocol + scoped tool gateway
+  examples/       # smoke + DevTools console helper (+ connectCabinetBridge)
 ```
+
+### Branches
+
+| Branch | Purpose |
+|--------|---------|
+| `main` | Automation skeleton |
+| `feat/ai-cabinet` | AI cabinet / Telegram / NVIDIA work (**this feature**) |
+
+## AI war cabinet (Phase 1)
+
+Telegram ministers debate with **scoped** live game data. You approve before any action. Branch: **`feat/ai-cabinet`**.
+
+### Boot order
+
+1. Fill `.env` from `.env.example`: `NVIDIA_API_KEY`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TELEGRAM_USER_ID` (never commit secrets; rotate if pasted in chat). Optional: `CABINET_BRIDGE_TOKEN` (auto-generated and saved to `data/cabinet/bridge.token` if empty).
+2. Open the game tab → paste [`src/examples/browser-console.js`](src/examples/browser-console.js). Cabinet prints the exact connect line; run that:
+   ```js
+   s1914.connectCabinetBridge("ws://127.0.0.1:8765", "<token from npm run cabinet>")
+   ```
+   Token is also stored in `localStorage.s1914BridgeToken` after a successful connect. `npm run cabinet:keep` / Tampermonkey reuse it.
+3. In the repo:
+   ```bash
+   npm run cabinet
+   ```
+4. In the Telegram group: `/status`, then `@Finance summarize my economy`. Owner-only sensors: `/spies` `/armies` `/stats` `/eco` `/diplo`.
+
+### Commands
+
+| Command | Who | Effect |
+|---------|-----|--------|
+| `/status` | owner (default) | bridge / gameId / models / open plans |
+| `/brief` | owner | cheap Chief summary |
+| `/war` | owner | war board |
+| `/spies` `/armies` `/stats` `/eco` | owner | live sensor widgets |
+| `/goal set key value` | owner | standing goal (not a hypothesis) |
+| `/seat list` | owner | seats + scopes |
+| `/seat add id "Name" scopes=…` | owner | add custom seat |
+| `/approve` (or reply `approve`) | owner | run allow-listed tasks only |
+| `/reject` | owner | mark rejected — **bridge not touched** |
+| `@Finance` `@War` `@Defense` `@Foreign` `@Intel` `@all` `@cabinet` | owner | debate / brief |
+
+### Hard rules (Phase 1)
+
+- Execute allow-list: **`moveArmy`**, **`constructBuilding`**, **`attackArmy`**, **`delayArmy`** (via proven browser helpers).
+- Owner ACL: only `TELEGRAM_USER_ID` can approve/seat/goal and (by default) sensors. Set `TELEGRAM_OWNER_ONLY_SENSORS=0` to open the group.
+- Tool `dataScopes` enforced in code; cost caps: 2 rounds, 4 tools/seat, 8 auto-executes/hour.
+- Bridge down → bot says “game not connected” (no invented stats).
+- Current open tab only. Heartbeat `gameId` mismatch drops the lock (reconnect).
+- Game dumps are wrapped as untrusted data in LLM prompts. `exportSession()` redacts auth unless `{secrets:true}`.
 
 ## Step 1 — Get your keys (`userAuth` + `tstamp`)
 
@@ -33,7 +84,7 @@ Get them from the live client:
    You should see: `s1914 ready: …` (a trailing `undefined` is normal).
 4. Run:
    ```js
-   s1914.exportSession()
+   s1914.exportSession({secrets:true})
    ```
 5. You get an object like:
    ```js
@@ -68,12 +119,12 @@ Get them from the live client:
 Helpers:
 
 ```js
-copy(s1914.exportSession())           // whole object → clipboard
-copy(s1914.exportSession().userAuth)  // auth only
+copy(s1914.exportSession({secrets:true}))           // whole object → clipboard
+copy(s1914.exportSession({secrets:true}).userAuth)  // auth only
 ```
 
 **Notes**
-- Re-run `exportSession()` after logout, long idle, or when HTTP auth starts failing — keys go stale.
+- Re-run `exportSession({secrets:true})` after logout, long idle, or when HTTP auth starts failing — keys go stale.
 - Browser helpers (`s1914.moveArmy`, …) do **not** need `.env`; they use live `hup` while the tab is open.
 - Optional `S1914_COOKIE=bl_sid=…` only if HTTP POSTs fail without a site session. Prefer keys above.
 - **Never commit** `.env` or paste real `userAuth` / `bl_sid` into git or public chats.
@@ -93,7 +144,7 @@ s1914.useGame(10880494)       // or by gameId
 
 // after the map finishes loading:
 s1914.rebind()                // refresh hup handle
-s1914.exportSession()         // NEW userAuth/tstamp/playerID for that map
+s1914.exportSession({secrets:true})         // NEW userAuth/tstamp/playerID for that map
 ```
 
 Live example from your account:
@@ -112,7 +163,7 @@ const my = await fetchMyGamesFromHup(hup);
 loadGameInHup(hup, my.games[0].gameId);
 ```
 
-**Note:** `playerID` and `userAuth` are **per game**. After `useGame`, always `rebind()` + `exportSession()` before HTTP `.env` use.
+**Note:** `playerID` and `userAuth` are **per game**. After `useGame`, always `rebind()` + `exportSession({secrets:true})` before HTTP `.env` use.
 
 ## Auth model (from live client)
 
@@ -131,7 +182,7 @@ Every action POST body is signed like the Ultimate client `signMessage`:
 ```bash
 npm install
 cp .env.example .env
-# fill .env using Step 1 above (s1914.exportSession())
+# fill .env using Step 1 above (s1914.exportSession({secrets:true}))
 npm run smoke
 npm run typecheck
 ```
@@ -144,7 +195,7 @@ Paste `src/examples/browser-console.js` into the **parent** page console:
 s1914.dumpOwnArmies()
 s1914.dumpResources()
 s1914.moveArmy(ARMY_ID, x, y)
-s1914.exportSession()  // copy into .env
+s1914.exportSession({secrets:true})  // copy into .env
 ```
 
 Moves use live A* via `armyController.setDragTarget` → `sendAction()` (same path as the UI).

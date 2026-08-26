@@ -58,6 +58,7 @@ export function mapHeroItem(it: RawHeroItem): HeroSnapshot {
     cooldownSeconds: it.getHeroRecoveryCooldown?.() ?? 0,
     limitReached: !!it.isHeroLimitReached?.(),
     locked,
+    moraleThreshold: it.deploymentMoraleThreshold,
     canDeploy: obtained && !deployed && !onCooldown && !locked,
   };
 }
@@ -100,14 +101,17 @@ export function readDeployedHeroArmiesFromHup(hup: {
           if (typeId == null) return null;
           const hi = hsm.getHeroUnitItemByUnitTypeId?.(typeId);
           if (!hi) return null;
-          const cfg = hi.getHeroConfig?.();
+          const mapped = mapHeroItem(hi);
           return {
             unitTypeId: typeId,
-            name: cfg?.getName?.() ?? null,
-            shortName: cfg?.getShortName?.() ?? null,
+            name: mapped.name,
+            shortName: mapped.shortName,
+            level: mapped.level,
+            rarity: mapped.rarity,
+            cooldownSeconds: mapped.cooldownSeconds,
           };
         })
-        .filter((x): x is { unitTypeId: number; name: string | null; shortName: string | null } => !!x);
+        .filter((x) => x != null);
       if (!heroes.length) return [];
       const pos = a.getPosition();
       const prov = map.getProvinceAt(pos);

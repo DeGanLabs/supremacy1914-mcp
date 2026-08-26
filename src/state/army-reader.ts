@@ -59,8 +59,12 @@ function mapCommandKind(cmd: RawBrowserCommand): ArmyCommandKind {
 
 export function mapUnit(unit: RawBrowserUnit): UnitStack {
   const type = unit.getEffectiveUnitType?.();
+  const typeId =
+    unit.getTypeID?.() ??
+    (type as { getItemID?: () => number } | null | undefined)?.getItemID?.() ??
+    0;
   return {
-    typeId: unit.getTypeID?.() ?? -1,
+    typeId: typeId > 0 ? typeId : 0,
     size: unit.getSize?.() ?? 0,
     name: type?.getName?.(),
     morale: unit.getMorale?.(),

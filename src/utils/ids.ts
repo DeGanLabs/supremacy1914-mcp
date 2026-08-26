@@ -8,8 +8,12 @@ export function createLocalRequestId(prefix = "actionReq"): string {
   return id;
 }
 
+let numericSeq = 0;
+
 export function createNumericRequestId(seed?: number): RequestId {
-  return seed ?? Date.now() % 1_000_000;
+  if (seed != null) return seed;
+  numericSeq = (numericSeq + 1) % 1000;
+  return (Date.now() % 1_000_000) * 1000 + numericSeq;
 }
 
 export function assertFiniteNumber(name: string, value: number): number {
