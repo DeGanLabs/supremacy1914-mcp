@@ -18,6 +18,8 @@ export type CabinetEventKind =
   | "MOVE_FAILED"
   | "WAR_OPERATION"
   | "PLAYER_ORDER"
+  | "MAP_DELTA"
+  | "PLAYER_MANUAL_DELTA"
   | "SYSTEM";
 
 export interface CabinetEvent {

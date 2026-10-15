@@ -11,20 +11,17 @@ function humanTask(
   picture: WarPictureRaw | null | undefined,
 ): string {
   const n = index + 1;
-  const tag = task.proposeOnly ? "advisory" : "will run";
+  const badge = task.proposeOnly ? "📋 advice" : "▶️ will run";
   if (task.type === "moveArmy") {
     const a = (task.args ?? {}) as { armyId?: number; x?: number; y?: number };
     const label = formatArmyLabel(picture, a.armyId);
     const destName = provinceFromTaskText(task);
     const dest =
       destName ??
-      (a.x != null && a.y != null
-        ? formatProvinceLabel(picture, `${a.x},${a.y}`) !== "?"
-          ? `(${a.x}, ${a.y})`
-          : `(${a.x}, ${a.y})`
-        : "?");
-    const showId = quiet && !task.proposeOnly ? label.replace(/\s*\(\d+\)/, "") : label;
-    return `${n}. ${tag} — Move ${showId} → ${dest}${task.template ? ` (${task.template})` : ""}`;
+      (a.x != null && a.y != null ? `(${a.x}, ${a.y})` : "?");
+    const showId =
+      quiet && !task.proposeOnly ? label.replace(/\s*\(\d+\)/, "") : label;
+    return `${n}. ${badge}\n    Move ${showId} → *${dest}*${task.template ? ` · ${task.template}` : ""}`;
   }
   if (task.type === "spyMission") {
     const a = (task.args ?? {}) as {
@@ -41,7 +38,7 @@ function humanTask(
           ? `nation ${a.targetNation}`
           : null);
     if (!where || where.includes("?")) return "";
-    return `${n}. advisory — Spy ${a.mission ?? "intel"} on ${where}`;
+    return `${n}. ${badge}\n    Spy ${a.mission ?? "intel"} on ${where}`;
   }
   if (task.type === "constructBuilding") {
     const a = (task.args ?? {}) as {
@@ -49,24 +46,27 @@ function humanTask(
       upgradeId?: number;
     };
     const prov = formatProvinceLabel(picture, a.provinceIdOrName);
-    return `${n}. ${tag} — Build upgrade ${a.upgradeId ?? "?"} at ${prov}`;
+    return `${n}. ${badge}\n    Build upgrade ${a.upgradeId ?? "?"} at *${prov}*`;
   }
   if (task.type === "attackArmy") {
     const a = (task.args ?? {}) as { armyId?: number; targetArmyId?: number };
-    return `${n}. ${tag} — Attack ${formatArmyLabel(picture, a.armyId)} → ${formatArmyLabel(picture, a.targetArmyId)}`;
+    return `${n}. ${badge}\n    Attack ${formatArmyLabel(picture, a.armyId)} → ${formatArmyLabel(picture, a.targetArmyId)}`;
   }
   if (task.type === "delayArmy") {
     const a = (task.args ?? {}) as { armyId?: number; minutes?: number };
-    return `${n}. ${tag} — Halt ${formatArmyLabel(picture, a.armyId)} for ${a.minutes ?? "?"} min`;
+    return `${n}. ${badge}\n    Halt ${formatArmyLabel(picture, a.armyId)} for ${a.minutes ?? "?"} min`;
   }
   const args =
     quiet && !task.proposeOnly
       ? ""
       : ` ${JSON.stringify(task.args).slice(0, 80)}`;
-  if (/proposeonly|spy_retask/i.test(task.type) && !Object.keys(task.args ?? {}).length) {
+  if (
+    /proposeonly|spy_retask/i.test(task.type) &&
+    !Object.keys(task.args ?? {}).length
+  ) {
     return "";
   }
-  return `${n}. ${tag} ${task.type}${args}`;
+  return `${n}. ${badge}\n    ${task.type}${args}`;
 }
 
 export function planHasExecutable(plan: CabinetPlan): boolean {
@@ -82,21 +82,25 @@ export function formatHumanPlan(
   const lines = plan.tasks
     .map((t, i) => humanTask(t, i, quiet, picture))
     .filter(Boolean);
-  // renumber after filtering blanks
   const numbered = lines.map((line, i) => line.replace(/^\d+\./, `${i + 1}.`));
 
   const out = [
-    `PLAN ${plan.id}`,
-    plan.goalSummary ? `Goal: ${plan.goalSummary}` : null,
+    `📜 *ORDERS FOR APPROVAL*`,
+    `\`${plan.id}\``,
+    plan.goalSummary ? `\n🎯 *Objective*\n${plan.goalSummary}` : null,
     plan.assumptions.length
-      ? `Notes: ${plan.assumptions.slice(0, 3).join("; ")}`
+      ? `\n📌 *Notes*\n${plan.assumptions
+          .slice(0, 3)
+          .map((a) => `• ${a}`)
+          .join("\n")}`
       : null,
     "",
+    `📋 *Actions*`,
     ...numbered,
     "",
     executable.length
-      ? "Tap buttons below, or reply: approve all · approve 1 and 2 · skip 3 · reject"
-      : "Advice only — nothing to approve. Ask for moves/builds if you want an executable PLAN.",
+      ? "Tap below, or reply: *yes* · *approve* · *do 1 and 2* · *reject*"
+      : "_Advice only — nothing to run. Ask for moves/builds for an executable plan._",
   ];
   return out.filter((l) => l !== null).join("\n");
 }

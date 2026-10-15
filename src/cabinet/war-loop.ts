@@ -27,6 +27,8 @@ export interface WarWatchLoopOptions {
     critical?: readonly string[];
     level: string;
     line: string;
+    /** Short Telegram bubbles — send one after another, not one wall of text. */
+    parts?: readonly string[];
     escalateAll: boolean;
     board?: string;
   }) => void | Promise<void>;
@@ -83,6 +85,7 @@ export function startWarWatch(opts: WarWatchLoopOptions): { stop: () => void } {
 
       const dataDir =
         process.env.CABINET_DATA_DIR?.trim() || "data/cabinet";
+      let mapDeltaHighSignal: string[] = [];
       try {
         const { seedDefaultGroups, loadGroups, saveGroups } = await import(
           "./groups.js"
@@ -97,13 +100,55 @@ export function startWarWatch(opts: WarWatchLoopOptions): { stop: () => void } {
           snap.picture.foreignArmies ?? [],
         );
         const { getEventBus } = await import("./events.js");
+        const bus = getEventBus(dataDir);
         for (const w of snap.atWar.slice(0, 5)) {
-          await getEventBus(dataDir).publish("WAR_DECLARED", {
+          await bus.publish("WAR_DECLARED", {
             source: "war-watch",
             playerId: w.id,
             nation: w.nation || w.name,
           });
         }
+
+        // Manual-play awareness: diff own armies vs previous snapshot
+        try {
+          const { diffOwnArmies, recentCabinetArmyIds } = await import(
+            "./map-delta.js"
+          );
+          const recent = await bus.loadTail(60);
+          const cabinetIds = recentCabinetArmyIds(recent);
+          const report = diffOwnArmies(previous, snap, cabinetIds);
+          if (report.deltas.length) {
+            await bus.publish("MAP_DELTA", {
+              source: "war-watch",
+              payload: {
+                count: report.deltas.length,
+                manualCount: report.manualCount,
+                lines: report.deltas.slice(0, 12).map((d) => d.line),
+              },
+            });
+            if (report.manualCount > 0) {
+              await bus.publish("PLAYER_MANUAL_DELTA", {
+                source: "war-watch",
+                payload: {
+                  count: report.manualCount,
+                  lines: report.deltas
+                    .filter((d) => d.likelyManual)
+                    .slice(0, 10)
+                    .map((d) => d.line),
+                  brief: report.brief,
+                },
+              });
+              await opts.memory.saveFieldDelta(report);
+            }
+            mapDeltaHighSignal = [...report.highSignalLines];
+          }
+        } catch (err) {
+          console.warn(
+            "[war-watch] map-delta:",
+            err instanceof Error ? err.message : String(err),
+          );
+        }
+
         if (snap.picture.diplo?.embargo?.length) {
           const { recordEmbargo } = await import("./finance-model.js");
           for (const e of snap.picture.diplo.embargo.slice(0, 5)) {
@@ -117,6 +162,28 @@ export function startWarWatch(opts: WarWatchLoopOptions): { stop: () => void } {
         const { getCommandQueue } = await import("./command-queue.js");
         const q = getCommandQueue(dataDir);
         await q.load();
+
+        try {
+          const { reconcilePlansWithMap } = await import("./plan-reconcile.js");
+          const rec = await reconcilePlansWithMap(opts.memory, snap, q);
+          if (rec.brief) {
+            await opts.memory.saveReconcileBrief(rec.brief);
+            await bus.publish("SYSTEM", {
+              source: "plan-reconcile",
+              payload: {
+                stalePlanIds: rec.stalePlanIds,
+                cancelledCommands: rec.cancelledCommands,
+                hints: rec.hints.slice(0, 8),
+              },
+            });
+          }
+        } catch (err) {
+          console.warn(
+            "[war-watch] plan-reconcile:",
+            err instanceof Error ? err.message : String(err),
+          );
+        }
+
         const conv = await opts.memory.loadConversationState();
         const mode = (conv?.humanMode as string) || (conv?.autoPilot ? "AUTO" : "CONFIRM");
         if (mode === "PAUSE" || mode === "ABORT") {
@@ -145,9 +212,13 @@ export function startWarWatch(opts: WarWatchLoopOptions): { stop: () => void } {
 
       // Quieter sitreps while War seat is thinking / Auto hero advance running
       const warBusy = opts.chief?.busySeatIds()?.includes("war");
-      if (warBusy && !messages.critical.length) {
+      if (warBusy && !messages.critical.length && !mapDeltaHighSignal.length) {
         console.log("[war-watch] folding digest — War busy");
-      } else if (messages.digest || messages.critical.length) {
+      } else if (
+        messages.digest ||
+        messages.critical.length ||
+        mapDeltaHighSignal.length
+      ) {
         const intelGaps = [
           ...new Set(
             alerts
@@ -156,24 +227,41 @@ export function startWarWatch(opts: WarWatchLoopOptions): { stop: () => void } {
               .filter(Boolean),
           ),
         ].slice(0, 3);
-        const digestParts = [
-          messages.digest,
-          messages.critical.length
-            ? `Critical:\n${messages.critical.join("\n")}`
-            : null,
-          intelGaps.length
-            ? `Intel note: spy gap on ${intelGaps.join(", ")} — ask @Intel if you want a plan.`
-            : null,
-        ].filter(Boolean);
+        const parts: string[] = [];
+        // Critical pings — each its own short bubble (max 2)
+        for (const c of messages.critical.slice(0, 2)) {
+          parts.push(`⚠️ *Alert*\n${c}`);
+        }
+        // Sitrep card (compact)
+        if (messages.digest) {
+          parts.push(messages.digest);
+        }
+        // Field awareness — short, human
+        if (mapDeltaHighSignal.length) {
+          parts.push(
+            `🧭 *Field*\n${mapDeltaHighSignal
+              .slice(0, 2)
+              .join("\n")}\n_Looks like map clicks — staff will use this next turn._`,
+          );
+        }
+        if (intelGaps.length) {
+          parts.push(
+            `🕵️ *Intel gap*\nThin eyes on ${intelGaps.join(", ")}.\nAsk @Intel if you want a spy plan.`,
+          );
+        }
+        // Board only on escalate — already reformatted as cards
+        const escalate = alerts.some((a) => a.escalateAll);
+        if (escalate) {
+          parts.push(formatWarBoard(snap));
+        }
         await opts.onAlert({
           level: messages.critical.length ? "high" : "medium",
-          line: digestParts.join("\n\n"),
-          digest: digestParts.join("\n\n"),
+          line: parts[0] || "",
+          digest: messages.digest ?? undefined,
           critical: messages.critical,
-          escalateAll: alerts.some((a) => a.escalateAll),
-          board: alerts.some((a) => a.escalateAll)
-            ? formatWarBoard(snap)
-            : undefined,
+          parts,
+          escalateAll: escalate,
+          board: escalate ? formatWarBoard(snap) : undefined,
         });
       }
 

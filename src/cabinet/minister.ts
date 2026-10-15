@@ -5,7 +5,11 @@ import { MinisterOutputSchema, type MinisterOutput } from "./types.js";
 import { COST_CAPS } from "./cost-caps.js";
 import type { SensorToolName } from "./cost-caps.js";
 import type { SeatRegistry } from "./seats.js";
-import { formatWarBriefing } from "./war-brief.js";
+import {
+  formatWarBriefing,
+  formatWarSituationAnswer,
+  formatWarSituationFromBrief,
+} from "./war-brief.js";
 import { scoreWarPicture } from "./war-watch.js";
 import type { WarPictureRaw } from "./war-types.js";
 import { wrapUntrusted } from "./untrusted.js";
@@ -17,7 +21,9 @@ import {
 
 const TOOL_HINT = `You may request tools by including a JSON field "tool_request": {"name":"<tool>","args":{...}} instead of final answer.
 After tool results are provided, return final MinisterOutput JSON:
-{"facts":[],"concerns":[],"proposals":[],"need_from":[],"draft_message":null,"public_line":""}`;
+{"facts":[],"concerns":[],"proposals":[],"need_from":[],"draft_message":null,"public_line":""}
+
+If the player asks for situation / status / assessment (not orders), put the answer in public_line from the live war picture — never claim you lack data that is already preloaded. proposals may be [].`;
 
 export class MinisterAgent {
   constructor(
@@ -96,6 +102,13 @@ export class MinisterAgent {
     if (preloaded.text) {
       user += `\n\n${wrapUntrusted("preloaded tool data (cite these; do not invent)", preloaded.text)}`;
     }
+    const sensorFallback = this.buildSensorFallback(
+      input.seat,
+      input.question,
+      preloaded.resourceSummary,
+      input.sharedWarPicture ?? input.warBrief,
+      preloaded.warSnap,
+    );
     const tier = input.useQualityModel ? "quality" : "fast";
 
     for (let attempt = 0; attempt <= COST_CAPS.maxJsonRetry + 2; attempt++) {
@@ -107,7 +120,7 @@ export class MinisterAgent {
       });
       let parsed: unknown;
       try {
-        parsed = JSON.parse(raw);
+        parsed = extractJsonObject(raw);
       } catch {
         user += `\n\nPrevious output was not valid JSON. Return valid JSON only.`;
         continue;
@@ -136,19 +149,19 @@ export class MinisterAgent {
 
       const out = MinisterOutputSchema.safeParse(parsed);
       if (out.success) {
-        return this.ensurePublicLine(out.data, preloaded.resourceSummary);
+        return this.ensurePublicLine(out.data, sensorFallback);
       }
       user += `\n\nSchema error: ${out.error.message}. Fix and return JSON.`;
     }
 
-    if (preloaded.resourceSummary) {
+    if (sensorFallback) {
       return {
-        facts: [preloaded.resourceSummary],
-        concerns: ["minister JSON weak — raw sensor summary used"],
+        facts: [sensorFallback],
+        concerns: ["minister JSON weak — sensor sitrep used"],
         proposals: [],
         need_from: [],
         draft_message: null,
-        public_line: preloaded.resourceSummary,
+        public_line: sensorFallback,
       };
     }
 
@@ -162,12 +175,33 @@ export class MinisterAgent {
     };
   }
 
+  private buildSensorFallback(
+    seat: SeatDefinition,
+    question: string,
+    resourceSummary: string | null,
+    warBrief: string | undefined,
+    warSnap: Parameters<typeof formatWarSituationAnswer>[0],
+  ): string | null {
+    if (resourceSummary) return resourceSummary;
+    const warSeat =
+      seat.id === "war" || seat.id === "defense" || seat.id === "intel";
+    if (!warSeat) return null;
+    return (
+      formatWarSituationAnswer(warSnap, question) ||
+      formatWarSituationFromBrief(warBrief, question)
+    );
+  }
+
   /** Pull scoped sensors before the LLM so Q&A cannot skip tools. */
   private async preloadSeatData(
     seat: SeatDefinition,
     question: string,
     skipWarPictureFetch = false,
-  ): Promise<{ text: string; resourceSummary: string | null }> {
+  ): Promise<{
+    text: string;
+    resourceSummary: string | null;
+    warSnap: Parameters<typeof formatWarSituationAnswer>[0];
+  }> {
     const q = question.toLowerCase();
     const economyAsk =
       seat.id === "finance" ||
@@ -223,6 +257,7 @@ export class MinisterAgent {
 
     const chunks: string[] = [];
     let resourceSummary: string | null = null;
+    let warSnap: Parameters<typeof formatWarSituationAnswer>[0] = null;
     let messagesDump: unknown = null;
     let resourcesRaw: unknown = null;
     let marketRaw: unknown = null;
@@ -230,6 +265,24 @@ export class MinisterAgent {
       process.env.CABINET_DATA_DIR?.trim() || "data/cabinet";
     const toolLimit =
       seat.id === "foreign" ? COST_CAPS.maxToolCallsPerMinister : COST_CAPS.maxToolCallsPerMinister;
+
+    // When war picture is prefetched by Chief, still load last snapshot for sitrep fallback.
+    if (
+      skipWarPictureFetch &&
+      (seat.id === "war" || seat.id === "defense" || seat.id === "intel")
+    ) {
+      try {
+        const { CabinetMemory } = await import("./memory.js");
+        const mem = new CabinetMemory(dataDir);
+        const saved = await mem.loadWarPicture<
+          NonNullable<Parameters<typeof formatWarSituationAnswer>[0]>
+        >();
+        if (saved) warSnap = saved;
+      } catch {
+        /* optional */
+      }
+    }
+
     for (const name of tools.slice(0, toolLimit)) {
       try {
         const result = await this.gateway.call(
@@ -241,6 +294,7 @@ export class MinisterAgent {
         if (name === "get_war_picture") {
           const pic = result as WarPictureRaw;
           const scored = scoreWarPicture(pic, null);
+          warSnap = scored;
           chunks.push(
             `get_war_picture:\n${formatWarBriefing(scored, pic, COST_CAPS.maxWarBriefChars)}`,
           );
@@ -385,24 +439,22 @@ export class MinisterAgent {
       }
     }
 
-    return { text: chunks.join("\n"), resourceSummary };
+    return { text: chunks.join("\n"), resourceSummary, warSnap };
   }
 
   private ensurePublicLine(
     out: MinisterOutput,
-    resourceSummary: string | null,
+    sensorFallback: string | null,
   ): MinisterOutput {
     const line = out.public_line.trim();
     const tooThin =
       !line ||
-      (resourceSummary != null &&
-        line.length < 120 &&
-        !/\bstock\b|\brate\b|\d{2,}/i.test(line));
+      (sensorFallback != null &&
+        line.length < 80 &&
+        !/\bstock\b|\brate\b|\d{2,}|vs\b|hostile|near /i.test(line));
     if (!tooThin) return out;
-    if (resourceSummary) {
-      const merged = line
-        ? `${resourceSummary} — ${line}`
-        : resourceSummary;
+    if (sensorFallback) {
+      const merged = line ? `${sensorFallback} — ${line}` : sensorFallback;
       return { ...out, public_line: merged };
     }
     if (out.facts.length) {
@@ -410,6 +462,27 @@ export class MinisterAgent {
     }
     return out;
   }
+}
+
+/** Pull a JSON object from model output (fences / leading prose). */
+function extractJsonObject(raw: string): unknown {
+  const text = raw.trim();
+  if (!text) throw new Error("empty model output");
+  try {
+    return JSON.parse(text);
+  } catch {
+    /* continue */
+  }
+  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fenced?.[1]) {
+    return JSON.parse(fenced[1].trim());
+  }
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  if (start >= 0 && end > start) {
+    return JSON.parse(text.slice(start, end + 1));
+  }
+  throw new Error("no JSON object");
 }
 
 function fmtRate(n: number): string {

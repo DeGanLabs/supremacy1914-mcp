@@ -399,6 +399,12 @@ export async function runCabinetSelfCheck(): Promise<string[]> {
   const selAllEx = parseApproveSelection("approve all except task 2");
   assert(selAllEx?.approveAll === true, "approve all except");
   assert(selAllEx?.excludeTasks.has(2), "except 2");
+  assert(parseApproveSelection("yes")?.approveAll === true, "yes => approve all");
+  assert(parseApproveSelection("do it")?.approveAll === true, "do it => approve all");
+  assert(parseApproveSelection("go")?.approveAll === true, "go => approve all");
+  const selDo = parseApproveSelection("do 1 and 3");
+  assert(selDo?.approveAll === false && selDo.includeTasks.has(1) && selDo.includeTasks.has(3), "do 1 and 3");
+  assert(parseApproveSelection("yes but also invade alaska with everything") === null, "long yes not approve");
   const tasksMixed = [
     { type: "moveArmy" as const, args: { armyId: 1, x: 1, y: 2 }, risk: "low" as const },
     { type: "spyMission" as const, args: { mission: "info", targetNation: 9 }, risk: "low" as const, proposeOnly: true },
@@ -406,7 +412,7 @@ export async function runCabinetSelfCheck(): Promise<string[]> {
   ];
   const picked = selectExecutableTasks(tasksMixed, sel12!);
   assert(picked.length === 1 && picked[0]!.args.armyId === 1, "select by plan index skips spy");
-  log.push("ok: approve parse approve 1 and 2 skip 3");
+  log.push("ok: approve parse approve 1 and 2 skip 3 + natural yes/do it");
 
   // Human plan format
   const humanPlan = formatHumanPlan(
@@ -422,8 +428,8 @@ export async function runCabinetSelfCheck(): Promise<string[]> {
     },
     true,
   );
-  assert(/approve all|Tap buttons|Advice only/i.test(humanPlan), "human plan has approve hints");
-  assert(/1\.\s*will run|Move/i.test(humanPlan), "task 1 labeled will run");
+  assert(/approve|yes|Advice only|ORDERS FOR APPROVAL/i.test(humanPlan), "human plan has approve hints");
+  assert(/1\.\s*.*will run|Move/i.test(humanPlan), "task 1 labeled will run");
   log.push("ok: formatHumanPlan");
   assert(planHasExecutable({
     id: "p",
@@ -937,6 +943,51 @@ export async function runCabinetSelfCheck(): Promise<string[]> {
   const idB = createNumericRequestId();
   assert(idA !== idB, "numeric request ids differ");
   log.push("ok: name-match + untrusted + display helpers");
+
+  // Map delta: player UI move not covered by MOVE_VERIFIED
+  const { diffOwnArmies } = await import("./map-delta.js");
+  const prevSnap = scoreWarPicture(
+    fixturePicture({
+      ownArmies: [
+        {
+          id: 101,
+          province: "Whitehorse",
+          pos: { x: 100, y: 100 },
+          idle: true,
+          commands: 0,
+        },
+      ],
+    }),
+    null,
+  );
+  const nextSnap = scoreWarPicture(
+    fixturePicture({
+      ownArmies: [
+        {
+          id: 101,
+          province: "Prince George",
+          pos: { x: 200, y: 180 },
+          idle: false,
+          commands: 1,
+        },
+      ],
+    }),
+    prevSnap,
+  );
+  const delta = diffOwnArmies(prevSnap, nextSnap, new Set());
+  assert(delta.manualCount >= 1, "manual map delta detected");
+  assert(
+    /Whitehorse|Prince George|repositioned|looks like your click/i.test(
+      delta.brief,
+    ),
+    "brief is human field language",
+  );
+  const cabinetAttributed = diffOwnArmies(prevSnap, nextSnap, new Set([101]));
+  assert(
+    cabinetAttributed.manualCount === 0,
+    "MOVE_VERIFIED army not counted as manual",
+  );
+  log.push("ok: map-delta manual vs cabinet");
 
   return log;
 }

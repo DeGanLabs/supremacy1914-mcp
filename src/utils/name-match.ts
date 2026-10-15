@@ -1,14 +1,22 @@
+function fold(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .trim()
+    .toLowerCase();
+}
+
 /** Exact name match, else a unique substring hit. Ambiguous → null. */
 export function uniqueNameMatch<T>(
   items: readonly T[],
   needle: string,
   getName: (item: T) => string | null | undefined,
 ): T | null {
-  const n = needle.trim().toLowerCase();
+  const n = fold(needle);
   if (!n) return null;
   const named = items.map((item) => ({
     item,
-    name: (getName(item) ?? "").trim().toLowerCase(),
+    name: fold(getName(item) ?? ""),
   }));
   const exact = named.filter((x) => x.name === n);
   if (exact.length === 1) return exact[0]!.item;

@@ -310,6 +310,68 @@ export class CabinetMemory {
       .join("\n");
   }
 
+  /** Latest manual field-change brief from war-watch map diff. */
+  async saveFieldDelta(report: {
+    readonly takenAt: string;
+    readonly brief: string;
+    readonly manualCount: number;
+    readonly highSignalLines?: readonly string[];
+  }): Promise<void> {
+    await this.writeJson("field-delta.json", {
+      takenAt: report.takenAt,
+      brief: report.brief,
+      manualCount: report.manualCount,
+      highSignalLines: report.highSignalLines ?? [],
+      updatedAt: new Date().toISOString(),
+    });
+  }
+
+  async saveReconcileBrief(brief: string): Promise<void> {
+    await this.writeJson("plan-reconcile.json", {
+      brief,
+      updatedAt: new Date().toISOString(),
+    });
+  }
+
+  /** Inject into minister context: player UI moves + stale plans. */
+  async loadFieldAwarenessBrief(): Promise<string> {
+    const parts: string[] = [];
+    try {
+      const delta = await this.readJson<{
+        takenAt?: string;
+        brief?: string;
+        updatedAt?: string;
+      }>("field-delta.json");
+      const age = Date.parse(delta.updatedAt || delta.takenAt || "");
+      if (
+        delta.brief &&
+        Number.isFinite(age) &&
+        Date.now() - age < 30 * 60_000
+      ) {
+        parts.push(delta.brief);
+      }
+    } catch {
+      /* none */
+    }
+    try {
+      const rec = await this.readJson<{
+        brief?: string;
+        updatedAt?: string;
+      }>("plan-reconcile.json");
+      const age = Date.parse(rec.updatedAt || "");
+      if (
+        rec.brief &&
+        Number.isFinite(age) &&
+        Date.now() - age < 30 * 60_000
+      ) {
+        parts.push(rec.brief);
+      }
+    } catch {
+      /* none */
+    }
+    return parts.filter(Boolean).join("\n\n");
+  }
+
   private async ensureJson(name: string, value: unknown): Promise<void> {
     const file = path.join(this.rootDir, name);
     try {

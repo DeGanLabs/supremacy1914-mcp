@@ -21,9 +21,21 @@ import {
   decorateMilitaryText,
   formatMinisterLine,
   formatStatusLines,
+  formatWarRoomHome,
   seatIcon,
   seatLabel,
 } from "./telegram-format.js";
+import {
+  ensureCabinetTopics,
+  formatTopicsBrief,
+  loadTopicsState,
+  seatIdFromThreadId,
+  sendInTopic,
+  topicKeyForSeat,
+  threadIdForKey,
+  type CabinetTopicKey,
+  type TelegramTopicsState,
+} from "./telegram-topics.js";
 import { normalizePlanTasks } from "./plan-normalize.js";
 import { unwrapWarPicture } from "./war-picture-util.js";
 import { formatThreadTranscript } from "./diplo-format.js";
@@ -69,6 +81,22 @@ function formatPlan(
   return formatHumanPlan(plan, quiet, picture);
 }
 
+const BRIDGE_HELP =
+  '🔴 game not connected — on the PC: `npm run cabinet` + `npm run cabinet:serve` (or `cabinet:keep`). In the game tab console: load browser-console.js from http://127.0.0.1:9878 then `s1914.connectCabinetBridge("ws://127.0.0.1:8765", TOKEN)`. Then /status.';
+
+function lastAdvisorKeyboard(
+  seats: SeatRegistry,
+  lastId: string | null | undefined,
+): InlineKeyboard {
+  const kb = new InlineKeyboard();
+  if (lastId && seats.get(lastId)) {
+    const s = seats.get(lastId)!;
+    kb.text(`↩ Talk to ${seatLabel(s.id, s.name)}`, `advisor:${s.id}`).row();
+  }
+  kb.text("👥 Pick advisor", "home:advisor").text("🏠 Home", "home:show");
+  return kb;
+}
+
 function approveTextFromCtx(ctx: Context): string {
   const cmdArg = ((ctx.match as string | undefined) || "").trim();
   if (cmdArg) return cmdArg;
@@ -102,8 +130,11 @@ function homeKeyboard(autoOn: boolean, mode?: string): InlineKeyboard {
             ? "🟢 Auto ON"
             : "⚪ Auto OFF";
   return new InlineKeyboard()
-    .text("🏠 Home", "home:show")
-    .text("👥 Advisor", "home:advisor")
+    .text("🏛️ Cabinet", "home:show")
+    .text("🧵 Threads", "home:topics")
+    .row()
+    .text("👥 Advisors", "home:advisor")
+    .text("⚔️ War board", "home:war")
     .row()
     .text("🤝 Diplomacy", "home:diplo")
     .text("🎖️ Heroes", "home:heroes")
@@ -112,9 +143,8 @@ function homeKeyboard(autoOn: boolean, mode?: string): InlineKeyboard {
     .text("📈 Market", "home:market")
     .row()
     .text(modeLabel, "home:auto")
-    .text("⚔️ War", "home:war")
-    .row()
     .text("📡 Status", "home:status")
+    .row()
     .text("🛑 E-Stop", "home:estop");
 }
 
@@ -126,7 +156,9 @@ function planKeyboard(planId: string): InlineKeyboard {
     .text("1️⃣", `plan:pick:${planId}:1`)
     .text("2️⃣", `plan:pick:${planId}:2`)
     .text("3️⃣", `plan:pick:${planId}:3`)
-    .text("4️⃣", `plan:pick:${planId}:4`);
+    .text("4️⃣", `plan:pick:${planId}:4`)
+    .row()
+    .text("💬 Reply yes / do 1 and 2", `plan:approve:${planId}`);
 }
 
 /** Pending free-text for hero province assign (chatId → armyId+goal). */
@@ -181,11 +213,60 @@ export function startTelegramBot(input: {
   const chatId = input.chatId;
   const dataDir = input.dataDir || process.env.CABINET_DATA_DIR?.trim() || "data/cabinet";
   const limiter = new RateLimiter(30, 60_000);
+  let topicsState: TelegramTopicsState | null = null;
 
   const isOwner = (ctx: Context) => ctx.from?.id === input.ownerUserId;
   const inWarRoom = (ctx: Context) => String(ctx.chat?.id) === String(chatId);
   const ownerOnlySensors = input.ownerOnlySensors !== false;
   const autoExecLog: number[] = [];
+
+  async function refreshTopics(): Promise<TelegramTopicsState> {
+    topicsState = await loadTopicsState(dataDir);
+    if (!topicsState) {
+      topicsState = await ensureCabinetTopics(bot.api, chatId, dataDir);
+    }
+    return topicsState;
+  }
+
+  void refreshTopics().catch((err) =>
+    console.warn(
+      "[telegram-topics] boot load:",
+      err instanceof Error ? err.message : String(err),
+    ),
+  );
+
+  function ctxThreadId(ctx: Context): number | undefined {
+    return (
+      ctx.message?.message_thread_id ??
+      ctx.callbackQuery?.message?.message_thread_id ??
+      undefined
+    );
+  }
+
+  /** Prefer posting a seat reply into that seat's forum topic. */
+  async function replyForSeat(
+    ctx: Context,
+    seatId: string | null,
+    text: string,
+    extra?: { reply_markup?: InlineKeyboard; parse_mode?: "Markdown" },
+  ): Promise<void> {
+    const state = topicsState ?? (await refreshTopics());
+    const key: CabinetTopicKey = seatId
+      ? topicKeyForSeat(seatId)
+      : "general";
+    const preferred = threadIdForKey(state, key);
+    const current = ctxThreadId(ctx);
+    if (
+      state.isForum &&
+      preferred != null &&
+      current != null &&
+      preferred !== current
+    ) {
+      await sendInTopic(bot.api, chatId, dataDir, key, text, extra);
+      return;
+    }
+    await safeReply(ctx, text, extra);
+  }
 
   async function requireOwner(ctx: Context): Promise<boolean> {
     if (isOwner(ctx)) return true;
@@ -219,33 +300,51 @@ export function startTelegramBot(input: {
   ): Promise<void> {
     if (!limiter.tryTake()) {
       if (limiter.shouldWarn()) {
-        await ctx.reply("⏳ rate limited — wait a minute");
+        await ctx.reply("⏳ rate limited — wait a minute", {
+          message_thread_id: ctxThreadId(ctx),
+        });
       }
       return;
     }
+    const threadId = ctxThreadId(ctx);
+    const base = {
+      reply_markup: extra?.reply_markup,
+      ...(threadId != null ? { message_thread_id: threadId } : {}),
+    };
     try {
       await ctx.reply(text.slice(0, 3500), {
+        ...base,
         parse_mode: extra?.parse_mode,
-        reply_markup: extra?.reply_markup,
       });
     } catch {
-      await ctx.reply(text.slice(0, 3500), {
-        reply_markup: extra?.reply_markup,
-      });
+      await ctx.reply(text.slice(0, 3500), base);
     }
+  }
+
+  async function showTopics(ctx: Context, setup: boolean): Promise<void> {
+    if (setup) {
+      await safeReply(ctx, "🧵 Setting up cabinet threads…");
+      topicsState = await ensureCabinetTopics(bot.api, chatId, dataDir);
+    } else {
+      topicsState = (await loadTopicsState(dataDir)) ?? (await refreshTopics());
+    }
+    await safeReply(ctx, formatTopicsBrief(topicsState), {
+      parse_mode: "Markdown",
+      reply_markup: await kbHome(),
+    });
   }
 
   bot.command("start", async (ctx) => {
     if (!inWarRoom(ctx)) return;
+    const conv = await input.memory.loadConversationState();
+    const state = await refreshTopics();
     await safeReply(
       ctx,
-      [
-        "🏛️ *War Room*",
-        "",
-        "Server = brain · browser = actuator.",
-        "Tap *Menu* (/) or buttons below.",
-        "/home · /spies · /armies · /stats · /eco · /heroes · /diplo · /auto",
-      ].join("\n"),
+      formatWarRoomHome({
+        advisor: conv?.activeAdvisor,
+        bridgeUp: input.bridge.isHealthy(),
+        forumsOn: state.isForum,
+      }),
       {
         parse_mode: "Markdown",
         reply_markup: await kbHome(),
@@ -255,9 +354,27 @@ export function startTelegramBot(input: {
 
   bot.command("home", async (ctx) => {
     if (!inWarRoom(ctx)) return;
-    await safeReply(ctx, "🏠 Home — pick an action:", {
-      reply_markup: await kbHome(),
-    });
+    const conv = await input.memory.loadConversationState();
+    const state = topicsState ?? (await refreshTopics());
+    await safeReply(
+      ctx,
+      formatWarRoomHome({
+        advisor: conv?.activeAdvisor,
+        bridgeUp: input.bridge.isHealthy(),
+        forumsOn: state.isForum,
+      }),
+      {
+        parse_mode: "Markdown",
+        reply_markup: await kbHome(),
+      },
+    );
+  });
+
+  bot.command("topics", async (ctx) => {
+    if (!inWarRoom(ctx)) return;
+    if (!(await requireOwner(ctx))) return;
+    const arg = ((ctx.match as string) || "").trim().toLowerCase();
+    await showTopics(ctx, arg === "setup" || arg === "init" || arg === "create");
   });
 
   bot.command("auto", async (ctx) => {
@@ -386,6 +503,7 @@ export function startTelegramBot(input: {
     const plans = await input.memory.getPlans();
     const open = plans.filter((p) => p.status === "proposed").length;
     const conv = await input.memory.loadConversationState();
+    const topics = topicsState ?? (await refreshTopics());
     await safeReply(
       ctx,
       formatStatusLines({
@@ -401,6 +519,7 @@ export function startTelegramBot(input: {
         advisor: conv?.activeAdvisor ?? null,
         busySeats: input.chief.busySeatIds(),
         autoPilot: !!conv?.autoPilot,
+        forumsOn: topics.isForum,
       }),
       {
         parse_mode: "Markdown",
@@ -449,9 +568,8 @@ export function startTelegramBot(input: {
       const { formatWarBoard } = await import("./war-loop.js");
       await safeReply(
         ctx,
-        decorateMilitaryText(
-          formatWarBoard(snap as import("./war-types.js").WarWatchSnapshot),
-        ),
+        formatWarBoard(snap as import("./war-types.js").WarWatchSnapshot),
+        { parse_mode: "Markdown" },
       );
       return;
     }
@@ -588,7 +706,7 @@ export function startTelegramBot(input: {
         return;
       }
       if (!input.bridge.isHealthy()) {
-        await safeReply(ctx, "🔴 game not connected — cannot approve/execute");
+        await safeReply(ctx, BRIDGE_HELP);
         return;
       }
       // Re-resolve coords from live war picture so lat/long invents never ship.
@@ -622,14 +740,29 @@ export function startTelegramBot(input: {
       }
       const skipped =
         executable.length - chosen.length + result.skippedProposeOnly;
-      const summary = input.quietApprove
-        ? `✅ approved ${plan.id}: ran ${fixedChosen.length} · ${result.results.filter((r) => r.ok).length} ok${skipped ? ` · ${skipped} skipped` : ""}`
-        : `✅ approved ${plan.id} (${fixedChosen.length}/${executable.length})\n${result.results.map((r) => `${r.ok ? "✅" : "❌"} ${r.type}: ${r.detail}`).join("\n")}`;
-      await safeReply(ctx, decorateMilitaryText(summary));
+      const okN = result.results.filter((r) => r.ok).length;
+      const moving = result.results
+        .filter((r) => r.ok)
+        .map((r) => r.detail)
+        .filter(Boolean)
+        .slice(0, 4);
+      const failed = result.results
+        .filter((r) => !r.ok)
+        .map((r) => `• ${r.type}: ${r.detail}`)
+        .slice(0, 4);
+      const summary =
+        okN === 0
+          ? `❌ *No soldiers moved*\nPlan \`${plan.id}\` did not queue on the map.\n${failed.join("\n") || "Bridge returned no verified orders."}`
+          : input.quietApprove
+            ? `🫡 *Moving on the map* — ${okN}/${fixedChosen.length} verified${skipped ? ` · ${skipped} skipped` : ""}${moving.length ? `\n${moving.map((d) => `• ${d}`).join("\n")}` : ""}`
+            : `✅ approved ${plan.id} (${okN}/${fixedChosen.length} verified)\n${result.results.map((r) => `${r.ok ? "✅" : "❌"} ${r.type}: ${r.detail}`).join("\n")}`;
+      await safeReply(ctx, decorateMilitaryText(summary), {
+        parse_mode: "Markdown",
+      });
       if (!result.ok) {
         await safeReply(
           ctx,
-          "⚠️ some tasks failed — plan is retryable (not locked). Fix args or /approve again.",
+          "⚠️ Not all orders landed on the map — plan is retryable. Open the game and check paths, or ask @War for a new PLAN with real province names.",
         );
       }
     } catch (err) {
@@ -691,7 +824,7 @@ export function startTelegramBot(input: {
 
   async function showSpies(ctx: Context): Promise<void> {
     if (!input.bridge.isHealthy()) {
-      await safeReply(ctx, "🔴 game not connected");
+      await safeReply(ctx, BRIDGE_HELP);
       return;
     }
     try {
@@ -718,7 +851,7 @@ export function startTelegramBot(input: {
 
   async function showStats(ctx: Context): Promise<void> {
     if (!input.bridge.isHealthy()) {
-      await safeReply(ctx, "🔴 game not connected");
+      await safeReply(ctx, BRIDGE_HELP);
       return;
     }
     try {
@@ -736,7 +869,7 @@ export function startTelegramBot(input: {
 
   async function showEco(ctx: Context): Promise<void> {
     if (!input.bridge.isHealthy()) {
-      await safeReply(ctx, "🔴 game not connected");
+      await safeReply(ctx, BRIDGE_HELP);
       return;
     }
     try {
@@ -754,7 +887,7 @@ export function startTelegramBot(input: {
 
   async function showHeroes(ctx: Context): Promise<void> {
     if (!input.bridge.isHealthy()) {
-      await safeReply(ctx, "🔴 game not connected");
+      await safeReply(ctx, BRIDGE_HELP);
       return;
     }
     try {
@@ -815,7 +948,7 @@ export function startTelegramBot(input: {
 
   async function showDiplo(ctx: Context): Promise<void> {
     if (!input.bridge.isHealthy()) {
-      await safeReply(ctx, "🔴 game not connected");
+      await safeReply(ctx, BRIDGE_HELP);
       return;
     }
     try {
@@ -945,17 +1078,37 @@ export function startTelegramBot(input: {
       const action = data.slice("home:".length);
       const conv = await input.memory.loadConversationState();
       if (action === "show") {
-        await ctx.answerCallbackQuery({ text: "Home" });
-        await safeReply(ctx, "🏠 Home — pick an action:", {
-          reply_markup: await kbHome(),
-        });
+        await ctx.answerCallbackQuery({ text: "Cabinet" });
+        const state = topicsState ?? (await refreshTopics());
+        await safeReply(
+          ctx,
+          formatWarRoomHome({
+            advisor: conv?.activeAdvisor,
+            bridgeUp: input.bridge.isHealthy(),
+            forumsOn: state.isForum,
+          }),
+          {
+            parse_mode: "Markdown",
+            reply_markup: await kbHome(),
+          },
+        );
+        return;
+      }
+      if (action === "topics") {
+        await ctx.answerCallbackQuery({ text: "Threads" });
+        await showTopics(ctx, false);
         return;
       }
       if (action === "advisor") {
         await ctx.answerCallbackQuery();
-        await safeReply(ctx, "👥 Pick an advisor:", {
-          reply_markup: advisorKeyboard(input.seats),
-        });
+        await safeReply(
+          ctx,
+          "👥 *Pick a minister*\nOr open their forum topic and just type.",
+          {
+            parse_mode: "Markdown",
+            reply_markup: advisorKeyboard(input.seats),
+          },
+        );
         return;
       }
       if (action === "diplo") {
@@ -1040,6 +1193,7 @@ export function startTelegramBot(input: {
         const plans = await input.memory.getPlans();
         const open = plans.filter((p) => p.status === "proposed").length;
         const c2 = await input.memory.loadConversationState();
+        const topics = topicsState ?? (await refreshTopics());
         await safeReply(
           ctx,
           formatStatusLines({
@@ -1055,6 +1209,7 @@ export function startTelegramBot(input: {
             advisor: c2?.activeAdvisor ?? null,
             busySeats: input.chief.busySeatIds(),
             autoPilot: !!c2?.autoPilot,
+            forumsOn: topics.isForum,
           }),
           {
             parse_mode: "Markdown",
@@ -1098,8 +1253,17 @@ export function startTelegramBot(input: {
         await ctx.answerCallbackQuery({ text: "Orders updated" });
         await safeReply(
           ctx,
-          `✅ New orders confirmed:\n${formatProposedGoals(pending.proposed)}`,
+          `✅ New orders confirmed:\n${formatProposedGoals(pending.proposed)}\n\n⏳ Building the full cabinet plan…`,
           { reply_markup: await kbHome() },
+        );
+        // Confirm used to only write goals — never asked ministers. Re-run now.
+        const orderBody =
+          pending.summary?.trim() ||
+          pending.proposed.map((p) => p.value).join("\n");
+        void runCabinetTurn(
+          ctx,
+          `@War @Intel @Finance PRESIDENT ORDERS (confirmed):\n${orderBody}\n\nProduce a phased Africa plan: retake Morocco + East Libya from Central USA; do not push deeper into USA beyond Africa. Executable moveArmy tasks with army ids + destinations.`,
+          { fireAndForget: true },
         );
         return;
       }
@@ -1111,7 +1275,7 @@ export function startTelegramBot(input: {
       const pid = Number(data.slice("diplo:thread:".length));
       await ctx.answerCallbackQuery({ text: "Loading thread…" });
       if (!input.bridge.isHealthy()) {
-        await safeReply(ctx, "🔴 game not connected");
+        await safeReply(ctx, BRIDGE_HELP);
         return;
       }
       try {
@@ -1378,14 +1542,24 @@ export function startTelegramBot(input: {
     turn: Awaited<ReturnType<CabinetChief["handleUserMessage"]>>,
   ): Promise<void> {
     if (turn.bridgeDown) {
+      await safeReply(ctx, turn.publicLines[0] || BRIDGE_HELP);
+      return;
+    }
+    if (turn.note === "no_advisor") {
+      const conv = await input.memory.loadConversationState();
+      const last =
+        conv?.activeAdvisor ||
+        conv?.seatIds?.[0] ||
+        null;
       await safeReply(
         ctx,
         turn.publicLines[0] ||
-          "🔴 game not connected — open tab + paste bridge, then /status",
+          "No advisor selected — choose who to talk to (@War, @Finance, …).",
+        { reply_markup: lastAdvisorKeyboard(input.seats, last) },
       );
       return;
     }
-    if (turn.note) await safeReply(ctx, turn.note);
+    // Internal notes (e.g. fast-sitrep) stay in logs — never echo to Telegram.
     for (const line of turn.publicLines.slice(0, 6)) {
       const m = line.match(/^@([^:]+):\s*([\s\S]*)$/);
       if (m) {
@@ -1400,7 +1574,9 @@ export function startTelegramBot(input: {
         const formatted = seat
           ? formatMinisterLine(seat.id, seat.name, m[2]!)
           : decorateMilitaryText(line);
-        await safeReply(ctx, formatted, { parse_mode: "Markdown" });
+        await replyForSeat(ctx, seat?.id ?? null, formatted, {
+          parse_mode: "Markdown",
+        });
       } else {
         await safeReply(ctx, decorateMilitaryText(line));
       }
@@ -1483,11 +1659,30 @@ export function startTelegramBot(input: {
       const body = decorateMilitaryText(
         formatPlan(turn.plan, input.quietApprove, picture),
       );
+      const planThread = ctxThreadId(ctx);
       const msg = await ctx.reply(body.slice(0, 3500), {
+        parse_mode: "Markdown",
         reply_markup: planKeyboard(turn.plan.id),
+        ...(planThread != null ? { message_thread_id: planThread } : {}),
       });
       turn.plan.telegramMessageId = msg.message_id;
       await input.memory.savePlan(turn.plan);
+      // Mirror a short pointer into Approvals topic when forums are on
+      const state = topicsState ?? (await refreshTopics());
+      if (state.isForum && threadIdForKey(state, "approvals") != null) {
+        const seatHint =
+          turn.plan.sourceSeatIds?.[0] ??
+          seatIdFromThreadId(state, planThread) ??
+          "cabinet";
+        void sendInTopic(
+          bot.api,
+          chatId,
+          dataDir,
+          "approvals",
+          `📜 New orders from *${seatHint}* — \`${turn.plan.id}\`\nOpen that seat topic to approve, or tap buttons on the plan message.`,
+          { parse_mode: "Markdown" },
+        ).catch(() => undefined);
+      }
     } else if (turn.plan && !planHasExecutable(turn.plan)) {
       // Should not happen (merge returns null) — never attach Approve.
     } else if (!turn.publicLines.length) {
@@ -1503,13 +1698,17 @@ export function startTelegramBot(input: {
     if (!(await requireOwner(ctx))) return;
     const conv = await input.memory.loadConversationState();
     const mentions = input.seats.resolveMentions(text);
+    const state = topicsState ?? (await refreshTopics());
+    const threadSeat = seatIdFromThreadId(state, ctxThreadId(ctx));
     if (mentions.seats.length === 1) {
       await input.memory.setActiveAdvisor(mentions.seats[0]!.id);
+    } else if (threadSeat && !mentions.all) {
+      await input.memory.setActiveAdvisor(threadSeat);
     }
     const sticky =
       mentions.seats.length === 1
         ? mentions.seats[0]!.id
-        : (conv?.activeAdvisor ?? null);
+        : (threadSeat ?? conv?.activeAdvisor ?? null);
     const forceSeatIds =
       !mentions.seats.length && !mentions.all && sticky
         ? [sticky]
@@ -1609,7 +1808,7 @@ export function startTelegramBot(input: {
 
     if (ctx.message.reply_to_message && isOwner(ctx)) {
       const low = text.trim().toLowerCase();
-      if (low === "reject") {
+      if (low === "reject" || low === "no" || low === "cancel") {
         const plan = await resolvePlan(ctx, input.memory);
         if (plan) {
           plan.status = "rejected";
@@ -1625,9 +1824,45 @@ export function startTelegramBot(input: {
       }
     }
 
+    // President language: "yes" / "do it" / "approve" against latest proposed PLAN
+    // (no need to reply-to the PLAN message when sticky context has one open).
+    if (isOwner(ctx)) {
+      const approveLikeEarly = parseApproveSelection(text);
+      if (approveLikeEarly) {
+        const mentionsEarly = input.seats.resolveMentions(text);
+        const hasSeatAsk =
+          mentionsEarly.all ||
+          mentionsEarly.cabinetOnly ||
+          mentionsEarly.seats.length > 0;
+        if (!hasSeatAsk) {
+          const open = await resolvePlan(ctx, input.memory);
+          if (open && open.status === "proposed") {
+            await doApprove(ctx, approveLikeEarly, open);
+            return;
+          }
+        }
+      }
+    }
+
     const mentions = input.seats.resolveMentions(text);
     const conv = await input.memory.loadConversationState();
-    const sticky = !!conv?.activeAdvisor;
+    const state = topicsState ?? (await refreshTopics());
+    const threadSeat = seatIdFromThreadId(state, ctxThreadId(ctx));
+    // Newspaper / article copy → Foreign (not sticky Finance from market board)
+    if (
+      !mentions.seats.length &&
+      !mentions.all &&
+      /\b(article|newspaper|write news|post as|propaganda|press release)\b/i.test(
+        text,
+      )
+    ) {
+      await input.memory.setActiveAdvisor("foreign");
+    }
+    // Forum topic = that minister's room (no @ needed)
+    if (threadSeat && !mentions.seats.length && !mentions.all) {
+      await input.memory.setActiveAdvisor(threadSeat);
+    }
+    const sticky = !!(conv?.activeAdvisor || threadSeat);
     const approveLike = parseApproveSelection(text);
 
     if (
@@ -1635,28 +1870,40 @@ export function startTelegramBot(input: {
       !mentions.cabinetOnly &&
       !mentions.seats.length &&
       !sticky &&
+      !threadSeat &&
       !approveLike &&
       !/@cabinet|@all|@finance|@war|@defense|@defence|@foreign|@intel/i.test(
         text,
       )
     ) {
-      await safeReply(ctx, "🏠 Pick an action — or choose an advisor to chat:", {
-        reply_markup: await kbHome(),
-      });
+      const last = conv?.activeAdvisor || conv?.seatIds?.[0] || null;
+      await safeReply(
+        ctx,
+        state.isForum
+          ? `Open a minister topic (⚔️ War, 💰 Finance, …) and type there — or pick below:`
+          : last
+            ? `No @seat in that message. Tap to continue with your last advisor, or /topics setup for threads:`
+            : `Pick a minister, or enable *Topics* and run /topics setup:`,
+        {
+          parse_mode: "Markdown",
+          reply_markup: lastAdvisorKeyboard(input.seats, last),
+        },
+      );
       return;
     }
 
     // Instant ack — do not wait for LLM. Parallel turns OK across seats.
     const who =
       mentions.seats[0]?.id ||
+      threadSeat ||
       conv?.activeAdvisor ||
       (mentions.all ? "all" : null);
     const ack =
       who === "all"
-        ? "⏳ 🏛️ cabinet thinking… (you can keep chatting /status anytime)"
+        ? "⏳ 🏛️ Cabinet is deliberating…"
         : who
-          ? `⏳ ${seatIcon(who)} thinking… (you can keep chatting /status anytime)`
-          : "⏳ thinking… (you can keep chatting)";
+          ? `⏳ ${seatIcon(who)} drafting orders…`
+          : "⏳ Working…";
     await safeReply(ctx, ack);
 
     void runCabinetTurn(ctx, text, { fireAndForget: true });
@@ -1664,7 +1911,8 @@ export function startTelegramBot(input: {
 
   // Slash-command menu (Telegram “/” button) for discoverability.
   const menuCommands: { command: string; description: string }[] = [
-    { command: "home", description: "Home — Advisor, Heroes, Groups, Market…" },
+    { command: "home", description: "Cabinet home — threads & actions" },
+    { command: "topics", description: "Forum threads — /topics setup" },
     { command: "advisor", description: "Pick who to talk to" },
     { command: "heroes", description: "Ops center — generals & missions" },
     { command: "groups", description: "Force groups (Alaska / air-bridge / reserve)" },

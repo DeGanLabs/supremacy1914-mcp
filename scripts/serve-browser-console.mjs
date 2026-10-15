@@ -35,7 +35,7 @@ function readToken() {
 
 function originAllowed(origin) {
   if (!origin) return true;
-  return /^(https?:\/\/(.*\.)?(supremacy1914\.com|bytro\.com)(:\d+)?)$/i.test(
+  return /^(https?:\/\/(.*\.)?(supremacy1914\.(com|de)|bytro\.com)(:\d+)?)$/i.test(
     origin,
   );
 }

@@ -29,7 +29,11 @@ export function provinceCoords(
   const needle = province.trim().toLowerCase();
 
   const ownProv = picture.ownProvinces ?? [];
-  const hitProv = uniqueNameMatch(ownProv, province, (p) => p.name);
+  const hitProv =
+    uniqueNameMatch(ownProv, province, (p) => p.name) ??
+    uniqueNameMatch(ownProv, foldAccents(province), (p) =>
+      foldAccents(p.name ?? ""),
+    );
   if (hitProv?.capital) {
     const x = Number(hitProv.capital.x);
     const y = Number(hitProv.capital.y);
@@ -63,8 +67,13 @@ export function provinceCoords(
   return null;
 }
 
+/** Allow accented names (Béchar, Königsberg) — ASCII-only class missed them. */
 const DEST_FROM_TEXT_RE =
-  /\b(?:withdraw to|pull(?: back)? to|redirect to|move to|merge (?:at|with)|screen at|hold at|toward|→|to)\s+([A-Z][A-Za-z .'-]{2,40})/;
+  /\b(?:withdraw to|pull(?: back)? to|redirect to|move to|merge (?:at|with)|screen at|hold at|concentrate at|join at|toward|→|to)\s+([\p{Lu}][\p{L} .'-]{2,40})/u;
+
+function foldAccents(s: string): string {
+  return s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+}
 
 /** Destination province from rationale / goal — prefers "to Whitehorse" over "out of New Arkhangelsk". */
 export function destinationProvinceFromText(
@@ -75,6 +84,13 @@ export function destinationProvinceFromText(
   const m = blob.match(DEST_FROM_TEXT_RE);
   if (m?.[1]) {
     return m[1].replace(/[.,;:]+$/, "").trim();
+  }
+  // Accent / punctuation fallback: "to bechar" / "to Béchar"
+  const soft = blob.match(
+    /\b(?:to|at|toward|→)\s+([A-Za-z\u00C0-\u024F][\w\u00C0-\u024F .'-]{2,40})/i,
+  );
+  if (soft?.[1]) {
+    return soft[1].replace(/[.,;:]+$/, "").trim();
   }
   return null;
 }

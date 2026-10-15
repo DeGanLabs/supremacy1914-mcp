@@ -82,7 +82,38 @@ export function formatMinisterLine(
   publicLine: string,
 ): string {
   const body = decorateMilitaryText(splitParagraphs(publicLine.trim()));
-  return `${seatIcon(seatId)} *${seatName}*\n${body}`;
+  return `${seatIcon(seatId)} *${seatName} — Cabinet*\n━━━━━━━━━━━━\n${body}`;
+}
+
+export function formatWarRoomHome(input?: {
+  advisor?: string | null;
+  bridgeUp?: boolean;
+  forumsOn?: boolean;
+}): string {
+  const bridge =
+    input?.bridgeUp === undefined
+      ? null
+      : input.bridgeUp
+        ? "🟢 linked to game"
+        : "🔴 game offline";
+  const advisor = input?.advisor
+    ? `${seatIcon(input.advisor)} ${input.advisor}`
+    : "none — open a seat topic or /advisor";
+  return [
+    `🏛️ *Presidential Cabinet*`,
+    `━━━━━━━━━━━━`,
+    `You are the President. Ministers brief you in their *threads*.`,
+    "",
+    input?.forumsOn
+      ? `🧵 Forum topics on — talk in ⚔️ War / 💰 Finance / …`
+      : `🧵 Tip: enable *Topics* on this group, then /topics setup`,
+    bridge ? `📡 ${bridge}` : null,
+    `🗣️ Active: ${advisor}`,
+    "",
+    `Say what you need · they propose · you say *yes* · they move.`,
+  ]
+    .filter((l) => l !== null)
+    .join("\n");
 }
 
 export function formatStatusLines(input: {
@@ -96,24 +127,25 @@ export function formatStatusLines(input: {
   advisor: string | null;
   busySeats: readonly string[];
   autoPilot?: boolean;
+  forumsOn?: boolean;
 }): string {
-  const bridge = input.bridgeUp ? "🟢 UP" : "🔴 DOWN";
+  const bridge = input.bridgeUp ? "🟢 linked" : "🔴 offline";
   const advisor = input.advisor
     ? `${seatIcon(input.advisor)} ${input.advisor}`
-    : "none — /advisor";
+    : "none — open a seat topic";
   const busy = input.busySeats.length
     ? input.busySeats.map((s) => `${seatIcon(s)} ${s}`).join(", ")
-    : "none";
+    : "idle";
   return [
     `📡 *Cabinet status*`,
-    `Bridge: ${bridge}`,
-    `Game: \`${input.gameId ?? "—"}\` · Player: \`${input.playerId ?? "—"}\``,
-    `Heartbeat: ${input.heartbeat ?? "—"}`,
-    `Model: ${input.model}`,
-    `Fast: ${input.fast}`,
-    `Open plans: ${input.openPlans}`,
-    `Auto: ${input.autoPilot ? "🟢 ON" : "⚪ OFF"}`,
-    `Talking to: ${advisor}`,
-    `Thinking: ${busy}`,
+    `━━━━━━━━━━━━`,
+    `Game link: ${bridge}`,
+    `Match: \`${input.gameId ?? "—"}\` · You: \`${input.playerId ?? "—"}\``,
+    `Pulse: ${input.heartbeat ?? "—"}`,
+    `Threads: ${input.forumsOn ? "🧵 forum on" : "flat chat — /topics setup"}`,
+    `Open orders: ${input.openPlans}`,
+    `Auto: ${input.autoPilot ? "🟢 ON" : "⚪ OFF (you approve)"}`,
+    `Speaking with: ${advisor}`,
+    `Working: ${busy}`,
   ].join("\n");
 }

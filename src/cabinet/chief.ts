@@ -16,7 +16,10 @@ import { normalizePlanTasks } from "./plan-normalize.js";
 import { filterTrustedBorderMoves } from "./plan-filter.js";
 import { unwrapWarPicture } from "./war-picture-util.js";
 import { expandSafeRetreatMoves } from "./safe-route.js";
-import { standingOrdersBlock } from "./war-brief.js";
+import {
+  formatWarSituationAnswer,
+  standingOrdersBlock,
+} from "./war-brief.js";
 import { getEventBus } from "./events.js";
 import { formatGroupsBrief, loadGroups } from "./groups.js";
 import { formatGeneralsBrief, loadGenerals } from "./generals.js";
@@ -33,6 +36,22 @@ import { formatMarketDigest } from "./market-engine.js";
 function wantsForeignDraft(text: string): boolean {
   return /\b(dm |draft (a |the )?message|tell (him|her|them)|message (to |yakut|adak|atka)|write (him|her|them)|pay for airport)\b/i.test(
     text,
+  );
+}
+
+/** Status / sitrep — answer from snapshot, no move orders. */
+function isSituationAsk(text: string): boolean {
+  const t = text.toLowerCase();
+  // Never fast-path planning / ops / campaigns
+  if (
+    /\b(move|attack|invade|push|retreat|bombard|approve|build|construct|spy plan|draft |dm |plan|tasks?|campaign|offensive|strategy|how we (get|take|attack|retake)|full plan|war against)\b/i.test(
+      t,
+    )
+  ) {
+    return false;
+  }
+  return /\b(situat(ion)?|status|sitrep|how (are|is) we|what('s| is) (our|the) (situat|status|position)|assess(ment)?|overview|standing orders|actual situat)\b/i.test(
+    t,
   );
 }
 
@@ -161,10 +180,11 @@ export class CabinetChief {
     if (!seats.length && !routed.all) {
       return {
         publicLines: [
-          "No advisor selected — tap /advisor and choose who to talk to.",
+          "No advisor selected — tap /advisor (or @War / @Finance / @Intel / @Foreign / @Defense). Sticky advisor remembers who you last chose.",
         ],
         plan: null,
         bridgeDown: false,
+        note: "no_advisor",
       };
     }
     if (routed.all) seats = this.seats.list();
@@ -187,6 +207,44 @@ export class CabinetChief {
     }
     seats = orderSeats(seats);
 
+    // Instant sitrep — no NVIDIA. Uses last war-picture.json (watch keeps it fresh).
+    if (
+      seats.length === 1 &&
+      (seats[0]!.id === "war" ||
+        seats[0]!.id === "defense" ||
+        seats[0]!.id === "intel") &&
+      isSituationAsk(text)
+    ) {
+      const snap = (await this.memory.loadWarPicture()) as Parameters<
+        typeof formatWarSituationAnswer
+      >[0];
+      const line = formatWarSituationAnswer(snap, text);
+      if (line) {
+        const seat = seats[0]!;
+        await this.memory.appendSeatNote(seat.id, line);
+        await this.memory.appendTranscript({
+          role: "seat",
+          seatId: seat.id,
+          text: line,
+        });
+        const conv = await this.memory.loadConversationState();
+        await this.memory.saveConversationState({
+          seatIds: [seat.id],
+          activeAdvisor: seat.id,
+          lastPlanId: conv?.lastPlanId,
+          autoPilot: conv?.autoPilot,
+          humanMode: conv?.humanMode,
+          transcript: conv?.transcript,
+          updatedAt: new Date().toISOString(),
+        });
+        return {
+          publicLines: [`@${seat.name}: ${line}`],
+          plan: null,
+          bridgeDown: false,
+        };
+      }
+    }
+
     const locked: string[] = [];
     for (const s of seats) {
       this.busySeats.add(s.id);
@@ -197,7 +255,11 @@ export class CabinetChief {
       // Fast path by default. Quality only for @all or CABINET_QUALITY=1.
       const useQuality =
         process.env.CABINET_QUALITY === "1" || routed.all;
-      const warBrief = await this.memory.loadWarBrief();
+      const warBriefBase = await this.memory.loadWarBrief();
+      const fieldAware = await this.memory.loadFieldAwarenessBrief();
+      const warBrief = fieldAware
+        ? `${warBriefBase}\n\n${fieldAware}`
+        : warBriefBase;
       const goals = await this.memory.getGoals();
       const standingWarOrders = standingOrdersBlock(goals);
       const dataDir =
@@ -365,7 +427,7 @@ export class CabinetChief {
         if (r === "bridge_down") {
           return {
             publicLines: [
-              "game not connected — open tab + paste bridge, then /status",
+              '🔴 game not connected — run `npm run cabinet` + `npm run cabinet:serve`, open the game tab, then: fetch("http://127.0.0.1:9878/browser-console.js").then(r=>r.text()).then(eval) and s1914.connectCabinetBridge("ws://127.0.0.1:8765", TOKEN). Or `npm run cabinet:keep`. Then /status.',
             ],
             plan: null,
             bridgeDown: true,
@@ -398,7 +460,7 @@ export class CabinetChief {
           if (r === "bridge_down") {
             return {
               publicLines: [
-                "game not connected — open tab + paste bridge, then /status",
+                '🔴 game not connected — run `npm run cabinet` + `npm run cabinet:serve`, open the game tab, then connectCabinetBridge. Or `npm run cabinet:keep`. Then /status.',
               ],
               plan: null,
               bridgeDown: true,
@@ -420,7 +482,7 @@ export class CabinetChief {
             if (r === "bridge_down") {
               return {
                 publicLines: [
-                  "game not connected — open tab + paste bridge, then /status",
+                  '🔴 game not connected — run `npm run cabinet` + `npm run cabinet:serve`, open the game tab, then connectCabinetBridge. Or `npm run cabinet:keep`. Then /status.',
                 ],
                 plan: null,
                 bridgeDown: true,
@@ -446,7 +508,15 @@ export class CabinetChief {
         }
       }
 
-      const plan = await this.mergePlan(text, outputs, goalsBlock);
+      // Skip second NVIDIA call when nobody proposed moves (Q&A / advice only).
+      const wantsOrders =
+        outputs.some((o) => o.out.proposals.length > 0) ||
+        /\b(move|attack|invade|push|retreat|bombard|approve|build|concentrate|pull)\b/i.test(
+          text,
+        );
+      const plan = wantsOrders
+        ? await this.mergePlan(text, outputs, goalsBlock)
+        : null;
       if (plan) await this.memory.savePlan(plan);
       const conv = await this.memory.loadConversationState();
       const stickySeat =
@@ -476,6 +546,10 @@ export class CabinetChief {
     goalsBlock: string,
   ): Promise<CabinetPlan | null> {
     if (!outputs.length) return null;
+    const ministerProposals = outputs.flatMap((o) => o.out.proposals);
+    // No executable proposals → skip chief NVIDIA merge (was ~half the latency).
+    if (!ministerProposals.length) return null;
+
     const bundle = outputs.map((o) => ({
       seat: o.seat.id,
       ...o.out,
@@ -503,7 +577,6 @@ export class CabinetChief {
     const picture = unwrapWarPicture(await this.memory.loadWarPicture());
     const goals = await this.memory.getGoals();
     const chiefTasks = merged.tasks ?? [];
-    const ministerProposals = outputs.flatMap((o) => o.out.proposals);
     // Prefer chief list when present to avoid double-counting minister copies.
     const rawTasks = chiefTasks.length
       ? [...chiefTasks, ...ministerProposals]

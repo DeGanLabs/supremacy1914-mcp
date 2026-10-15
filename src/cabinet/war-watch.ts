@@ -483,24 +483,35 @@ export function formatWarBoard(snap: WarWatchSnapshot): string {
   const activeZones = snap.zones
     .filter((z) => z.level === "high" || z.level === "medium")
     .sort((a, b) => levelRank(a.level) - levelRank(b.level));
-  const paper = (snap.picture.diplo?.atWarPaper ?? []).slice(0, 8);
+  const paper = (snap.picture.diplo?.atWarPaper ?? []).slice(0, 6);
+  const fronts = activeZones.slice(0, 5).map((z) => {
+    const f = snap.fronts.find((x) => x.playerId === z.playerId);
+    const heat = z.level === "high" ? "🔴 HIGH" : "🟡 MED";
+    const near =
+      f?.nearestHostile?.province ||
+      z.provinces.slice(0, 2).join(", ") ||
+      "—";
+    const own = f?.ownStrength ?? z.ownArmyIds.length;
+    const host = f?.hostileStrength ?? z.hostileArmyIds.length;
+    return `• *${z.nation}* — ${heat}\n  Near ${near} · us ${own} · them ${host}`;
+  });
   const lines = [
-    `WAR BOARD day=${snap.day ?? "?"} ${snap.myNation} (p${snap.myPlayerId}) game=${snap.gameId}`,
-    `Live wars: ${snap.atWar.length} | paper/defeated/ghost: ${paper.length}`,
-    `Front | Level | Status | Enemy | Own | Hostile | Last`,
-    ...activeZones.slice(0, 12).map((z) => {
-      const f = snap.fronts.find((x) => x.playerId === z.playerId);
-      const st = f?.status ?? z.tags.find((t) => t.startsWith("STATUS:"))?.slice(7) ?? "?";
-      return `${z.nation} | ${z.level.toUpperCase()} | ${st} | p${z.playerId} | own ${f?.ownStrength ?? z.ownArmyIds.length} | host ${f?.hostileStrength ?? z.hostileArmyIds.length} | ${f?.nearestHostile?.province ?? z.note.slice(0, 40)}`;
-    }),
+    `🗺️ *War board* · day ${snap.day ?? "?"} · ${snap.myNation}`,
+    `Live wars: *${snap.atWar.length}*`,
+    "",
+    fronts.length ? fronts.join("\n\n") : "_No active HIGH/MED fronts._",
   ];
-  if (!activeZones.length) lines.push("(no active HIGH/MED fronts)");
   if (paper.length) {
     lines.push(
-      `PAPER WARS (ignore ops): ${paper.map((p) => `${p.nation || p.name}[${p.status || "defeated"}]`).join(", ")}`,
+      "",
+      `📜 Paper only (ignore ops): ${paper
+        .map((p) => p.nation || p.name || "?")
+        .join(", ")}`,
     );
   }
-  if (snap.sensorDegraded) lines.push("WARN: SENSOR_DEGRADED");
+  if (snap.sensorDegraded) {
+    lines.push("", "⚠️ Sensor degraded — picture may be incomplete.");
+  }
   return lines.join("\n");
 }
 

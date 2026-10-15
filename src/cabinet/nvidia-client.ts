@@ -12,7 +12,11 @@ export type ModelTier = "fast" | "quality";
 
 interface ChatCompletionResponse {
   readonly choices?: ReadonlyArray<{
-    readonly message?: { readonly content?: string | null };
+    readonly message?: {
+      readonly content?: string | null;
+      readonly reasoning_content?: string | null;
+      readonly reasoning?: string | null;
+    };
   }>;
 }
 
@@ -86,11 +90,11 @@ export class NvidiaClient {
         { role: "user", content: input.user },
       ],
     };
+    if (/nemotron/i.test(model)) {
+      body.chat_template_kwargs = { enable_thinking: false };
+    }
     if (input.json) {
       body.response_format = { type: "json_object" };
-      if (/nemotron/i.test(model)) {
-        body.chat_template_kwargs = { enable_thinking: false };
-      }
     }
 
     const res = await fetch(`${this.baseURL}/chat/completions`, {
@@ -109,7 +113,16 @@ export class NvidiaClient {
       );
     }
     const data = JSON.parse(text) as ChatCompletionResponse;
-    return data.choices?.[0]?.message?.content?.trim() ?? "";
+    const msg = data.choices?.[0]?.message;
+    // JSON mode must use content only — reasoning_content is prose and breaks parsers.
+    const content = (msg?.content ?? "").trim();
+    if (content) return content;
+    if (input.json) return "";
+    return (
+      msg?.reasoning_content?.trim() ||
+      msg?.reasoning?.trim() ||
+      ""
+    );
   }
 
   async smoke(): Promise<{ ok: boolean; model: string; sample: string }> {

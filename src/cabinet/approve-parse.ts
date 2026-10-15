@@ -9,14 +9,17 @@ export interface ApproveSelection {
   readonly excludeTasks: Set<number>;
 }
 
-/** Parse owner text like "approve 1 and 3", "skip 2", "approve all except task 2". */
+const NATURAL_ALL =
+  /^(yes|yeah|yep|yup|ok|okay|k|go|go ahead|do it|do that|proceed|execute|ship it|make it so|lgtm|sounds good|approved)\.?$/i;
+
+/** Parse owner text like "approve 1 and 3", "yes", "do it", "do 1 and 3". */
 export function parseApproveSelection(text: string): ApproveSelection | null {
-  const raw = text.trim().toLowerCase();
+  const raw = text.trim().toLowerCase().replace(/\s+/g, " ");
   if (!raw) return null;
-  if (!/(^|\s)(approve|reject|skip|exclude)/.test(raw)) return null;
+
+  // Explicit reject is never an approve selection
   if (/^reject\b/.test(raw)) return null;
 
-  const approveAll = /\bapprove\s*all\b/.test(raw) || raw === "approve";
   const includeTasks = new Set<number>();
   const excludeTasks = new Set<number>();
 
@@ -26,6 +29,40 @@ export function parseApproveSelection(text: string): ApproveSelection | null {
   for (const m of raw.matchAll(/\bexcept\s*(?:task\s*)?(\d+)\b/g)) {
     excludeTasks.add(Number(m[1]));
   }
+
+  // Short president-language affirmatives (only when short — avoid "yes but also move…")
+  if (raw.length <= 48 && NATURAL_ALL.test(raw)) {
+    return { approveAll: true, includeTasks, excludeTasks };
+  }
+
+  // "do 1 and 3" / "run tasks 1, 2" / "1 and 3 only"
+  const doNums = raw.match(
+    /^(?:do|run|execute|go)\s+(?:tasks?\s+)?(.+)$/i,
+  );
+  if (doNums && raw.length <= 64) {
+    for (const m of doNums[1]!.matchAll(/(\d+)/g)) {
+      includeTasks.add(Number(m[1]));
+    }
+    if (includeTasks.size) {
+      return { approveAll: false, includeTasks, excludeTasks };
+    }
+  }
+  if (
+    raw.length <= 32 &&
+    /^\d+(\s*(?:and|,|&|\+)\s*\d+)*\s*(?:only)?\.?$/.test(raw)
+  ) {
+    for (const m of raw.matchAll(/(\d+)/g)) {
+      includeTasks.add(Number(m[1]));
+    }
+    if (includeTasks.size) {
+      return { approveAll: false, includeTasks, excludeTasks };
+    }
+  }
+
+  // Legacy approve / skip language
+  if (!/(^|\s)(approve|skip|exclude)/.test(raw)) return null;
+
+  const approveAll = /\bapprove\s*all\b/.test(raw) || raw === "approve";
 
   if (!approveAll) {
     const approveChunk = raw.match(/\bapprove\s+(.+)/);

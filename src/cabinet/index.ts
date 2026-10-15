@@ -121,21 +121,29 @@ async function main(): Promise<void> {
     intervalMs: env.warWatchMs,
     enabled: env.warWatch,
     autoReinforce: env.warAutoReinforce,
-    onAlert: async ({ digest, level, line, board }) => {
+    onAlert: async ({ digest, level, line, parts, board }) => {
       console.log(`[war-alert/${level}] ${(digest || line).slice(0, 120)}`);
       try {
-        const body = digest || line;
-        if (body) {
-          await bot.api.sendMessage(
+        const { sendInTopic } = await import("./telegram-topics.js");
+        const bubbles =
+          parts && parts.length
+            ? [...parts]
+            : [digest || line, board].filter(Boolean);
+        // Separate short bubbles — never one mega-batch
+        for (let i = 0; i < bubbles.length; i++) {
+          const body = String(bubbles[i]).slice(0, 1200);
+          if (!body.trim()) continue;
+          await sendInTopic(
+            bot.api,
             env.telegramChatId,
-            `@War ${body}`.slice(0, 3500),
+            env.dataDir,
+            "war",
+            body,
+            { parse_mode: "Markdown" },
           );
-        }
-        if (board) {
-          await bot.api.sendMessage(
-            env.telegramChatId,
-            board.slice(0, 3500),
-          );
+          if (i < bubbles.length - 1) {
+            await new Promise((r) => setTimeout(r, 350));
+          }
         }
       } catch (err) {
         console.warn(
@@ -145,16 +153,23 @@ async function main(): Promise<void> {
       }
     },
     onHandoff: async ({ seat, line }) => {
+      const key =
+        seat === "foreign"
+          ? "foreign"
+          : seat === "finance"
+            ? "finance"
+            : "intel";
       const tag =
         seat === "foreign"
-          ? "@Foreign"
+          ? "🤝 Foreign"
           : seat === "finance"
-            ? "@Finance"
-            : "@Intel";
-      const msg = `${tag} handoff: ${line}`.slice(0, 3500);
+            ? "💰 Finance"
+            : "🕵️ Intel";
+      const msg = `${tag} handoff:\n${line}`.slice(0, 3500);
       console.log(`[war-handoff] ${msg}`);
       try {
-        await bot.api.sendMessage(env.telegramChatId, msg);
+        const { sendInTopic } = await import("./telegram-topics.js");
+        await sendInTopic(bot.api, env.telegramChatId, env.dataDir, key, msg);
       } catch {
         /* ignore */
       }
@@ -197,13 +212,39 @@ async function main(): Promise<void> {
     );
   }
 
-  await bot.api.sendMessage(
-    env.telegramChatId,
-    [
-      "🏛️ cabinet online (server = brain · browser = actuator)",
-      "Menu: /home · /advisor · /heroes · /groups · /market · /auto · /mode · /status",
-    ].join("\n"),
-  );
+  try {
+    const { ensureCabinetTopics, sendInTopic } = await import(
+      "./telegram-topics.js"
+    );
+    const topics = await ensureCabinetTopics(
+      bot.api,
+      env.telegramChatId,
+      env.dataDir,
+    );
+    await sendInTopic(
+      bot.api,
+      env.telegramChatId,
+      env.dataDir,
+      "general",
+      [
+        "🏛️ *Presidential Cabinet — online*",
+        topics.isForum
+          ? "🧵 Seat threads ready — talk in ⚔️ War / 💰 Finance / …"
+          : "Enable *Topics* on this group, then /topics setup",
+        "You approve · they move. /home · /topics · /status",
+      ].join("\n"),
+      { parse_mode: "Markdown" },
+    );
+  } catch (err) {
+    console.warn(
+      "telegram boot message:",
+      err instanceof Error ? err.message : String(err),
+    );
+    await bot.api.sendMessage(
+      env.telegramChatId,
+      "🏛️ cabinet online — /home · /topics setup · /status",
+    );
+  }
 
   const shutdown = () => {
     watch.stop();

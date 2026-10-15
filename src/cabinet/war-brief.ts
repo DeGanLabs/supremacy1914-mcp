@@ -176,6 +176,152 @@ export function formatWarBriefing(
   return out;
 }
 
+/**
+ * Player-facing sitrep when the LLM fails JSON — prefer fronts/zones matching the question.
+ */
+export function formatWarSituationAnswer(
+  snap: {
+    readonly day?: number | null;
+    readonly fronts?: ReadonlyArray<{
+      readonly name: string;
+      readonly atWar?: boolean;
+      readonly level?: string;
+      readonly ownArmyIds?: readonly number[];
+      readonly hostileArmyIds?: readonly number[];
+      readonly ownStrength?: number;
+      readonly hostileStrength?: number;
+      readonly borderProvinces?: readonly string[];
+      readonly nearestHostile?: {
+        armyId?: number;
+        province?: string | null;
+        distance?: number;
+      } | null;
+    }>;
+    readonly zones?: ReadonlyArray<{
+      readonly nation: string;
+      readonly level?: string;
+      readonly provinces?: readonly string[];
+      readonly ownArmyIds?: readonly number[];
+      readonly hostileArmyIds?: readonly number[];
+      readonly note?: string;
+    }>;
+    readonly atWar?: ReadonlyArray<{ nation?: string; name?: string }>;
+    readonly picture?: {
+      readonly ownArmies?: ReadonlyArray<{
+        readonly id?: number;
+        readonly idle?: boolean;
+        readonly province?: string | null;
+      }>;
+    };
+  } | null,
+  question: string,
+  maxChars = 900,
+): string | null {
+  if (!snap) return null;
+  const q = question.toLowerCase();
+  const fronts = snap.fronts ?? [];
+  const zones = snap.zones ?? [];
+  const own = snap.picture?.ownArmies ?? [];
+
+  const mentioned = fronts.filter((f) => {
+    const nat = f.name.toLowerCase();
+    return nat.length >= 3 && q.includes(nat);
+  });
+  const pool =
+    mentioned.length > 0
+      ? mentioned
+      : fronts.filter((f) => f.atWar).slice(0, 3);
+  if (!pool.length && !zones.length) return null;
+
+  const parts: string[] = [];
+  if (snap.day != null) parts.push(`Day ${snap.day}.`);
+
+  for (const f of pool.slice(0, 3)) {
+    const z = zones.find(
+      (x) => x.nation.toLowerCase() === f.name.toLowerCase(),
+    );
+    const provs = (
+      z?.provinces?.slice(0, 3) ??
+      f.borderProvinces?.slice(0, 3) ??
+      []
+    ).join(", ");
+    const ownN = f.ownArmyIds?.length ?? z?.ownArmyIds?.length ?? 0;
+    const hostN = f.hostileArmyIds?.length ?? z?.hostileArmyIds?.length ?? 0;
+    const idle = (f.ownArmyIds ?? z?.ownArmyIds ?? []).filter((id) => {
+      const a = own.find((x) => x.id === id);
+      return a?.idle;
+    }).length;
+    const nh = f.nearestHostile;
+    const near =
+      nh?.province != null
+        ? ` Nearest hostile @ ${nh.province}${nh.distance != null ? ` (d=${Math.round(nh.distance)})` : ""}.`
+        : z?.note
+          ? ` ${z.note}.`
+          : "";
+    const str =
+      f.ownStrength != null && f.hostileStrength != null
+        ? ` Force ~${f.ownStrength} vs ~${f.hostileStrength}.`
+        : "";
+    parts.push(
+      `${f.name}${f.atWar ? " (war)" : ""}: ${ownN} of ours near ${provs || "?"}, ${hostN} hostile visible${idle ? `, ${idle} idle` : ""}.${str}${near}`,
+    );
+  }
+
+  if (!parts.length) return null;
+  let out = parts.join(" ");
+  if (out.length > maxChars) out = `${out.slice(0, maxChars - 1)}…`;
+  return out;
+}
+
+/** Best-effort sitrep from the already-formatted war briefing text. */
+export function formatWarSituationFromBrief(
+  brief: string | undefined,
+  question: string,
+  maxChars = 900,
+): string | null {
+  if (!brief?.trim()) return null;
+  const q = question.toLowerCase();
+  const frontLines = brief
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => /^- .+\s\[(high|medium|low)\]/i.test(l));
+  const picked = frontLines.filter((l) => {
+    const name = l.replace(/^- /, "").split("[")[0]?.trim().toLowerCase() ?? "";
+    return name.length >= 3 && q.includes(name);
+  });
+  const use = picked.length ? picked : frontLines.filter((l) => /war=true/i.test(l)).slice(0, 3);
+  if (!use.length) {
+    // Fall back to HIGH zone lines
+    const high = brief
+      .split("\n")
+      .map((l) => l.trim())
+      .filter((l) => /^- .+:/.test(l) && !/\[(high|medium|low)\]/i.test(l));
+    const zh = high.filter((l) => {
+      const name = l.replace(/^- /, "").split(":")[0]?.trim().toLowerCase() ?? "";
+      return name.length >= 3 && q.includes(name);
+    });
+    if (!zh.length) return brief.slice(0, maxChars);
+    return zh
+      .slice(0, 2)
+      .map((l) => l.replace(/^- /, "").replace(/\s*\|\s*/g, " · "))
+      .join(" ")
+      .slice(0, maxChars);
+  }
+  const parts = use.slice(0, 3).map((l) => {
+    const m = l.match(
+      /^- (.+?)\s\[(\w+)\]\s+war=(\S+)\s+ownStr=(\S+)\s+hostileStr=(\S+)\s+nearest=(\S+)/i,
+    );
+    if (!m) return l.replace(/^- /, "");
+    const [, name, level, war, ownStr, hostStr, nearest] = m;
+    const near =
+      nearest && nearest !== "—"
+        ? ` Nearest ${nearest.replace(/d=([\d.]+)/, (_, d) => `d=${Math.round(Number(d))}`)}.`
+        : "";
+    return `${name} [${level}${war === "true" ? ", war" : ""}]: force ~${ownStr} vs ~${hostStr}.${near}`;
+  });
+  return parts.join(" ").slice(0, maxChars);
+}
+
 export function standingOrdersBlock(
   goals: ReadonlyArray<{ key: string; value: string }>,
 ): string {

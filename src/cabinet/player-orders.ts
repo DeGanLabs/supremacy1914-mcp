@@ -42,6 +42,31 @@ export function detectGoalOverrideIntent(text: string): {
       value: "player override pending confirm",
     });
   }
+  // Africa recovery vs Central USA — Morocco / East Libya, stop at Africa
+  if (
+    /usa|central usa|america/i.test(t) &&
+    /morocco|libya|africa|maroco|afrika/i.test(t)
+  ) {
+    proposed.push({
+      key: "focus:africa-vs-usa",
+      value: "Retake Morocco + East Libya from Central USA; hold Africa rim",
+    });
+    if (/morocco|maroco/i.test(t)) {
+      proposed.push({ key: "focus:morocco", value: "retake Morocco from Central USA" });
+    }
+    if (/east libya|libya/i.test(t)) {
+      proposed.push({
+        key: "focus:east-libya",
+        value: "retake East Libya from Central USA",
+      });
+    }
+    if (/no further|dont push|don't push|rest in africa|stop at africa|not deeper|homeland/i.test(t)) {
+      proposed.push({
+        key: "no-invade:usa-beyond-africa",
+        value: "Do not push Central USA beyond African theater",
+      });
+    }
+  }
   if (!proposed.length) {
     proposed.push({ key: "war:player-order", value: t.slice(0, 200) });
   }

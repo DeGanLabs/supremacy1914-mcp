@@ -22,9 +22,17 @@ export class CabinetExecutor {
   ): Promise<ExecuteResult> {
     const idem = `approve:${plan.id}:${plan.payloadHash}`;
     if (this.bridge.wasDone(idem)) {
+      // Do NOT report success as if soldiers moved again — caller must replan.
       return {
-        ok: true,
-        results: [{ type: "_idempotent", ok: true, detail: "already executed" }],
+        ok: false,
+        results: [
+          {
+            type: "_idempotent",
+            ok: false,
+            detail:
+              "already executed earlier — no new move sent. Check the map or ask @War for a fresh PLAN",
+          },
+        ],
         skippedProposeOnly: 0,
       };
     }
@@ -133,14 +141,19 @@ export class CabinetExecutor {
           typeof result === "object" && result !== null
             ? (result as Record<string, unknown>)
             : null;
+        // Moves must be verified on the live army command queue — never trust silence.
         const verifiedOk =
-          asObj == null ||
-          (asObj.verified !== false && asObj.ok !== false);
+          task.type === "moveArmy" || task.type === "attackArmy"
+            ? !!(asObj && asObj.verified === true && asObj.ok !== false)
+            : asObj == null ||
+              (asObj.verified !== false && asObj.ok !== false);
         if (!verifiedOk) {
           results.push({
             type: task.type,
             ok: false,
-            detail: formatBridgeResult(asObj!),
+            detail: asObj
+              ? formatBridgeResult(asObj)
+              : "no verified result from game bridge",
           });
           continue;
         }

@@ -158,48 +158,47 @@ export function formatWatchDigest(
   const focus = focusNations(goals);
 
   const parts: string[] = [];
-  parts.push(`📡 President — quick sitrep (day ${snap.day ?? "?"}).`);
+  parts.push(`📡 *Sitrep* · day ${snap.day ?? "?"}`);
 
   if (liveHigh.length) {
     for (const z of liveHigh.slice(0, 3)) {
-      const provs = z.provinces.slice(0, 3).join("/") || z.nation;
+      const provs = z.provinces.slice(0, 2).join(", ") || z.nation;
       const idleCount = z.ownArmyIds.filter((id) => {
         const a = snap.picture.ownArmies?.find((x) => x.id === id);
         if (!a) return false;
         return a.idle || armyCommandCount(a) <= 0;
       }).length;
-      const holdNote = holdDisengage(goals) && focus.some((f) => z.nation.toLowerCase().includes(f))
-        ? " Standing order is hold/disengage — thin screen, no push."
-        : "";
+      const holdNote =
+        holdDisengage(goals) &&
+        focus.some((f) => z.nation.toLowerCase().includes(f))
+          ? "\n_Hold / disengage standing — no push._"
+          : "";
       parts.push(
-        `⚔️ ${z.nation}: ${z.ownArmyIds.length} of ours at ${provs}, ${z.hostileArmyIds.length} hostile visible.${idleCount ? ` ${idleCount} 😴 idle.` : ""}${holdNote}`,
+        `⚔️ *${z.nation}*\n${z.ownArmyIds.length} of ours near ${provs} · ${z.hostileArmyIds.length} hostile visible${idleCount ? ` · ${idleCount} idle` : ""}${holdNote}`,
       );
     }
   } else {
-    parts.push("✅ No live-war HIGH fronts right now.");
+    parts.push("✅ No live HIGH fronts right now.");
   }
 
   if (shareMap.length) {
     const names = shareMap
-      .slice(0, 4)
+      .slice(0, 3)
       .map((f) => f.name)
       .join(", ");
-    parts.push(
-      `🤝 Trusted borders (${names}) — map-share allies. I'm not pulling troops off those lines.`,
-    );
+    parts.push(`🤝 Trusted map-share: ${names}`);
   }
 
   const dist = distrustNations(goals);
   if (dist.length) {
-    parts.push(`Watch list: ${dist.join(", ")} — borders not fully trusted.`);
+    parts.push(`👁 Watch list: ${dist.slice(0, 4).join(", ")}`);
   }
 
   if (snap.sensorDegraded) {
-    parts.push("Sensor degraded — picture may be incomplete.");
+    parts.push("⚠️ Sensor degraded.");
   }
 
-  parts.push("Watching.");
-  return parts.join("\n");
+  return parts.join("\n\n");
 }
 
 export interface WatchTelegramMessages {
