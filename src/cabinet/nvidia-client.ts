@@ -105,6 +105,7 @@ export class NvidiaClient {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
+      signal: AbortSignal.timeout(90_000),
     });
     const text = await res.text();
     if (!res.ok) {

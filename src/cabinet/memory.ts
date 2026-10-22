@@ -5,13 +5,63 @@ import type {
   Hypothesis,
   PlayerGoal,
 } from "../cabinet/types.js";
+import { COST_CAPS } from "./cost-caps.js";
+import type { CabinetLanguage } from "./language.js";
 
 const MAX_FACTS = 200;
 const MAX_HYPOTHESES = 50;
 const MAX_SEAT_LINES = 40;
 
+export interface ConversationTranscriptEntry {
+  t: string;
+  role: "user" | "seat" | "system";
+  seatId?: string;
+  text: string;
+}
+
+export interface LastDiploDraft {
+  text: string;
+  targetNation?: string;
+  targetPlayerId?: number;
+  language?: string;
+  seatId?: string;
+  savedAt: string;
+}
+
+export interface RecentAction {
+  t: string;
+  kind: string;
+  detail: string;
+}
+
+export interface ConversationState {
+  seatIds: string[];
+  activeAdvisor?: string | null;
+  lastPlanId?: string;
+  autoPilot?: boolean;
+  humanMode?: string;
+  /** Default advisor speech language. */
+  cabinetLanguage?: CabinetLanguage;
+  /** Last Foreign draft ready to send. */
+  lastDraft?: LastDiploDraft | null;
+  /** Recent executed / sent actions for advisor awareness. */
+  recentActions?: RecentAction[];
+  transcript?: ConversationTranscriptEntry[];
+  updatedAt: string;
+}
+
 export class CabinetMemory {
-  constructor(private readonly rootDir: string) {}
+  constructor(private rootDir: string) {}
+
+  /** Active match-scoped directory. */
+  getRootDir(): string {
+    return this.rootDir;
+  }
+
+  /** Point memory at games/{gameId} after a match switch. */
+  rebind(rootDir: string): void {
+    this.rootDir = rootDir;
+  }
 
   async init(): Promise<void> {
     await mkdir(this.rootDir, { recursive: true });
@@ -143,53 +193,27 @@ export class CabinetMemory {
     }
   }
 
-  async saveConversationState(state: {
-    readonly seatIds: readonly string[];
-    /** Sticky 1:1 advisor from /advisor buttons (free chat, no @tag). */
-    readonly activeAdvisor?: string | null;
-    readonly lastPlanId?: string;
-    /** When true, executable plans auto-run without Approve. */
-    readonly autoPilot?: boolean;
-    /** Human override: AUTO | SUGGEST | CONFIRM | PAUSE | ABORT */
-    readonly humanMode?: string;
-    /** Rolling important chat turns for LLM context. */
-    readonly transcript?: ReadonlyArray<{
-      t: string;
-      role: "user" | "seat" | "system";
-      seatId?: string;
-      text: string;
-    }>;
-    readonly updatedAt: string;
-  }): Promise<void> {
+  async saveConversationState(state: ConversationState): Promise<void> {
     await this.writeJson("conversation.json", state);
   }
 
-  async loadConversationState(): Promise<{
-    seatIds: string[];
-    activeAdvisor?: string | null;
-    lastPlanId?: string;
-    autoPilot?: boolean;
-    humanMode?: string;
-    transcript?: Array<{
-      t: string;
-      role: "user" | "seat" | "system";
-      seatId?: string;
-      text: string;
-    }>;
-    updatedAt: string;
-  } | null> {
+  async loadConversationState(): Promise<ConversationState | null> {
     try {
-      return await this.readJson("conversation.json");
+      return await this.readJson<ConversationState>("conversation.json");
     } catch {
       return null;
     }
   }
 
-  async setActiveAdvisor(seatId: string | null): Promise<void> {
-    const prev = (await this.loadConversationState()) ?? {
-      seatIds: [] as string[],
+  private emptyConversation(): ConversationState {
+    return {
+      seatIds: [],
       updatedAt: new Date().toISOString(),
     };
+  }
+
+  async setActiveAdvisor(seatId: string | null): Promise<void> {
+    const prev = (await this.loadConversationState()) ?? this.emptyConversation();
     await this.saveConversationState({
       ...prev,
       seatIds: seatId ? [seatId] : prev.seatIds,
@@ -199,10 +223,7 @@ export class CabinetMemory {
   }
 
   async setAutoPilot(on: boolean): Promise<void> {
-    const prev = (await this.loadConversationState()) ?? {
-      seatIds: [] as string[],
-      updatedAt: new Date().toISOString(),
-    };
+    const prev = (await this.loadConversationState()) ?? this.emptyConversation();
     await this.saveConversationState({
       ...prev,
       autoPilot: on,
@@ -214,16 +235,57 @@ export class CabinetMemory {
   async setHumanMode(
     mode: "AUTO" | "SUGGEST" | "CONFIRM" | "PAUSE" | "ABORT",
   ): Promise<void> {
-    const prev = (await this.loadConversationState()) ?? {
-      seatIds: [] as string[],
-      updatedAt: new Date().toISOString(),
-    };
+    const prev = (await this.loadConversationState()) ?? this.emptyConversation();
     await this.saveConversationState({
       ...prev,
       humanMode: mode,
       autoPilot: mode === "AUTO",
       updatedAt: new Date().toISOString(),
     });
+  }
+
+  async setCabinetLanguage(lang: CabinetLanguage): Promise<void> {
+    const prev = (await this.loadConversationState()) ?? this.emptyConversation();
+    await this.saveConversationState({
+      ...prev,
+      cabinetLanguage: lang,
+      updatedAt: new Date().toISOString(),
+    });
+  }
+
+  async setLastDraft(draft: LastDiploDraft | null): Promise<void> {
+    const prev = (await this.loadConversationState()) ?? this.emptyConversation();
+    await this.saveConversationState({
+      ...prev,
+      lastDraft: draft,
+      updatedAt: new Date().toISOString(),
+    });
+  }
+
+  async appendRecentAction(kind: string, detail: string): Promise<void> {
+    const prev = (await this.loadConversationState()) ?? this.emptyConversation();
+    const recentActions = [...(prev.recentActions ?? [])];
+    recentActions.push({
+      t: new Date().toISOString(),
+      kind,
+      detail: detail.trim().slice(0, 240),
+    });
+    while (recentActions.length > 16) recentActions.shift();
+    await this.saveConversationState({
+      ...prev,
+      recentActions,
+      updatedAt: new Date().toISOString(),
+    });
+  }
+
+  async loadRecentActionsBrief(): Promise<string> {
+    const state = await this.loadConversationState();
+    const rows = state?.recentActions ?? [];
+    if (!rows.length) return "";
+    return rows
+      .slice(-10)
+      .map((r) => `- [${r.kind}] ${r.detail}`)
+      .join("\n");
   }
 
   async replaceGoals(goals: PlayerGoal[]): Promise<void> {
@@ -235,12 +297,10 @@ export class CabinetMemory {
     seatId?: string;
     text: string;
   }): Promise<void> {
-    const prev = (await this.loadConversationState()) ?? {
-      seatIds: [] as string[],
-      updatedAt: new Date().toISOString(),
-    };
+    const prev = (await this.loadConversationState()) ?? this.emptyConversation();
     const transcript = [...(prev.transcript ?? [])];
-    const text = entry.text.trim().slice(0, 500);
+    const maxChars = COST_CAPS.maxTranscriptChars ?? 1200;
+    const text = entry.text.trim().slice(0, maxChars);
     if (!text) return;
     transcript.push({
       t: new Date().toISOString(),
@@ -248,7 +308,8 @@ export class CabinetMemory {
       seatId: entry.seatId,
       text,
     });
-    while (transcript.length > 12) transcript.shift();
+    const maxLines = COST_CAPS.maxChatTranscript ?? 24;
+    while (transcript.length > maxLines) transcript.shift();
     await this.saveConversationState({
       ...prev,
       transcript,

@@ -54,18 +54,30 @@ export class MinisterAgent {
     readonly generalsBrief?: string;
     readonly intelBrief?: string;
     readonly financeBrief?: string;
+    readonly cabinetLanguage?: import("./language.js").CabinetLanguage;
+    readonly outputLanguage?: string | null;
+    readonly councilMode?: boolean;
+    /** Recent moves / diplo sends so seats stay aware. */
+    readonly recentActions?: string;
   }): Promise<MinisterOutput> {
     this.gateway.resetTurn(input.seat.id);
     if (!this.gateway.isBridgeHealthy()) {
       throw new Error("game not connected");
     }
-    const system = `${await this.seats.loadPrompt(input.seat)}\n\n${TOOL_HINT}`;
+    const system = `${await this.seats.loadPrompt(input.seat, {
+      cabinetLanguage: input.cabinetLanguage,
+      outputLanguage: input.outputLanguage,
+      councilMode: input.councilMode,
+    })}\n\n${TOOL_HINT}`;
     let user = `Standing goals:\n${input.goalsBlock}\n\nPlayer question:\n${input.question}\n\nRespond with JSON.`;
     if (input.recentConversation?.trim()) {
       user += `\n\n${wrapUntrusted("recent conversation", input.recentConversation)}`;
     }
     if (input.seatNotes?.trim()) {
       user += `\n\nYour recent notes:\n${input.seatNotes}`;
+    }
+    if (input.recentActions?.trim()) {
+      user += `\n\nRecent cabinet actions (already done — do not claim they are still pending):\n${input.recentActions}`;
     }
     if (input.standingWarOrders?.trim()) {
       user += `\n\nStanding war orders (OBEY — filter every proposal):\n${input.standingWarOrders}`;
@@ -92,7 +104,7 @@ export class MinisterAgent {
       user += `\n\nCabinet table so far (authoritative peer briefs — use these numbers; do not ask peers to repeat):\n${input.peerBriefings}`;
     }
     if (input.reactionPass) {
-      user += `\n\nThis is the reaction pass. Revise your public_line to answer the player AND react to peers (agree / challenge / add the missing piece). Do not repeat your previous speech verbatim. Do not claim you lack data a peer already provided.`;
+      user += `\n\nThis is the reaction pass. Revise your public_line to answer the player AND react to peers (agree / challenge / add the missing piece). Do NOT repeat any peer's plan, timings, or draft status. If peers already covered the plan, say at most one short agree/add line. Do not claim you lack data a peer already provided.`;
     }
     const preloaded = await this.preloadSeatData(
       input.seat,
@@ -446,6 +458,8 @@ export class MinisterAgent {
     out: MinisterOutput,
     sensorFallback: string | null,
   ): MinisterOutput {
+    // Draft turns: keep the short "draft ready" line — never pad with sitrep.
+    if (out.draft_message?.trim()) return out;
     const line = out.public_line.trim();
     const tooThin =
       !line ||

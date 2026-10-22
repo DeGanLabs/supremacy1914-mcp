@@ -76,13 +76,43 @@ export function splitParagraphs(text: string, maxBlocks = 5): string {
   return chunks.slice(0, maxBlocks).join("\n\n");
 }
 
+/** Strip staff jargon / bot refusals so chat reads human. */
+export function scrubHumanChat(text: string): string {
+  let out = String(text ?? "");
+  out = out.replace(/\bshare[- ]?map\s+ally\b/gi, "ally");
+  out = out.replace(/\bclean\s+share[- ]?map\b/gi, "solid");
+  out = out.replace(/\bshare[- ]?map\b/gi, "map");
+  out = out.replace(/\bno open thread\b/gi, "nothing pending");
+  out = out.replace(/\bopen thread\b/gi, "pending chat");
+  out = out.replace(/\bpending requests\b/gi, "asks");
+  // Drop “X isn't on our map” refusals (+ trailing empty-threat lines).
+  out = out.replace(
+    /(?:^|\n+)\s*[^\n]*\bisn'?t on (?:our |the )?map[^\n]*(?:\n+[^\n]*(?:empty noise|looks weak|public threat)[^\n]*)?/gi,
+    "\n",
+  );
+  out = out.replace(
+    /(?:^|\n+)\s*[^\n]*\bnot on (?:our |the )?map[^\n]*/gi,
+    "\n",
+  );
+  out = out.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+  return out;
+}
+
 export function formatMinisterLine(
   seatId: string,
   seatName: string,
   publicLine: string,
 ): string {
-  const body = decorateMilitaryText(splitParagraphs(publicLine.trim()));
-  return `${seatIcon(seatId)} *${seatName} — Cabinet*\n━━━━━━━━━━━━\n${body}`;
+  // Seat topics already name the speaker — no robotic "X — Cabinet ━━━━" banner.
+  const body = decorateMilitaryText(
+    splitParagraphs(scrubHumanChat(publicLine.trim())),
+  );
+  if (!body) return "";
+  // Light cue only (emoji + short name) so council threads stay readable.
+  const short =
+    seatName.replace(/\s+Affairs$/i, "").replace(/\s+&.*$/, "").trim() ||
+    seatName;
+  return `${seatIcon(seatId)} *${short}*\n${body}`;
 }
 
 export function formatWarRoomHome(input?: {
@@ -128,6 +158,7 @@ export function formatStatusLines(input: {
   busySeats: readonly string[];
   autoPilot?: boolean;
   forumsOn?: boolean;
+  language?: string | null;
 }): string {
   const bridge = input.bridgeUp ? "🟢 linked" : "🔴 offline";
   const advisor = input.advisor
@@ -143,6 +174,7 @@ export function formatStatusLines(input: {
     `Match: \`${input.gameId ?? "—"}\` · You: \`${input.playerId ?? "—"}\``,
     `Pulse: ${input.heartbeat ?? "—"}`,
     `Threads: ${input.forumsOn ? "🧵 forum on" : "flat chat — /topics setup"}`,
+    `Language: ${input.language ?? "English"}`,
     `Open orders: ${input.openPlans}`,
     `Auto: ${input.autoPilot ? "🟢 ON" : "⚪ OFF (you approve)"}`,
     `Speaking with: ${advisor}`,

@@ -5,6 +5,7 @@ import type { Api, Bot } from "grammy";
 /** Logical cabinet rooms → Telegram forum topic thread ids. */
 export type CabinetTopicKey =
   | "general"
+  | "council"
   | "war"
   | "defense"
   | "finance"
@@ -16,8 +17,15 @@ export const CABINET_TOPIC_DEFS: ReadonlyArray<{
   readonly key: CabinetTopicKey;
   readonly name: string;
   readonly seatId?: string;
+  /** Full multi-minister debate + joint plan (not a single seat). */
+  readonly council?: boolean;
 }> = [
   { key: "general", name: "🏛️ General" },
+  {
+    key: "council",
+    name: "🗣️ Cabinet Council",
+    council: true,
+  },
   { key: "war", name: "⚔️ War", seatId: "war" },
   { key: "defense", name: "🛡️ Defense", seatId: "defense" },
   { key: "finance", name: "💰 Finance", seatId: "finance" },
@@ -76,6 +84,15 @@ export function seatIdFromThreadId(
     if (def.seatId && state.topics[def.key] === threadId) return def.seatId;
   }
   return null;
+}
+
+/** True when the message is in the multi-minister Council topic. */
+export function isCouncilThread(
+  state: TelegramTopicsState | null | undefined,
+  threadId: number | undefined,
+): boolean {
+  if (!state?.isForum || threadId == null) return false;
+  return state.topics.council === threadId;
 }
 
 export function threadIdForKey(
@@ -191,8 +208,9 @@ export function formatTopicsBrief(state: TelegramTopicsState): string {
   return [
     "🧵 *Cabinet threads* (forum topics)",
     "",
-    "Talk in a seat topic — that minister answers there.",
-    "Plans stay in the same topic; Approvals is for queue overview.",
+    "• Seat topic → that minister only",
+    "• *Cabinet Council* → all advisors debate + joint plan (same as @all)",
+    "• Approvals → queue overview",
     "",
     ...lines,
   ].join("\n");

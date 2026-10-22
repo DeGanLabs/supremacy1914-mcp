@@ -18,10 +18,14 @@ export type GeneralStatus =
 
 export interface GeneralRecord {
   id: string;
+  /** In-game hero name from the picture. */
   name: string;
+  /** President-assigned call-sign used in cabinet chat. */
+  callSign?: string;
   heroArmyId?: number;
   role: string;
   groupId?: string;
+  /** Armies ordered to stick with this hero. */
   assignedArmyIds: number[];
   mission?: string;
   objective?: string;
@@ -31,6 +35,11 @@ export interface GeneralRecord {
   queuedOrderIds: string[];
   completedOrderIds: string[];
   updatedAt: string;
+}
+
+/** Name ministers should use in speech. */
+export function generalCallName(g: GeneralRecord): string {
+  return g.callSign?.trim() || g.name;
 }
 
 export async function loadGenerals(rootDir: string): Promise<GeneralRecord[]> {
@@ -98,6 +107,7 @@ export async function seedGeneralsFromPicture(
     byArmy.set(d.armyId, {
       id: prev?.id ?? `gen_${d.armyId}`,
       name,
+      callSign: prev?.callSign,
       heroArmyId: d.armyId,
       role,
       groupId,
@@ -109,7 +119,7 @@ export async function seedGeneralsFromPicture(
       posture,
       rules: prev?.rules ?? [
         "never split attached core without approval",
-        "maintain reserve",
+        "keep assigned stacks with this hero",
         "follow general movement plan",
       ],
       status: prev?.status ?? "IDLE",
@@ -165,13 +175,35 @@ export async function setGeneralMission(
   return g;
 }
 
+export async function renameGeneral(
+  rootDir: string,
+  generalId: string,
+  callSign: string,
+): Promise<GeneralRecord | null> {
+  const generals = await loadGenerals(rootDir);
+  const g = generals.find(
+    (x) =>
+      x.id === generalId ||
+      String(x.heroArmyId) === generalId ||
+      generalCallName(x).toLowerCase() === generalId.toLowerCase(),
+  );
+  if (!g) return null;
+  g.callSign = callSign.trim().slice(0, 48);
+  g.updatedAt = new Date().toISOString();
+  await saveGenerals(rootDir, generals);
+  return g;
+}
+
 export function formatGeneralsBrief(generals: GeneralRecord[]): string {
   if (!generals.length) return "(no generals seeded)";
   return generals
     .slice(0, 8)
-    .map(
-      (g) =>
-        `${g.name} [${g.status}] ${g.role} — armies ${g.assignedArmyIds.slice(0, 6).join(",")}${g.mission ? ` — ${g.mission}` : ""}`,
-    )
+    .map((g) => {
+      const call = generalCallName(g);
+      const game =
+        g.callSign && g.callSign !== g.name ? ` (game: ${g.name})` : "";
+      const stack = g.assignedArmyIds.slice(0, 8).join(",") || "none";
+      return `Call "${call}"${game} [${g.status}] ${g.role} — keep armies ${stack} with him${g.mission ? ` — ${g.mission}` : ""}`;
+    })
     .join("\n");
 }

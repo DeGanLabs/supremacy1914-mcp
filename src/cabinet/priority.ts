@@ -28,7 +28,7 @@ export function modeFromAutoPilot(autoPilot: boolean | undefined): HumanMode {
 /** High-impact actions always need Confirm unless already reserved/approved under AUTO. */
 export function isHighImpact(action: string, risk?: string): boolean {
   if (risk === "high") return true;
-  return /declare.?war|dump.?reserve|sell.?all|hero.?danger|strategic.?fleet|attack.?large|major.?diplo|embargo.?retaliation/i.test(
+  return /declare.?war|dump.?reserve|sell.?all|hero.?danger|strategic.?fleet|attack.?large|major.?diplo|embargo.?retaliation|writeNews|newspaper|press.?release/i.test(
     action,
   );
 }

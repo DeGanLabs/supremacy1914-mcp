@@ -10,7 +10,7 @@ export interface ApproveSelection {
 }
 
 const NATURAL_ALL =
-  /^(yes|yeah|yep|yup|ok|okay|k|go|go ahead|do it|do that|proceed|execute|ship it|make it so|lgtm|sounds good|approved)\.?$/i;
+  /^(yes|yeah|yep|yup|ok|okay|k|go|go ahead|do it|do that|proceed|execute|ship it|make it so|lgtm|sounds good|approved|oui|ouais|d'accord|ey|aye|wakel|oké)\.?$/i;
 
 /** Parse owner text like "approve 1 and 3", "yes", "do it", "do 1 and 3". */
 export function parseApproveSelection(text: string): ApproveSelection | null {

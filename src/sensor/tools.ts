@@ -6,6 +6,21 @@ export const SENSOR_TOOLS: Record<
   { readonly description: string; readonly requiresArgs?: string[] }
 > = {
   current_game: { description: "Open tab game identity (gameId, playerId, day)" },
+  list_games: {
+    description: "List account games (joined maps) from getMyGames",
+  },
+  use_game: {
+    description: "Switch open tab to a joined game by gameId",
+    requiresArgs: ["gameId"],
+  },
+  send_diplo: {
+    description: "Send an in-game diplomacy message to a player",
+    requiresArgs: ["playerId|name", "text"],
+  },
+  deploy_hero: {
+    description: "Deploy a hero from inventory to a province",
+    requiresArgs: ["heroIdOrName", "provinceIdOrName"],
+  },
   get_resources: { description: "Player resource stockpile and rates" },
   get_relations: { description: "Diplomacy relation matrix summary" },
   get_diplomacy: { description: "Alias of get_relations" },
@@ -42,6 +57,7 @@ export const PHASE1_ACTION_METHODS = [
   "constructBuilding",
   "attackArmy",
   "delayArmy",
+  "writeNews",
 ] as const;
 
 export function isSensorTool(name: string): name is SensorToolName {

@@ -28,6 +28,7 @@ import { cleanPlanTasks } from "./plan-dedupe.js";
 import { formatArmyLabel, resolveProvinceId } from "./army-labels.js";
 import { splitParagraphs, decorateMilitaryText } from "./telegram-format.js";
 import { normalizePlanTasks } from "./plan-normalize.js";
+import { filterGoalsForPicture } from "./session.js";
 import { wrapUntrusted } from "./untrusted.js";
 import { uniqueNameMatch } from "../utils/name-match.js";
 import { armyCommandCount, formatGameTimestamp } from "./display-format.js";
@@ -224,6 +225,7 @@ export async function runCabinetSelfCheck(): Promise<string[]> {
   assert(isPhase1Executable("constructBuilding"), "constructBuilding executable");
   assert(isPhase1Executable("attackArmy"), "attackArmy executable");
   assert(isPhase1Executable("delayArmy"), "delayArmy executable");
+  assert(isPhase1Executable("writeNews"), "writeNews executable");
   assert(!isPhase1Executable("declareWar"), "declareWar not executable");
   const classified = classifyTasks([
     {
@@ -238,6 +240,11 @@ export async function runCabinetSelfCheck(): Promise<string[]> {
       template: "kill-transport",
     },
     {
+      type: "writeNews",
+      args: { title: "Victory", body: "We hold the line." },
+      risk: "high",
+    },
+    {
       type: "declareWar",
       args: { playerId: 9 },
       risk: "high",
@@ -248,9 +255,14 @@ export async function runCabinetSelfCheck(): Promise<string[]> {
       risk: "medium",
     },
   ]);
-  assert(classified.executable.length === 2, "two executable");
+  assert(classified.executable.length === 3, "three executable");
   assert(classified.proposeOnly.length === 2, "declareWar+split propose-only");
   assert(classified.proposeOnly[0]!.proposeOnly === true, "proposeOnly flag");
+  const badNews = PlanTaskSchema.safeParse({
+    type: "writeNews",
+    args: { title: "" },
+  });
+  assert(!badNews.success, "invalid writeNews must fail");
   log.push("ok: action allow-list / classifyTasks");
 
   const tasks = classified.executable.concat(classified.proposeOnly);
@@ -314,8 +326,43 @@ export async function runCabinetSelfCheck(): Promise<string[]> {
   assert(COST_CAPS.maxAutoExecutesPerHour === 8, "auto-exec hourly cap");
   assert(PHASE1_ACTION_METHODS.includes("attackArmy"), "phase1 has attack");
   assert(PHASE1_ACTION_METHODS.includes("delayArmy"), "phase1 has delay");
-  assert(PHASE1_ACTION_METHODS.length === 4, "phase1 method count");
+  assert(PHASE1_ACTION_METHODS.includes("writeNews"), "phase1 has writeNews");
+  assert(PHASE1_ACTION_METHODS.length === 5, "phase1 method count");
+  assert(DEFAULT_SEAT_SCOPES.mcp.includes("get_war_picture"), "mcp has war picture");
   log.push("ok: cost caps + seat scopes");
+
+  {
+    const kept = filterGoalsForPicture(
+      [
+        {
+          key: "focus:africa-vs-usa",
+          value: "Retake Morocco from Central USA",
+          setAt: "t",
+        },
+        {
+          key: "focus:lithuania",
+          value: "invade Lithuania",
+          setAt: "t",
+        },
+        { key: "war:generic", value: "hold the line", setAt: "t" },
+      ],
+      {
+        myNation: "Ukraine",
+        atWar: [{ nation: "Lithuania" }],
+        fronts: [{ name: "Lithuania" }],
+        zones: [{ nation: "Lithuania" }],
+      },
+    );
+    assert(
+      !kept.some((g) => /africa|morocco/i.test(g.key + g.value)),
+      "scrub africa goals on Ukraine session",
+    );
+    assert(
+      kept.some((g) => /lithuania|generic|hold/i.test(g.key + g.value)),
+      "keep lithuania + generic goals",
+    );
+    log.push("ok: session goal filter");
+  }
 
   const red = redactSecrets(
     "key nvapi-ABCDEFG123 and 1234567890:AAHxxxxxxxxxxxxxxxxxxxxxxxTOKEN Cookie: sid=abc bl_sid=secret.cookie aabbccddeeffaabbccddeeffaabbccddeeffaabb",

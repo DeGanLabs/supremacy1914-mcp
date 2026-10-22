@@ -3,6 +3,15 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { DEFAULT_SEAT_SCOPES } from "./cost-caps.js";
 import type { SeatDefinition } from "./types.js";
+import {
+  buildLanguagePromptBlock,
+  type CabinetLanguage,
+} from "./language.js";
+import {
+  displayNameForSeat,
+  loadSeatOverrides,
+  type SeatOverride,
+} from "./seat-overrides.js";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 
@@ -51,9 +60,35 @@ export const DEFAULT_SEATS: SeatDefinition[] = [
 
 export class SeatRegistry {
   private seats: SeatDefinition[];
+  private overrides = new Map<string, SeatOverride>();
+  private overridesDir: string | null = null;
 
   constructor(initial: SeatDefinition[] = DEFAULT_SEATS) {
     this.seats = [...initial];
+  }
+
+  /** Load name/personality overrides from data/cabinet/seat-overrides.json */
+  async loadOverrides(dataDir: string): Promise<void> {
+    this.overridesDir = dataDir;
+    this.overrides = await loadSeatOverrides(dataDir);
+    this.applyOverrideNames();
+  }
+
+  getOverrides(): Map<string, SeatOverride> {
+    return this.overrides;
+  }
+
+  async refreshOverrides(): Promise<void> {
+    if (!this.overridesDir) return;
+    this.overrides = await loadSeatOverrides(this.overridesDir);
+    this.applyOverrideNames();
+  }
+
+  private applyOverrideNames(): void {
+    this.seats = this.seats.map((s) => {
+      const name = displayNameForSeat(s.id, s.name, this.overrides);
+      return name === s.name ? s : { ...s, name };
+    });
   }
 
   list(): SeatDefinition[] {
@@ -64,9 +99,13 @@ export class SeatRegistry {
     return this.seats.find((s) => s.id === id);
   }
 
-  resolveMentions(text: string): { all: boolean; cabinetOnly: boolean; seats: SeatDefinition[] } {
+  resolveMentions(text: string): {
+    all: boolean;
+    cabinetOnly: boolean;
+    seats: SeatDefinition[];
+  } {
     const lower = text.toLowerCase();
-    if (/(^|\s)@all\b/.test(lower)) {
+    if (/(^|\s)@all\b/.test(lower) || /(^|\s)@council\b/.test(lower)) {
       return { all: true, cabinetOnly: false, seats: this.list() };
     }
     if (/(^|\s)@cabinet\b/.test(lower)) {
@@ -93,7 +132,14 @@ export class SeatRegistry {
     this.seats = this.seats.filter((s) => s.id !== id);
   }
 
-  async loadPrompt(seat: SeatDefinition): Promise<string> {
+  async loadPrompt(
+    seat: SeatDefinition,
+    opts?: {
+      readonly cabinetLanguage?: CabinetLanguage;
+      readonly outputLanguage?: string | null;
+      readonly councilMode?: boolean;
+    },
+  ): Promise<string> {
     const voice = await readFile(path.join(HERE, "prompts", "voice.md"), "utf8");
     const body = await readFile(
       path.join(HERE, "prompts", seat.systemPromptPath),
@@ -113,12 +159,30 @@ export class SeatRegistry {
     } else if (seat.id === "defense" || seat.id === "intel") {
       doctrine = `\n\n---\n\nNaval/coastal handoff: bombard-first on coastal stacks; never invent damage numbers; NEED_SPY / @Intel before committing battleships into unknown waters; embarked transports = priority kills; keep main ground hammer together.`;
     }
-    return `${voice.trim()}\n\n---\n\n${body.trim()}${doctrine}\n\nAllowed tools: ${seat.dataScopes.join(", ")}`;
+    const ov = this.overrides.get(seat.id);
+    const personality = ov?.personality?.trim();
+    const personalityBlock = personality
+      ? `\n\n---\n\nPresident-set personality for this seat:\n${personality}`
+      : "";
+    const langBlock = buildLanguagePromptBlock({
+      cabinetLanguage: opts?.cabinetLanguage ?? "en",
+      outputOverride: opts?.outputLanguage,
+      forDraftOrArticle: true,
+    });
+    const councilBlock = opts?.councilMode
+      ? `\n\n---\n\nCabinet Council: shared table. Short turns. Never restate a peer's sitrep (plan / 4–6h / Ottoman / Poland). Only your new piece — or one-line agree.`
+      : "";
+    return `${voice.trim()}\n\n---\n\n${body.trim()}${doctrine}${personalityBlock}\n\n---\n\n${langBlock}${councilBlock}\n\nAllowed tools: ${seat.dataScopes.join(", ")}`;
   }
 
-  async loadChiefPrompt(): Promise<string> {
+  async loadChiefPrompt(
+    opts?: { readonly cabinetLanguage?: CabinetLanguage },
+  ): Promise<string> {
     const voice = await readFile(path.join(HERE, "prompts", "voice.md"), "utf8");
     const chief = await readFile(path.join(HERE, "prompts", "chief.md"), "utf8");
-    return `${voice.trim()}\n\n---\n\n${chief.trim()}`;
+    const langBlock = buildLanguagePromptBlock({
+      cabinetLanguage: opts?.cabinetLanguage ?? "en",
+    });
+    return `${voice.trim()}\n\n---\n\n${chief.trim()}\n\n---\n\n${langBlock}`;
   }
 }

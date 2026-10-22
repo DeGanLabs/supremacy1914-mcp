@@ -9,6 +9,7 @@ export const ExecutableActionType = z.enum([
   "constructBuilding",
   "attackArmy",
   "delayArmy",
+  "writeNews",
 ]);
 export type ExecutableActionType = z.infer<typeof ExecutableActionType>;
 
@@ -35,6 +36,12 @@ export const DelayArmyArgsSchema = z.object({
   armyId: z.number().int().positive(),
   minutes: z.number().positive(),
   syncArrival: z.boolean().optional(),
+});
+
+export const WriteNewsArgsSchema = z.object({
+  title: z.string().min(1).max(200),
+  body: z.string().min(1).max(4000),
+  anonymous: z.boolean().optional(),
 });
 
 export const PlanTaskSchema = z
@@ -95,6 +102,15 @@ export const PlanTaskSchema = z
         });
       }
     }
+    if (task.type === "writeNews") {
+      const parsed = WriteNewsArgsSchema.safeParse(task.args);
+      if (!parsed.success) {
+        ctx.addIssue({
+          code: "custom",
+          message: `writeNews args invalid: ${parsed.error.message}`,
+        });
+      }
+    }
   });
 
 export type PlanTask = z.infer<typeof PlanTaskSchema>;
@@ -115,6 +131,7 @@ export const PHASE1_EXECUTABLE = new Set<string>([
   "constructBuilding",
   "attackArmy",
   "delayArmy",
+  "writeNews",
 ]);
 
 export function isPhase1Executable(type: string): boolean {

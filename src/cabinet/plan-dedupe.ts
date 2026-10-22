@@ -18,6 +18,10 @@ function taskDedupeKey(task: PlanTask): string {
   if (type === "attackArmy") {
     return `atk:${args.armyId}:${args.targetArmyId}`;
   }
+  if (type === "writeNews") {
+    // One newspaper article per plan — collapse duplicates.
+    return "writeNews";
+  }
   return `${type}:${JSON.stringify(args)}`;
 }
 

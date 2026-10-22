@@ -46,7 +46,7 @@ export class CabinetExecutor {
     );
     if (executable.length === 0) {
       throw new Error(
-        "approve refused — no Phase-1 executable tasks (moveArmy/constructBuilding/attackArmy/delayArmy); plan is propose-only/advisory",
+        "approve refused — no Phase-1 executable tasks (moveArmy/constructBuilding/attackArmy/delayArmy/writeNews); plan is propose-only/advisory",
       );
     }
     const results: ExecuteResult["results"] = [];
@@ -128,6 +128,23 @@ export class CabinetExecutor {
             armyId: task.args.armyId,
             minutes: task.args.minutes,
             syncArrival: task.args.syncArrival ?? false,
+          });
+        } else if (task.type === "writeNews") {
+          const { sanitizeNewsCopy } = await import("./news-opsec.js");
+          const scrubbed = sanitizeNewsCopy({
+            title: String(task.args.title ?? ""),
+            body: String(task.args.body ?? ""),
+          });
+          if (scrubbed.scrubbed) {
+            console.warn(
+              "[opsec] writeNews scrubbed:",
+              scrubbed.reasons.join(", "),
+            );
+          }
+          result = await this.bridge.call("writeNews", {
+            title: scrubbed.title,
+            body: scrubbed.body,
+            anonymous: !!(task.args as { anonymous?: boolean }).anonymous,
           });
         } else {
           results.push({
@@ -211,6 +228,10 @@ function formatBridgeResult(r: Record<string, unknown>): string {
     return `${who}${sea}${dest}`.replace(/\s+/g, " ").trim();
   }
   if (r.name) return String(r.name);
+  if (r.title) {
+    const anon = r.anonymous ? " (anon)" : "";
+    return `📰 ${String(r.title)}${anon}`;
+  }
   if (r.mode === "multi" && Array.isArray(r.armyIds)) {
     return `multi ${r.verifiedCount ?? r.armyIds.length}/${r.armyIds.length} verified`;
   }

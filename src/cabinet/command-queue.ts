@@ -269,6 +269,17 @@ export class CommandQueue {
           provinceIdOrName: target.provinceIdOrName,
           upgradeId: target.upgradeId,
         });
+      } else if ((cmd.action as string) === "writeNews") {
+        const { sanitizeNewsCopy } = await import("./news-opsec.js");
+        const scrubbed = sanitizeNewsCopy({
+          title: String(target.title ?? ""),
+          body: String(target.body ?? ""),
+        });
+        result = await bridge.call("writeNews", {
+          title: scrubbed.title,
+          body: scrubbed.body,
+          anonymous: !!target.anonymous,
+        });
       } else if (cmd.action === "hold" || cmd.action === "recon") {
         result = { ok: true, note: cmd.action };
       } else {

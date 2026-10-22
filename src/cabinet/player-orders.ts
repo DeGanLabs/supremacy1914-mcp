@@ -8,10 +8,27 @@ export function detectGoalOverrideIntent(text: string): {
 } | null {
   const t = text.trim();
   if (t.length < 8) return null;
-  const pushLike =
-    /\b(push|invade|attack|take|strike|advance|air-?bridge|screen alaska|distrust|dm |draft|go for|move on)\b/i.test(
+  // Newspaper / diplo drafting / advisory chat is not a war-order override.
+  if (
+    /\b(article|newspaper|write news|press release|propaganda|text\s+\w|msg\s+\w|dm\b|draft\s+(a\s+|the\s+)?message)\b/i.test(
       t,
-    );
+    )
+  ) {
+    return null;
+  }
+  // "one short take", "make sense?", "still with us?" — advice, not new orders.
+  if (
+    /\?\s*$/.test(t) ||
+    /\b(make sense|what do you think|one (short )?take|still with us|short answer)\b/i.test(
+      t,
+    )
+  ) {
+    return null;
+  }
+  const pushLike =
+    /\b(push|invade|attack|strike|advance|air-?bridge|screen alaska|distrust|go for|move on)\b/i.test(
+      t,
+    ) || /\btake\s+(the\s+)?[A-Za-z]{3,}/i.test(t);
   const conflictsStanding =
     /\b(no-?invade|hold|don'?t attack|stand down)\b/i.test(t) === false &&
     pushLike;

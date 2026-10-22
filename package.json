@@ -16,6 +16,8 @@
     "cabinet:verify": "tsx src/cabinet/verify.ts",
     "cabinet:serve": "node scripts/serve-browser-console.mjs",
     "cabinet:keep": "node scripts/cabinet-keep.mjs",
+    "mcp": "tsx src/mcp/stdio.ts",
+    "cabinet:api": "echo Cabinet API starts with npm run cabinet (port CABINET_API_PORT)",
     "finance:engine": "tsx src/finance/boot.ts",
     "finance:verify": "tsx src/finance/verify.ts",
     "finance:map": "npm run dev --prefix apps/finance-map",

@@ -20,6 +20,7 @@ import {
   formatWarSituationAnswer,
   standingOrdersBlock,
 } from "./war-brief.js";
+import { filterGoalsForPicture, type GameSession } from "./session.js";
 import { getEventBus } from "./events.js";
 import { formatGroupsBrief, loadGroups } from "./groups.js";
 import { formatGeneralsBrief, loadGenerals } from "./generals.js";
@@ -32,9 +33,14 @@ import {
   loadFinanceState,
 } from "./finance-model.js";
 import { formatMarketDigest } from "./market-engine.js";
+import {
+  detectOutputLanguageOverride,
+  type CabinetLanguage,
+} from "./language.js";
+import { guessDiploTarget, sanitizeNewsCopy } from "./news-opsec.js";
 
 function wantsForeignDraft(text: string): boolean {
-  return /\b(dm |draft (a |the )?message|tell (him|her|them)|message (to |yakut|adak|atka)|write (him|her|them)|pay for airport)\b/i.test(
+  return /(?:\bdm\b|\bdraft(?:\s+(?:a|the))?\s+message\b|\btext\s+\w|\bmsg\s+\w|\bmessage\s+to\b|\btell\s+(?:him|her|them)\b|\bwrite\s+(?:him|her|them)\b|\bpay for airport\b)/i.test(
     text,
   );
 }
@@ -60,7 +66,17 @@ export interface CabinetTurnResult {
   readonly plan: CabinetPlan | null;
   readonly bridgeDown: boolean;
   readonly note?: string;
+  /** Speeches already delivered live via onSeatSpeech. */
+  readonly streamed?: boolean;
 }
+
+export type SeatSpeechHook = (
+  seat: SeatDefinition,
+  out: MinisterOutput,
+  meta: { reaction: boolean },
+) => void | Promise<void>;
+
+export type SeatTypingHook = (seat: SeatDefinition) => void | Promise<void>;
 
 /** Speak order: eco/intel ground truth before ops seats that depend on it. */
 const SEAT_PRIORITY: Record<string, number> = {
@@ -85,9 +101,19 @@ function formatPeerBriefings(
   if (!outputs.length) return "";
   return outputs
     .map((o) => {
-      const facts = o.out.facts.slice(0, 6).join(" | ") || "(no facts)";
-      const concerns = o.out.concerns.slice(0, 4).join(" | ") || "(none)";
-      return `@${o.seat.name} (${o.seat.id}):\n  public: ${o.out.public_line}\n  facts: ${facts}\n  concerns: ${concerns}`;
+      const speech = o.out.public_line.trim() || "(silent)";
+      const facts = o.out.facts.slice(0, 4).join("; ");
+      const concerns = o.out.concerns.slice(0, 3).join("; ");
+      const draft = o.out.draft_message?.trim()
+        ? `\n  (has draft ready — ${o.out.draft_message.trim().slice(0, 120)}…)`
+        : "";
+      const extras = [
+        facts ? `facts: ${facts}` : "",
+        concerns ? `concerns: ${concerns}` : "",
+      ]
+        .filter(Boolean)
+        .join(" · ");
+      return `@${o.seat.name}: "${speech}"${extras ? `\n  ${extras}` : ""}${draft}`;
     })
     .join("\n\n");
 }
@@ -103,6 +129,7 @@ export class CabinetChief {
     private readonly memory: CabinetMemory,
     private readonly seats: SeatRegistry,
     gateway: ScopeToolGateway,
+    private readonly session?: GameSession,
   ) {
     this.gateway = gateway;
     this.minister = new MinisterAgent(nvidia, gateway, seats);
@@ -138,15 +165,25 @@ export class CabinetChief {
       readonly forceSeatIds?: readonly string[];
       /** Do not auto-pull need_from peers (stay 1:1). */
       readonly singleAdvisor?: boolean;
+      /** Live “X is typing” before each seat. */
+      readonly onSeatTyping?: SeatTypingHook;
+      /** Deliver each seat as they finish (streamed cabinet). */
+      readonly onSeatSpeech?: SeatSpeechHook;
     } = {},
   ): Promise<CabinetTurnResult> {
-    const goalsBlock = await this.memory.goalsBlock();
+    await this.session?.scrubStaleGoals();
+    const goalsBlock = await this.buildGoalsBlock();
     const routed = this.seats.resolveMentions(text);
+
+    const convEarly = await this.memory.loadConversationState();
+    const cabinetLanguage: CabinetLanguage =
+      convEarly?.cabinetLanguage ?? "en";
+    const outputLanguage = detectOutputLanguageOverride(text);
 
     if (routed.cabinetOnly) {
       const brief = await this.nvidia.chat({
         tier: "fast",
-        system: await this.seats.loadChiefPrompt(),
+        system: await this.seats.loadChiefPrompt({ cabinetLanguage }),
         user: `Goals:\n${goalsBlock}\n\nSummarize status for the player in 5 short lines based on goals only (no invented game stats):\n${text}`,
       });
       return { publicLines: [brief], plan: null, bridgeDown: false };
@@ -199,13 +236,24 @@ export class CabinetChief {
         foreign &&
         seats.length === 2 &&
         seats.some((s) => s.id === "war") &&
-        /dm |draft /i.test(text) &&
+        /dm |draft |text\s|msg\s|message\s+to/i.test(text) &&
+        !/move|attack|invade|bombard/i.test(text)
+      ) {
+        seats = [foreign];
+      }
+      // Pure draft with sticky War → Foreign only
+      if (
+        foreign &&
+        seats.length === 1 &&
+        seats[0]!.id !== "foreign" &&
+        /^(text|msg|dm)\b/i.test(text.trim()) &&
         !/move|attack|invade|bombard/i.test(text)
       ) {
         seats = [foreign];
       }
     }
     seats = orderSeats(seats);
+    const councilMode = routed.all;
 
     // Instant sitrep — no NVIDIA. Uses last war-picture.json (watch keeps it fresh).
     if (
@@ -229,11 +277,14 @@ export class CabinetChief {
         });
         const conv = await this.memory.loadConversationState();
         await this.memory.saveConversationState({
+          ...(conv ?? { seatIds: [], updatedAt: new Date().toISOString() }),
           seatIds: [seat.id],
           activeAdvisor: seat.id,
           lastPlanId: conv?.lastPlanId,
           autoPilot: conv?.autoPilot,
           humanMode: conv?.humanMode,
+          cabinetLanguage: conv?.cabinetLanguage,
+          lastDraft: conv?.lastDraft,
           transcript: conv?.transcript,
           updatedAt: new Date().toISOString(),
         });
@@ -330,12 +381,18 @@ export class CabinetChief {
         { seat: SeatDefinition; out: MinisterOutput }
       >();
 
+      const recentActions =
+        (await this.memory.loadRecentActionsBrief()) || undefined;
+
       const runSeat = async (
         seat: SeatDefinition,
         reactionPass: boolean,
       ): Promise<"ok" | "bridge_down"> => {
         const peers = [...bySeat.values()].filter((p) => p.seat.id !== seat.id);
         try {
+          if (!reactionPass && opts.onSeatTyping) {
+            await opts.onSeatTyping(seat);
+          }
           const recentConversation = await this.memory.loadTranscriptBlock();
           const seatNotes = (
             await this.memory.loadSeatNotes(seat.id, COST_CAPS.maxSeatNotesInject)
@@ -366,6 +423,7 @@ export class CabinetChief {
             skipWarPictureFetch: true,
             recentConversation: recentConversation || undefined,
             seatNotes: seatNotes || undefined,
+            recentActions,
             groupsBrief:
               seat.id === "war" || seat.id === "defense"
                 ? groupsBrief
@@ -384,6 +442,9 @@ export class CabinetChief {
               seat.id === "finance" || seat.id === "war"
                 ? financeBrief
                 : undefined,
+            cabinetLanguage,
+            outputLanguage,
+            councilMode,
           });
           bySeat.set(seat.id, { seat, out });
           await this.memory.appendSeatNote(
@@ -395,6 +456,17 @@ export class CabinetChief {
             seatId: seat.id,
             text: out.public_line || "",
           });
+          if (out.draft_message?.trim()) {
+            await this.memory.appendTranscript({
+              role: "seat",
+              seatId: seat.id,
+              text: `[draft] ${out.draft_message.trim().slice(0, 400)}`,
+            });
+          }
+          // Stream first-pass only (reaction updates peers/plan, avoids double posts).
+          if (opts.onSeatSpeech && !reactionPass) {
+            await opts.onSeatSpeech(seat, out, { reaction: false });
+          }
           for (const c of out.concerns.slice(0, 2)) {
             await this.memory.addHypothesis({
               id: `h_${Date.now()}_${seat.id}`,
@@ -469,10 +541,11 @@ export class CabinetChief {
         }
 
         const needs = [...bySeat.values()].flatMap((o) => o.out.need_from);
+        // Council always debates; otherwise reaction only when someone tagged need_from.
         const wantReaction =
           bySeat.size > 1 &&
           COST_CAPS.maxDebateRounds > 1 &&
-          needs.length > 0;
+          (councilMode || needs.length > 0);
 
         if (wantReaction) {
           for (const seat of orderSeats(
@@ -495,16 +568,32 @@ export class CabinetChief {
       const outputs = orderSeats([...bySeat.values()].map((v) => v.seat)).map(
         (s) => bySeat.get(s.id)!,
       );
+      const streamed = !!opts.onSeatSpeech;
       const publicLines: string[] = [];
+      let lastDraftSaved: import("./memory.js").LastDiploDraft | null | undefined;
       for (const o of outputs) {
-        if (o.out.public_line.trim()) {
+        if (!streamed && o.out.public_line.trim()) {
           publicLines.push(`@${o.seat.name}: ${o.out.public_line}`);
         }
         const draft = o.out.draft_message?.trim();
         if (draft) {
-          publicLines.push(
-            `@${o.seat.name} draft (copy-paste):\n${draft}`,
-          );
+          if (!streamed) {
+            publicLines.push(
+              `@${o.seat.name} draft (copy-paste):\n${draft}`,
+            );
+          }
+          const nationGuess = guessDiploTarget({
+            question: text,
+            publicLine: o.out.public_line,
+            draft,
+          });
+          lastDraftSaved = {
+            text: draft,
+            targetNation: nationGuess ?? undefined,
+            language: outputLanguage ?? cabinetLanguage,
+            seatId: o.seat.id,
+            savedAt: new Date().toISOString(),
+          };
         }
       }
 
@@ -515,7 +604,7 @@ export class CabinetChief {
           text,
         );
       const plan = wantsOrders
-        ? await this.mergePlan(text, outputs, goalsBlock)
+        ? await this.mergePlan(text, outputs, goalsBlock, cabinetLanguage)
         : null;
       if (plan) await this.memory.savePlan(plan);
       const conv = await this.memory.loadConversationState();
@@ -526,15 +615,27 @@ export class CabinetChief {
               ? opts.forceSeatIds[0]
               : null);
       await this.memory.saveConversationState({
+        ...(conv ?? { seatIds: [], updatedAt: new Date().toISOString() }),
         seatIds: outputs.map((o) => o.seat.id),
         activeAdvisor: stickySeat ?? conv?.activeAdvisor ?? null,
         lastPlanId: plan?.id ?? conv?.lastPlanId,
         autoPilot: conv?.autoPilot,
         humanMode: conv?.humanMode,
+        cabinetLanguage: conv?.cabinetLanguage ?? cabinetLanguage,
+        lastDraft:
+          lastDraftSaved !== undefined
+            ? lastDraftSaved
+            : (conv?.lastDraft ?? null),
         transcript: conv?.transcript,
         updatedAt: new Date().toISOString(),
       });
-      return { publicLines, plan, bridgeDown: false };
+      return {
+        publicLines,
+        plan,
+        bridgeDown: false,
+        streamed: !!opts.onSeatSpeech,
+        note: opts.onSeatSpeech ? "streamed" : undefined,
+      };
     } finally {
       for (const id of locked) this.busySeats.delete(id);
     }
@@ -544,6 +645,7 @@ export class CabinetChief {
     question: string,
     outputs: { seat: SeatDefinition; out: MinisterOutput }[],
     goalsBlock: string,
+    cabinetLanguage: CabinetLanguage = "en",
   ): Promise<CabinetPlan | null> {
     if (!outputs.length) return null;
     const ministerProposals = outputs.flatMap((o) => o.out.proposals);
@@ -556,8 +658,8 @@ export class CabinetChief {
     }));
     const chiefRaw = await this.nvidia.chat({
       tier: process.env.CABINET_QUALITY === "1" ? "quality" : "fast",
-      system: await this.seats.loadChiefPrompt(),
-      user: `Goals:\n${goalsBlock}\n\nPlayer asked:\n${question}\n\nMinister JSON bundle:\n${JSON.stringify(bundle).slice(0, 8000)}\n\nRules:\n- Executable ONLY: moveArmy, constructBuilding, attackArmy, delayArmy with real args.\n- Same destination = multiple moveArmy (group move). Do NOT spam delayArmy to "wait together".\n- Never duplicate the same move/build. Never empty proposeOnly {}.\n- Spy/Q&A/draft chat → tasks: [] (advice lives in public_line / draft_message).\n- moveArmy rationale must name destination province. Coords from war picture only.\nReturn JSON: {"goalSummary":"","assumptions":[],"tasks":[],"facts":[],"concerns":[]}`,
+      system: await this.seats.loadChiefPrompt({ cabinetLanguage }),
+      user: `Goals:\n${goalsBlock}\n\nPlayer asked:\n${question}\n\nMinister JSON bundle:\n${JSON.stringify(bundle).slice(0, 8000)}\n\nRules:\n- Executable ONLY: moveArmy, constructBuilding, attackArmy, delayArmy, writeNews with real args.\n- Same destination = multiple moveArmy (group move). Do NOT spam delayArmy to "wait together".\n- Never duplicate the same move/build. At most ONE writeNews. Never empty proposeOnly {}.\n- writeNews is PUBLIC — no attack hours, army ids, stack sizes, hero names, or column axes.\n- Spy/Q&A/draft chat → tasks: [] (advice lives in public_line / draft_message).\n- moveArmy rationale must name destination province. Coords from war picture only.\nReturn JSON: {"goalSummary":"","assumptions":[],"tasks":[],"facts":[],"concerns":[]}`,
       json: true,
     });
 
@@ -597,7 +699,25 @@ export class CabinetChief {
     // PLAN only when something can actually run on approve.
     if (!classified.executable.length) return null;
 
-    const tasks = classified.executable;
+    // OPSEC + single article: scrub writeNews bodies before the president sees Approve.
+    const tasks = classified.executable.map((t) => {
+      if (t.type !== "writeNews") return t;
+      const scrubbed = sanitizeNewsCopy({
+        title: String(t.args.title ?? ""),
+        body: String(t.args.body ?? ""),
+      });
+      return {
+        ...t,
+        args: {
+          ...t.args,
+          title: scrubbed.title,
+          body: scrubbed.body,
+        },
+        rationale: scrubbed.scrubbed
+          ? `${t.rationale ?? "publish"} (opsec-scrubbed: ${scrubbed.reasons.join(", ")})`
+          : t.rationale,
+      };
+    });
 
     return {
       id: createPlanId(),
@@ -609,5 +729,23 @@ export class CabinetChief {
       status: "proposed",
       sourceSeatIds: outputs.map((o) => o.seat.id),
     };
+  }
+
+  private async buildGoalsBlock(): Promise<string> {
+    const sessionLine =
+      this.session?.sessionPromptBlock() ??
+      "SESSION: bind bridge to lock gameId.";
+    let goals = await this.memory.getGoals();
+    const pic = await this.memory.loadWarPicture();
+    if (pic && goals.length) {
+      goals = filterGoalsForPicture(
+        goals,
+        pic as Parameters<typeof filterGoalsForPicture>[1],
+      );
+    }
+    const goalsText = goals.length
+      ? goals.map((g) => `- ${g.key}: ${g.value}`).join("\n")
+      : "(no standing goals for this match)";
+    return `${sessionLine}\n\nStanding goals:\n${goalsText}`;
   }
 }

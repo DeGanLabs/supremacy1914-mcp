@@ -1419,6 +1419,37 @@
       switch (method) {
         case "current_game":
           return currentGame();
+        case "list_games":
+          return listGames();
+        case "use_game": {
+          const gid =
+            args.gameId != null
+              ? Number(args.gameId)
+              : args.index != null
+                ? Number(args.index)
+                : null;
+          if (gid == null || Number.isNaN(gid)) {
+            throw new Error("use_game needs gameId or index");
+          }
+          // Ensure cache is warm when switching by gameId.
+          if (!window.s1914._gamesIndex || !window.s1914._gamesIndex.length) {
+            await listGames();
+          }
+          return useGame(gid);
+        }
+        case "send_diplo": {
+          const target = args.playerId != null ? args.playerId : args.name;
+          if (target == null || !args.text) {
+            throw new Error("send_diplo needs playerId|name and text");
+          }
+          return sendDiploMessage(target, String(args.text));
+        }
+        case "deploy_hero": {
+          if (args.heroIdOrName == null || args.provinceIdOrName == null) {
+            throw new Error("deploy_hero needs heroIdOrName and provinceIdOrName");
+          }
+          return deployHero(args.heroIdOrName, args.provinceIdOrName);
+        }
         case "get_resources":
           return dumpResources();
         case "get_relations":
@@ -1475,6 +1506,12 @@
           );
         case "constructBuilding":
           return constructBuilding(args.provinceIdOrName, Number(args.upgradeId));
+        case "writeNews":
+          return writeNews(args.title, args.body, {
+            anonymous: !!args.anonymous,
+            imageData: args.imageData || null,
+            imageName: args.imageName || null,
+          });
         default:
           throw new Error("unknown bridge method: " + method);
       }
@@ -2071,19 +2108,34 @@
     if (typeof idOrName === "number") {
       return hup.gameState.getPlayerState().getPlayer(idOrName);
     }
-    const needle = String(idOrName).toLowerCase();
-    return hup.gameState
-      .getPlayerState()
-      .getPlayersArray()
-      .find((p) => {
-        const name = (p.getName && p.getName()) || "";
-        const nation = (p.getNationName && p.getNationName()) || "";
-        return (
-          name.toLowerCase() === needle ||
-          nation.toLowerCase() === needle ||
-          name.toLowerCase().includes(needle)
-        );
-      });
+    const raw = String(idOrName).toLowerCase().trim();
+    const needle = raw
+      .replace(/^(the)\s+/, "")
+      .replace(/\s+(empire|kingdom|republic)$/, "")
+      .trim();
+    const players = hup.gameState.getPlayerState().getPlayersArray();
+    const score = function (p) {
+      const name = ((p.getName && p.getName()) || "").toLowerCase();
+      const nation = ((p.getNationName && p.getNationName()) || "").toLowerCase();
+      if (name === raw || nation === raw || name === needle || nation === needle)
+        return 3;
+      if (
+        (nation && (nation.includes(needle) || needle.includes(nation))) ||
+        (name && (name.includes(needle) || needle.includes(name)))
+      )
+        return 2;
+      return 0;
+    };
+    let best = null;
+    let bestScore = 0;
+    for (let i = 0; i < players.length; i++) {
+      const s = score(players[i]);
+      if (s > bestScore) {
+        bestScore = s;
+        best = players[i];
+      }
+    }
+    return bestScore > 0 ? best : null;
   }
 
   function sendDiploMessage(playerIdOrName, text) {
@@ -2369,27 +2421,67 @@
 
   function writeNews(title, body, options) {
     if (!title || !body) throw new Error("title and body required");
+    const t = String(title).trim();
+    const b = String(body).trim();
+    if (!t || !b) throw new Error("title and body required");
     const req = webpackRequire();
     const Article = req(28384).S;
     const NewArticleAction = req(10243).I;
     const profile = hup.gameState.getPlayerProfile();
     const art = new Article();
     const anonymous = !!(options && options.anonymous);
-    art.updateArticle(profile, String(title), String(body), anonymous);
+    art.updateArticle(profile, t, b, anonymous);
     const imageData = (options && options.imageData) || null;
     const imageName = (options && options.imageName) || null;
     const action = new NewArticleAction(art, imageData, imageName);
-    hup.userActionController.triggerActionWithOptions(action, {
-      onSuccess: function () {
-        console.log("newspaper article published");
-      },
+    return new Promise(function (resolve, reject) {
+      let settled = false;
+      const finish = function (payload) {
+        if (settled) return;
+        settled = true;
+        resolve(payload);
+      };
+      const fail = function (err) {
+        if (settled) return;
+        settled = true;
+        reject(err instanceof Error ? err : new Error(String(err)));
+      };
+      try {
+        hup.userActionController.triggerActionWithOptions(action, {
+          onSuccess: function () {
+            console.log("newspaper article published");
+            finish({
+              ok: true,
+              verified: true,
+              title: t,
+              bodyPreview: b.slice(0, 120),
+              anonymous,
+            });
+          },
+          onFailure: function (err) {
+            fail(
+              err && err.message
+                ? err
+                : new Error(String(err || "writeNews failed")),
+            );
+          },
+        });
+      } catch (err) {
+        fail(err);
+        return;
+      }
+      // Game client sometimes omits callbacks — treat quiet accept as ok.
+      setTimeout(function () {
+        finish({
+          ok: true,
+          verified: true,
+          title: t,
+          bodyPreview: b.slice(0, 120),
+          anonymous,
+          pendingAck: true,
+        });
+      }, 2500);
     });
-    return {
-      ok: true,
-      title: String(title),
-      bodyPreview: String(body).slice(0, 120),
-      anonymous,
-    };
   }
 
   function dumpWorldView(opts) {

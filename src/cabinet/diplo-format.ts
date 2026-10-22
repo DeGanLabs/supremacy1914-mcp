@@ -18,15 +18,24 @@ export function formatThreadTranscript(thread: unknown): string {
     t.other?.nation ||
     t.other?.name ||
     `player ${t.otherPlayerId ?? t.other?.playerId ?? "?"}`;
+  const otherId = t.otherPlayerId ?? t.other?.playerId;
   const lines: string[] = [`Thread with ${who}:`];
   const msgs = t.messages ?? [];
   for (const m of msgs) {
     const body = String(m.bodyText ?? "").trim();
     if (!body) continue;
     const when = formatGameTimestamp(m.timestamp);
-    const from = m.isSystemMessage
-      ? "System"
-      : `p${m.senderId ?? "?"}`;
+    let from = "System";
+    if (!m.isSystemMessage) {
+      const sid = m.senderId;
+      if (sid != null && otherId != null && Number(sid) === Number(otherId)) {
+        from = who;
+      } else if (sid != null) {
+        from = "Us";
+      } else {
+        from = "Unknown";
+      }
+    }
     lines.push(`[${when}] ${from}: ${body.slice(0, 800)}`);
   }
   if (!msgs.length) lines.push("(no messages)");

@@ -56,6 +56,17 @@ function humanTask(
     const a = (task.args ?? {}) as { armyId?: number; minutes?: number };
     return `${n}. ${badge}\n    Halt ${formatArmyLabel(picture, a.armyId)} for ${a.minutes ?? "?"} min`;
   }
+  if (task.type === "writeNews") {
+    const a = (task.args ?? {}) as {
+      title?: string;
+      body?: string;
+      anonymous?: boolean;
+    };
+    const title = (a.title ?? "?").trim() || "?";
+    const preview = (a.body ?? "").trim().slice(0, 80);
+    const anon = a.anonymous ? " · anonymous" : "";
+    return `${n}. ${badge}\n    📰 Publish *${title}*${anon}${preview ? `\n    _${preview}${preview.length >= 80 ? "…" : ""}_` : ""}`;
+  }
   const args =
     quiet && !task.proposeOnly
       ? ""

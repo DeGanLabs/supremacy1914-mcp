@@ -33,6 +33,12 @@ function isLoopback(addr: string | undefined): boolean {
   );
 }
 
+export type BridgeHelloHandler = (info: {
+  readonly gameId: number;
+  readonly playerId: number;
+  readonly siteUserId: number | null;
+}) => void | Promise<void>;
+
 export class BrowserBridgeServer {
   private wss: WebSocketServer | null = null;
   private socket: WebSocket | null = null;
@@ -45,6 +51,7 @@ export class BrowserBridgeServer {
   };
   private readonly pending = new Map<string, Pending>();
   private readonly doneIds = new Set<string>();
+  private helloHandler: BridgeHelloHandler | null = null;
 
   constructor(
     private readonly host: string,
@@ -53,6 +60,11 @@ export class BrowserBridgeServer {
     private readonly token = "",
     private readonly requireLoopback = true,
   ) {}
+
+  /** Fired after a successful authenticated hello (match bind). */
+  onHello(handler: BridgeHelloHandler): void {
+    this.helloHandler = handler;
+  }
 
   start(): void {
     this.wss = new WebSocketServer({ host: this.host, port: this.port });
@@ -171,12 +183,27 @@ export class BrowserBridgeServer {
         connected: true,
         gameId: hello.data.gameId,
         playerId: hello.data.playerId,
-        siteUserId: hello.data.siteUserId,
+        siteUserId: hello.data.siteUserId ?? null,
         lastHeartbeatAt: Date.now(),
       };
       console.log(
         `bridge hello ok gameId=${hello.data.gameId} playerId=${hello.data.playerId}`,
       );
+      const handler = this.helloHandler;
+      if (handler) {
+        void Promise.resolve(
+          handler({
+            gameId: hello.data.gameId,
+            playerId: hello.data.playerId,
+            siteUserId: hello.data.siteUserId ?? null,
+          }),
+        ).catch((err) =>
+          console.warn(
+            "[bridge] onHello failed:",
+            err instanceof Error ? err.message : String(err),
+          ),
+        );
+      }
       return;
     }
     if (ws !== this.socket) return;
