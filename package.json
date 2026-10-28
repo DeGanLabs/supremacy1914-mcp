@@ -2,7 +2,7 @@
   "name": "s1914-automation",
   "version": "0.1.0",
   "private": true,
-  "description": "Modular Supremacy 1914 game automation skeleton (state read + signed actions)",
+  "description": "Supremacy 1914 MCP and automation — live Ultimate client tools for Cursor/ChatGPT players (DeGanLabs)",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -10,16 +10,35 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "dev": "tsx src/examples/smoke.ts",
-    "smoke": "tsx src/examples/smoke.ts"
+    "smoke": "tsx src/examples/smoke.ts",
+    "cabinet": "tsx src/cabinet/index.ts",
+    "cabinet:cli": "tsx src/cabinet/cli.ts",
+    "cabinet:verify": "tsx src/cabinet/verify.ts",
+    "cabinet:serve": "node scripts/serve-browser-console.mjs",
+    "cabinet:keep": "node scripts/cabinet-keep.mjs",
+    "mcp": "tsx src/mcp/stdio.ts",
+    "mcp:supremacy": "npm run start --prefix mcp_supremacy",
+    "mcp:supremacy:http": "npm run start:http --prefix mcp_supremacy",
+    "cabinet:api": "echo Cabinet API starts with npm run cabinet (port CABINET_API_PORT)",
+    "finance:engine": "tsx src/finance/boot.ts",
+    "finance:verify": "tsx src/finance/verify.ts",
+    "finance:map": "npm run dev --prefix apps/finance-map",
+    "assets:download": "node scripts/download-s1914-assets.mjs"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.4.7",
+    "grammy": "^1.45.1",
+    "openai": "^7.5.0",
+    "playwright": "^1.55.0",
+    "ws": "^8.21.3",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",
+    "@types/ws": "^8.18.1",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2"
   }

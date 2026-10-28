@@ -1,0 +1,654 @@
+{
+  "generatedAt": "2026-08-26T14:10:18.885Z",
+  "selfPlayerId": 1,
+  "mapSize": {
+    "width": 2000,
+    "height": 1200
+  },
+  "national": {
+    "resources": [
+      {
+        "id": 0,
+        "name": "Grain",
+        "amount": 800,
+        "production": 200,
+        "consumption": 420,
+        "rate": -220,
+        "isCritical": true,
+        "hoursToZero": 3.6363636363636362,
+        "daysToZero": 0.15151515151515152
+      },
+      {
+        "id": 1,
+        "name": "Iron",
+        "amount": 5000,
+        "production": 800,
+        "consumption": 400,
+        "rate": 400,
+        "isCritical": false,
+        "hoursToZero": null,
+        "daysToZero": null
+      },
+      {
+        "id": 2,
+        "name": "Oil",
+        "amount": 200,
+        "production": 100,
+        "consumption": 120,
+        "rate": -20,
+        "isCritical": false,
+        "hoursToZero": 10,
+        "daysToZero": 0.4166666666666667
+      },
+      {
+        "id": 20,
+        "name": "Money",
+        "amount": 12400,
+        "production": 200,
+        "consumption": 80,
+        "rate": 120,
+        "isCritical": false,
+        "hoursToZero": null,
+        "daysToZero": null
+      }
+    ],
+    "money": 12400,
+    "moneyRate": 120,
+    "health": {
+      "production": 16,
+      "liquidity": 24,
+      "reserves": 2,
+      "infrastructure": 2,
+      "trade": 4,
+      "risk": -18,
+      "total": 30
+    },
+    "bottleneck": {
+      "resourceId": 0,
+      "name": "Grain",
+      "production": 200,
+      "consumption": 420,
+      "deficit": 220,
+      "hoursToZero": 3.6363636363636362,
+      "line": "Grain: prod 200.0 cons 420.0 rate -220.00/h"
+    },
+    "failures": [
+      {
+        "code": "CRITICAL_RATE",
+        "severity": "high",
+        "line": "Grain critical — rate -220.00/h, ~3.6h left",
+        "resourceId": 0,
+        "confidence": "verified"
+      },
+      {
+        "code": "BARRACKS_SUSPECT",
+        "severity": "medium",
+        "line": "Prince George: BARRACKS_SUSPECT",
+        "provinceIds": [
+          11
+        ],
+        "confidence": "estimate"
+      },
+      {
+        "code": "MORALE_LOW",
+        "severity": "medium",
+        "line": "Prince George: MORALE_LOW",
+        "provinceIds": [
+          11
+        ],
+        "confidence": "estimate"
+      },
+      {
+        "code": "CAPITAL_WASTED",
+        "severity": "medium",
+        "line": "Prince George: CAPITAL_WASTED",
+        "provinceIds": [
+          11
+        ],
+        "confidence": "estimate"
+      },
+      {
+        "code": "RICH_IDLE",
+        "severity": "medium",
+        "line": "Anchorage: RICH_IDLE",
+        "provinceIds": [
+          12
+        ],
+        "confidence": "estimate"
+      }
+    ],
+    "threats": [
+      {
+        "code": "RATE_THREAT",
+        "severity": "medium",
+        "line": "Oil goes empty in ~10.0h at current rate",
+        "resourceId": 2,
+        "confidence": "verified"
+      }
+    ],
+    "rankings": {
+      "topAssets": [
+        {
+          "provinceId": 10,
+          "provinceName": "Whitehorse",
+          "score": 84,
+          "note": "IRON PROVINCE"
+        },
+        {
+          "provinceId": 12,
+          "provinceName": "Anchorage",
+          "score": 70,
+          "note": "OIL PROVINCE"
+        },
+        {
+          "provinceId": 11,
+          "provinceName": "Prince George",
+          "score": 50,
+          "note": "GRAIN INDUSTRY"
+        }
+      ],
+      "topProblems": [
+        {
+          "provinceId": 11,
+          "provinceName": "Prince George",
+          "score": 100,
+          "note": "BARRACKS_SUSPECT"
+        },
+        {
+          "provinceId": 12,
+          "provinceName": "Anchorage",
+          "score": 70,
+          "note": "RICH_IDLE"
+        }
+      ],
+      "bestInvestments": [
+        {
+          "provinceId": 10,
+          "provinceName": "Whitehorse",
+          "score": 63,
+          "note": "Factory 1"
+        },
+        {
+          "provinceId": 10,
+          "provinceName": "Whitehorse",
+          "score": 54,
+          "note": "Railway 1"
+        },
+        {
+          "provinceId": 12,
+          "provinceName": "Anchorage",
+          "score": 49,
+          "note": "Workshop 1"
+        },
+        {
+          "provinceId": 11,
+          "provinceName": "Prince George",
+          "score": 45,
+          "note": "Barracks 3"
+        }
+      ]
+    },
+    "forecasts": {
+      "statusNow": "CRITICAL",
+      "status6h": "CRITICAL",
+      "status12h": "CRITICAL",
+      "status24h": "CRITICAL"
+    },
+    "market": [
+      {
+        "resourceId": 1,
+        "name": "Iron",
+        "buy": 108,
+        "sell": 116,
+        "feePct": 2,
+        "netMarginPct": 5.259259259259252,
+        "hint": "BUY"
+      }
+    ],
+    "embargoes": [],
+    "warDemand": [
+      {
+        "operationId": "alaska-1",
+        "name": "Alaska Operation",
+        "needed": {
+          "Oil": 2400,
+          "Iron": 1900,
+          "Grain": 4300
+        },
+        "priority": 0.8,
+        "status": "active"
+      }
+    ],
+    "dataQuality": {
+      "percent": 83,
+      "sources": {
+        "nationalEconomy": "VERIFIED",
+        "provinceBuildings": "VERIFIED",
+        "market": "VERIFIED",
+        "provinceAttribution": "PARTIAL",
+        "relations": "PARTIAL",
+        "warDemand": "VERIFIED"
+      }
+    },
+    "mode": "economy",
+    "financeBrief": {
+      "economyLine": "CRITICAL now; CRITICAL in 12h (health 30/100)",
+      "bottleneckLine": "Grain — Grain: prod 200.0 cons 420.0 rate -220.00/h",
+      "doNextLine": "Factory 1 @ Whitehorse (prio 63)",
+      "capitalLine": "Factory 1 — Whitehorse",
+      "marketLine": "Buy Iron (~5.3% net)",
+      "warLine": "Alaska Operation",
+      "riskLine": "High"
+    },
+    "doNext": [
+      {
+        "provinceId": 10,
+        "provinceName": "Whitehorse",
+        "action": "constructBuilding",
+        "upgradeId": 101,
+        "upgradeName": "Factory 1",
+        "cost": 6000,
+        "resourceCosts": {
+          "20": 6000
+        },
+        "missingResources": [],
+        "priority": 63,
+        "explainKeys": [
+          "FACTORY_MISSING",
+          "GRAIN_BOTTLENECK",
+          "WAR_DEMAND",
+          "AFFORDABLE"
+        ],
+        "blockedBy": [
+          "none"
+        ],
+        "affordable": true,
+        "economicScore": 65,
+        "militaryScore": 55,
+        "combinedScore": 63,
+        "confidence": "estimate",
+        "netBenefitPerHour": 40,
+        "paybackHours": 150
+      },
+      {
+        "provinceId": 10,
+        "provinceName": "Whitehorse",
+        "action": "constructBuilding",
+        "upgradeId": 102,
+        "upgradeName": "Railway 1",
+        "cost": 3500,
+        "resourceCosts": {
+          "20": 3500
+        },
+        "missingResources": [],
+        "priority": 54,
+        "explainKeys": [
+          "RAIL_MISSING",
+          "GRAIN_BOTTLENECK",
+          "WAR_DEMAND",
+          "AFFORDABLE"
+        ],
+        "blockedBy": [
+          "none"
+        ],
+        "affordable": true,
+        "economicScore": 50,
+        "militaryScore": 65,
+        "combinedScore": 54,
+        "confidence": "estimate",
+        "netBenefitPerHour": 12,
+        "paybackHours": 291.7
+      },
+      {
+        "provinceId": 12,
+        "provinceName": "Anchorage",
+        "action": "constructBuilding",
+        "upgradeId": 301,
+        "upgradeName": "Workshop 1",
+        "cost": 2500,
+        "resourceCosts": {
+          "20": 2500
+        },
+        "missingResources": [],
+        "priority": 49,
+        "explainKeys": [
+          "WORKSHOP_MISSING",
+          "GRAIN_BOTTLENECK",
+          "WAR_DEMAND",
+          "AFFORDABLE"
+        ],
+        "blockedBy": [
+          "none"
+        ],
+        "affordable": true,
+        "economicScore": 55,
+        "militaryScore": 30,
+        "combinedScore": 49,
+        "confidence": "estimate",
+        "netBenefitPerHour": 18,
+        "paybackHours": 138.9
+      },
+      {
+        "provinceId": 11,
+        "provinceName": "Prince George",
+        "action": "constructBuilding",
+        "upgradeId": 201,
+        "upgradeName": "Barracks 3",
+        "cost": 2000,
+        "resourceCosts": {
+          "20": 2000
+        },
+        "missingResources": [],
+        "priority": 45,
+        "explainKeys": [
+          "LOW_MORALE",
+          "BARRACKS_OVERBURN",
+          "WAR_DEMAND"
+        ],
+        "blockedBy": [
+          "grain_crisis"
+        ],
+        "affordable": true,
+        "economicScore": 40,
+        "militaryScore": 60,
+        "combinedScore": 45,
+        "confidence": "estimate",
+        "netBenefitPerHour": 8,
+        "paybackHours": 250
+      }
+    ],
+    "minHoursToZero": 3.6363636363636362
+  },
+  "provinces": [
+    {
+      "id": 10,
+      "name": "Whitehorse",
+      "capital": {
+        "x": 400,
+        "y": 300
+      },
+      "coastal": false,
+      "resourceType": "Iron",
+      "isDouble": false,
+      "mainProduction": 820,
+      "taxProduction": 40,
+      "efficiencyScore": 74,
+      "buildings": [
+        {
+          "id": 1,
+          "name": "Workshop 2"
+        }
+      ],
+      "queue": [],
+      "infraScore": 12,
+      "investedEstimate": 4000,
+      "morale": 91,
+      "revoltChance": null,
+      "bestAction": {
+        "provinceId": 10,
+        "provinceName": "Whitehorse",
+        "action": "constructBuilding",
+        "upgradeId": 101,
+        "upgradeName": "Factory 1",
+        "cost": 6000,
+        "resourceCosts": {
+          "20": 6000
+        },
+        "missingResources": [],
+        "priority": 63,
+        "explainKeys": [
+          "FACTORY_MISSING",
+          "GRAIN_BOTTLENECK",
+          "WAR_DEMAND",
+          "AFFORDABLE"
+        ],
+        "blockedBy": [
+          "none"
+        ],
+        "affordable": true,
+        "economicScore": 65,
+        "militaryScore": 55,
+        "combinedScore": 63,
+        "confidence": "estimate",
+        "netBenefitPerHour": 40,
+        "paybackHours": 150
+      },
+      "capitalWasted": false,
+      "utilizationPct": 100,
+      "failureCodes": [],
+      "threatCodes": [],
+      "forecasts": {
+        "at6h": "ok",
+        "at12h": "ok",
+        "at24h": "ok"
+      },
+      "warPressure": 0.16000000000000003,
+      "events": [
+        {
+          "t": "2026-08-26T14:10:18.865Z",
+          "line": "Whitehorse: Factory queued"
+        }
+      ],
+      "marketHint": "BUY",
+      "role": "IRON PROVINCE",
+      "assetScore": 84,
+      "problemScore": 26,
+      "borders": [
+        [
+          360,
+          260,
+          440,
+          250,
+          470,
+          300,
+          440,
+          350,
+          360,
+          340,
+          340,
+          300
+        ]
+      ],
+      "bounds": {
+        "x": 340,
+        "y": 250,
+        "w": 130,
+        "h": 100
+      },
+      "terrainType": null
+    },
+    {
+      "id": 11,
+      "name": "Prince George",
+      "capital": {
+        "x": 500,
+        "y": 400
+      },
+      "coastal": false,
+      "resourceType": "Grain",
+      "isDouble": false,
+      "mainProduction": 100,
+      "taxProduction": null,
+      "efficiencyScore": 56,
+      "buildings": [
+        {
+          "id": 2,
+          "name": "Barracks 2"
+        },
+        {
+          "id": 3,
+          "name": "Factory 1"
+        },
+        {
+          "id": 4,
+          "name": "Railway 1"
+        }
+      ],
+      "queue": [],
+      "infraScore": 33,
+      "investedEstimate": 9500,
+      "morale": 42,
+      "revoltChance": null,
+      "bestAction": {
+        "provinceId": 11,
+        "provinceName": "Prince George",
+        "action": "constructBuilding",
+        "upgradeId": 201,
+        "upgradeName": "Barracks 3",
+        "cost": 2000,
+        "resourceCosts": {
+          "20": 2000
+        },
+        "missingResources": [],
+        "priority": 45,
+        "explainKeys": [
+          "LOW_MORALE",
+          "BARRACKS_OVERBURN",
+          "WAR_DEMAND"
+        ],
+        "blockedBy": [
+          "grain_crisis"
+        ],
+        "affordable": true,
+        "economicScore": 40,
+        "militaryScore": 60,
+        "combinedScore": 45,
+        "confidence": "estimate",
+        "netBenefitPerHour": 8,
+        "paybackHours": 250
+      },
+      "capitalWasted": true,
+      "utilizationPct": 51,
+      "failureCodes": [
+        "BARRACKS_SUSPECT",
+        "MORALE_LOW",
+        "CAPITAL_WASTED"
+      ],
+      "threatCodes": [],
+      "forecasts": {
+        "at6h": "warning",
+        "at12h": "warning",
+        "at24h": "ok"
+      },
+      "warPressure": 0.16000000000000003,
+      "events": [],
+      "marketHint": "NONE",
+      "role": "GRAIN INDUSTRY",
+      "assetScore": 50,
+      "problemScore": 100,
+      "borders": [
+        [
+          460,
+          360,
+          540,
+          350,
+          570,
+          400,
+          540,
+          450,
+          460,
+          440,
+          440,
+          400
+        ]
+      ],
+      "bounds": {
+        "x": 440,
+        "y": 350,
+        "w": 130,
+        "h": 100
+      },
+      "terrainType": null
+    },
+    {
+      "id": 12,
+      "name": "Anchorage",
+      "capital": {
+        "x": 200,
+        "y": 500
+      },
+      "coastal": true,
+      "resourceType": "Oil",
+      "isDouble": false,
+      "mainProduction": 200,
+      "taxProduction": null,
+      "efficiencyScore": 42,
+      "buildings": [],
+      "queue": [],
+      "infraScore": 0,
+      "investedEstimate": 0,
+      "morale": 78,
+      "revoltChance": null,
+      "bestAction": {
+        "provinceId": 12,
+        "provinceName": "Anchorage",
+        "action": "constructBuilding",
+        "upgradeId": 301,
+        "upgradeName": "Workshop 1",
+        "cost": 2500,
+        "resourceCosts": {
+          "20": 2500
+        },
+        "missingResources": [],
+        "priority": 49,
+        "explainKeys": [
+          "WORKSHOP_MISSING",
+          "GRAIN_BOTTLENECK",
+          "WAR_DEMAND",
+          "AFFORDABLE"
+        ],
+        "blockedBy": [
+          "none"
+        ],
+        "affordable": true,
+        "economicScore": 55,
+        "militaryScore": 30,
+        "combinedScore": 49,
+        "confidence": "estimate",
+        "netBenefitPerHour": 18,
+        "paybackHours": 138.9
+      },
+      "capitalWasted": false,
+      "utilizationPct": 100,
+      "failureCodes": [
+        "RICH_IDLE"
+      ],
+      "threatCodes": [],
+      "forecasts": {
+        "at6h": "ok",
+        "at12h": "ok",
+        "at24h": "ok"
+      },
+      "warPressure": 0.16000000000000003,
+      "events": [],
+      "marketHint": "NONE",
+      "role": "OIL PROVINCE",
+      "assetScore": 70,
+      "problemScore": 70,
+      "borders": [
+        [
+          160,
+          460,
+          240,
+          450,
+          270,
+          500,
+          240,
+          550,
+          160,
+          540,
+          140,
+          500
+        ]
+      ],
+      "bounds": {
+        "x": 140,
+        "y": 450,
+        "w": 130,
+        "h": 100
+      },
+      "terrainType": null
+    }
+  ],
+  "whatIf": null
+}

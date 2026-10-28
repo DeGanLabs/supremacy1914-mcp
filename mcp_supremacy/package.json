@@ -1,0 +1,34 @@
+{
+  "name": "mcp-supremacy",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Supremacy 1914 MCP — Playwright Ultimate client tools for Cursor, ChatGPT, and agents",
+  "type": "module",
+  "bin": {
+    "mcp-supremacy": "./src/index.ts"
+  },
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "start:http": "tsx src/http.ts",
+    "docker:up": "docker compose -p mcp_supremacy --env-file .env.production up -d --build",
+    "docker:up:tunnel": "docker compose -p mcp_supremacy --env-file .env.production --profile tunnel up -d --build",
+    "docker:stop": "docker compose -p mcp_supremacy --env-file .env.production stop",
+    "docker:logs": "docker compose -p mcp_supremacy --env-file .env.production logs -f mcp",
+
+    "smoke:finance": "tsx scripts/smoke-finance.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "playwright": "1.64.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}

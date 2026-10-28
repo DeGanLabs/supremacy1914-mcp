@@ -14,7 +14,7 @@ export interface RawResourceState {
   getPlayerResourceEntry(id: number): RawResourceEntry | null | undefined;
 }
 
-const DEFAULT_RESOURCE_IDS = [0, 1, 2, 3, 4, 5, 6, 20] as const;
+const DEFAULT_RESOURCE_IDS = Array.from({ length: 31 }, (_, i) => i).concat([20]);
 
 export function readEconomyFromResourceState(
   state: RawResourceState,
@@ -23,7 +23,7 @@ export function readEconomyFromResourceState(
   const resources: ResourceSnapshot[] = [];
   const byName: Record<string, ResourceSnapshot> = {};
 
-  for (const id of resourceIds) {
+  for (const id of [...new Set(resourceIds)]) {
     const name = state.getResourceName(id);
     const entry = state.getPlayerResourceEntry(id);
     if (!name || !entry) continue;

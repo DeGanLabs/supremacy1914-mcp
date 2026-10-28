@@ -1,0 +1,12 @@
+node_modules
+data
+.env
+.env.*
+!.env.production.example
+*.log
+tmp*
+*.tmp
+.git
+deploy/*.pem
+deploy/cloudflared/credentials.json
+deploy/cloudflared/*.bak*

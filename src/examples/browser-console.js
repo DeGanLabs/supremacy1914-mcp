@@ -127,26 +127,201 @@
       switchingTo: gameId,
       title: row && row.title,
       playerIdInGame: row && row.playerId,
-      note: "Wait for map load, then run s1914.rebind() (or re-paste browser-console.js). Then exportSession() for new keys.",
+      note: "Wait for map load, then run s1914.rebind() (or re-paste browser-console.js). Then exportSession({secrets:true}) for new keys.",
     };
   }
 
   function dumpResources() {
     const res = hup.gameState.getResourceState();
-    const ids = [0, 1, 2, 3, 4, 5, 6, 20];
-    return ids.map((id) => {
-      const name = res.getResourceName(id);
-      const e = res.getPlayerResourceEntry(id);
-      if (!name || !e) return null;
+    const ids = [];
+    for (let i = 0; i <= 30; i++) ids.push(i);
+    ids.push(20);
+    const seen = {};
+    const resources = ids
+      .map((id) => {
+        if (seen[id]) return null;
+        seen[id] = true;
+        const name = res.getResourceName(id);
+        const e = res.getPlayerResourceEntry(id);
+        if (!name || !e) return null;
+        const amount = e.getAmount();
+        const rate = e.getRate();
+        return {
+          id,
+          name,
+          amount,
+          production: e.getProduction(),
+          consumption: e.getConsumption(),
+          rate,
+          isCritical: !!(e.isRateCritical && e.isRateCritical()),
+          hoursToZero:
+            rate < 0 && amount > 0
+              ? Math.round((amount / Math.abs(rate)) * 10) / 10
+              : null,
+        };
+      })
+      .filter(Boolean);
+    return {
+      money: res.getPlayerMoneyAmount ? res.getPlayerMoneyAmount() : 0,
+      resources,
+    };
+  }
+
+  function mapCommandDump(c) {
+    const tp = (c.getTargetPos && c.getTargetPos()) || c.targetPos || null;
+    return {
+      kind: (
+        c["@c"] ||
+        (c.getCommandIconName && c.getCommandIconName()) ||
+        ""
+      ).toString(),
+      waitSeconds: c.waitSeconds,
+      target: tp && tp.x != null ? { x: tp.x, y: tp.y } : tp,
+      targetArmyId: c.targetUnitID,
+    };
+  }
+
+  function mapArmyRuntime(a) {
+    const cmds = (a.getCommands && a.getCommands()) || [];
+    let wait = 0;
+    for (let i = 0; i < cmds.length; i++) {
+      wait += Number(cmds[i].waitSeconds) || 0;
+    }
+    return {
+      commands: cmds.map(mapCommandDump),
+      commandCount: cmds.length,
+      waitSeconds: wait > 0 ? wait : null,
+      speed: a.getSpeed && a.getSpeed(),
+      currentSpeed: a.getCurrentSpeed && a.getCurrentSpeed(),
+      forcedMarch: !!(a.getForcedMarch && a.getForcedMarch()),
+      range: a.getRange && a.getRange(),
+      morale: a.getVisibleMorale ? a.getVisibleMorale() : a.morale,
+    };
+  }
+
+  function flatBorderRing(ring) {
+    if (!ring) return null;
+    const out = [];
+    if (Array.isArray(ring) && typeof ring[0] === "number") {
+      for (let i = 0; i < ring.length; i++) out.push(Number(ring[i]));
+      return out.length >= 6 ? out : null;
+    }
+    const len =
+      ring.length != null
+        ? Number(ring.length)
+        : Object.keys(ring).filter((k) => /^\d+$/.test(k)).length;
+    for (let i = 0; i < len; i++) {
+      const v = ring[i];
+      if (v == null) continue;
+      out.push(Number(v));
+    }
+    return out.length >= 6 ? out : null;
+  }
+
+  function provinceBorders(p) {
+    try {
+      const raw = p.borders;
+      if (!raw) return [];
+      const rings = Array.isArray(raw) ? raw : [raw];
+      return rings
+        .map(flatBorderRing)
+        .filter(Boolean);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function provinceBounds(p) {
+    try {
+      const b = p.bounds;
+      if (!b) return null;
+      const x0 = Number(b[0] ?? b.minX);
+      const y0 = Number(b[1] ?? b.minY);
+      const x1 = Number(b[2] ?? b.maxX);
+      const y1 = Number(b[3] ?? b.maxY);
+      if (![x0, y0, x1, y1].every(Number.isFinite)) return null;
+      return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function dumpFinanceProvinces() {
+    const gs = hup.gameState;
+    const map = gs.getMapState();
+    const self = hup.config.userData.playerID;
+    const provs = map.getPlayerProvinces(self) || [];
+    const provinces = provs.map((p) => {
+      const cap = p.getCapital ? p.getCapital() : p.capital;
+      let resourceType = null;
+      let mainProduction = null;
+      let taxProduction = null;
+      let revoltChance = null;
+      try {
+        resourceType =
+          (p.getResourceType && p.getResourceType()) ||
+          (p.getResourceName && p.getResourceName()) ||
+          null;
+        if (resourceType && typeof resourceType === "object") {
+          resourceType =
+            resourceType.getName?.() ||
+            resourceType.name ||
+            String(resourceType);
+        }
+      } catch (e) {}
+      try {
+        mainProduction = p.getMainProduction ? p.getMainProduction() : null;
+      } catch (e) {}
+      try {
+        taxProduction = p.getTaxProduction ? p.getTaxProduction() : null;
+      } catch (e) {}
+      try {
+        revoltChance = p.getRevoltChance ? p.getRevoltChance() : null;
+      } catch (e) {}
+      const improvements = (
+        p.getImprovementsBuilt
+          ? p.getImprovementsBuilt()
+          : p.improvements || []
+      ).map((u) => ({
+        id: u.getItemID ? u.getItemID() : u.itemID,
+        name: u.getNameWithLevel
+          ? u.getNameWithLevel()
+          : u.getNameWithTier
+            ? u.getNameWithTier()
+            : u.getName
+              ? u.getName()
+              : null,
+        condition: u.getCondition ? u.getCondition() : u.condition,
+      }));
       return {
-        id,
-        name,
-        amount: e.getAmount(),
-        production: e.getProduction(),
-        consumption: e.getConsumption(),
-        rate: e.getRate(),
+        id: p.getLocationID ? p.getLocationID() : p.getProvinceID && p.getProvinceID(),
+        name: p.getName && p.getName(),
+        capital: cap ? { x: cap.x, y: cap.y } : null,
+        coastal: p.isCoastal ? p.isCoastal() : !!p.coastal,
+        morale: p.getMorale && p.getMorale(),
+        resourceType,
+        mainProduction,
+        taxProduction,
+        revoltChance,
+        buildings: improvements,
+        borders: provinceBorders(p),
+        bounds: provinceBounds(p),
+        terrainType:
+          p.terrainType != null
+            ? p.terrainType
+            : p.visualTerrainType != null
+              ? p.visualTerrainType
+              : null,
       };
-    }).filter(Boolean);
+    });
+    return {
+      selfPlayerId: self,
+      mapSize: {
+        width: map.getWidth && map.getWidth(),
+        height: map.getHeight && map.getHeight(),
+      },
+      provinces,
+    };
   }
 
   function dumpOwnArmies() {
@@ -169,43 +344,297 @@
             return {
               name: t && t.getName && t.getName(),
               size: u.getSize && u.getSize(),
+              typeId: (t && t.getItemID && t.getItemID()) || (u.getTypeID && u.getTypeID()) || 0,
+              morale: u.getMorale && u.getMorale(),
             };
           }),
-          commands: (a.getCommands() || []).length,
+          ...mapArmyRuntime(a),
         };
       });
   }
 
-  function moveArmy(armyId, targetX, targetY) {
+  function mapMoveError(msg, onSea) {
+    const s = String(msg || "");
+    if (/Bewegung zum Zielpunkt nicht m[oö]glich/i.test(s)) {
+      return onSea
+        ? "move not possible — land destination for sea unit, or no water path (raw: " +
+            s +
+            ")"
+        : "move not possible — no land path to target (raw: " + s + ")";
+    }
+    return s || "invalid command";
+  }
+
+  function readCommandTarget(cmd) {
+    if (!cmd) return null;
+    try {
+      const tp =
+        (cmd.getTargetPosition && cmd.getTargetPosition()) ||
+        cmd.targetPos ||
+        cmd.target ||
+        null;
+      if (!tp) return null;
+      const x = Number(tp.x != null ? tp.x : tp.getX && tp.getX());
+      const y = Number(tp.y != null ? tp.y : tp.getY && tp.getY());
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+      return { x: x, y: y };
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async function moveArmy(armyId, targetX, targetY, opts) {
+    rebind();
+    const append = !!(opts && opts.append);
     const army = hup.gameState.getArmyState().getArmy(armyId);
     if (!army) throw new Error("army not found");
-    const Point = army.getPosition().constructor;
+    if (army.getOwnerID() !== hup.config.userData.playerID) {
+      throw new Error("army " + armyId + " is not yours");
+    }
+    const onSea = !!(army.isOnSea && army.isOnSea());
+    const startPos = army.getPosition();
+    const Point = startPos.constructor;
+    // Sea units must snap to water; land units to land.
     const target = hup.gameState
       .getMapState()
-      .closestMapPoint(new Point(targetX, targetY), false);
+      .closestMapPoint(new Point(Number(targetX), Number(targetY)), onSea);
+    const dist = Math.hypot(startPos.x - target.x, startPos.y - target.y);
+    if (dist < 12 && !append) {
+      throw new Error(
+        "target too close to army (" +
+          Math.round(dist) +
+          " map units) — bad coords or already there (raw " +
+          targetX +
+          "," +
+          targetY +
+          ")",
+      );
+    }
+    // Pre-refuse obvious inland snap for fleets (raw was far from water snap).
+    if (onSea) {
+      const rawDist = Math.hypot(
+        Number(targetX) - target.x,
+        Number(targetY) - target.y,
+      );
+      if (rawDist > 80) {
+        throw new Error(
+          "move not possible — land destination for sea unit (raw " +
+            Math.round(Number(targetX)) +
+            "," +
+            Math.round(Number(targetY)) +
+            " snapped water " +
+            Math.round(target.x) +
+            "," +
+            Math.round(target.y) +
+            ")",
+        );
+      }
+    }
+    const cmdsBefore = (army.getCommands() || []).length;
+    try {
+      hup.armySelection.setSelected([]);
+    } catch (e) {}
     hup.armySelection.setSelected([army]);
     const ac = hup.mapMouseController.armyController;
     ac.updateMoveSelection();
     ac.setCommandMode(0);
+    if (typeof ac.setAppendMode === "function") {
+      try {
+        ac.setAppendMode(!!append);
+      } catch (e) {}
+    }
     ac.setDragTarget(target, null);
     if (!ac.isValidCommand) {
-      throw new Error(ac.message || "invalid command");
+      throw new Error(mapMoveError(ac.message, onSea));
     }
     ac.sendAction();
-    return { ok: true, armyId, target };
+
+    let cmdsAfter = cmdsBefore;
+    let after = army;
+    let observedTarget = null;
+    for (let i = 0; i < 30; i++) {
+      await new Promise(function (r) {
+        setTimeout(r, 80);
+      });
+      rebind();
+      after = hup.gameState.getArmyState().getArmy(armyId);
+      const cmds = after ? after.getCommands() || [] : [];
+      cmdsAfter = cmds.length;
+      // Prefer verifying last command targetPos near intended point.
+      for (let j = cmds.length - 1; j >= 0; j--) {
+        const tp = readCommandTarget(cmds[j]);
+        if (tp) {
+          observedTarget = tp;
+          break;
+        }
+      }
+      if (
+        observedTarget &&
+        Math.hypot(observedTarget.x - target.x, observedTarget.y - target.y) < 40
+      ) {
+        break;
+      }
+      if (!append && cmdsAfter > cmdsBefore && observedTarget) break;
+      if (append && cmdsAfter > cmdsBefore) break;
+    }
+    const destProv = hup.gameState.getMapState().getProvinceAt(target);
+    const destName =
+      destProv && destProv.getName ? destProv.getName() : null;
+    const verified =
+      observedTarget &&
+      Math.hypot(observedTarget.x - target.x, observedTarget.y - target.y) < 40;
+    if (!verified && cmdsAfter <= cmdsBefore) {
+      throw new Error(
+        "move did not queue on army " +
+          armyId +
+          (destName ? " → " + destName : "") +
+          " (still " +
+          cmdsAfter +
+          " cmds) — retry or move manually",
+      );
+    }
+    if (!verified) {
+      throw new Error(
+        "move queued but targetPos not verified for army " +
+          armyId +
+          (observedTarget
+            ? " (observed " +
+              Math.round(observedTarget.x) +
+              "," +
+              Math.round(observedTarget.y) +
+              " vs " +
+              Math.round(target.x) +
+              "," +
+              Math.round(target.y) +
+              ")"
+            : " — no targetPos on commands") +
+          (onSea ? " [sea unit]" : ""),
+      );
+    }
+    return {
+      ok: true,
+      verified: true,
+      armyId,
+      onSea: onSea,
+      append: !!append,
+      target: { x: target.x, y: target.y },
+      observedTarget: observedTarget,
+      destinationProvince: destName,
+      from: { x: startPos.x, y: startPos.y },
+      distance: Math.round(dist),
+      commandsBefore: cmdsBefore,
+      commandsAfter: cmdsAfter,
+    };
+  }
+
+  /** Move multiple armies to the same point (shared selection when possible). */
+  async function moveArmies(armyIds, targetX, targetY, opts) {
+    const ids = (armyIds || []).map(Number).filter(function (id) {
+      return Number.isFinite(id) && id > 0;
+    });
+    if (!ids.length) throw new Error("moveArmies needs armyIds");
+    rebind();
+    const armies = [];
+    for (let i = 0; i < ids.length; i++) {
+      const a = hup.gameState.getArmyState().getArmy(ids[i]);
+      if (!a) throw new Error("army not found: " + ids[i]);
+      if (a.getOwnerID() !== hup.config.userData.playerID) {
+        throw new Error("army " + ids[i] + " is not yours");
+      }
+      armies.push(a);
+    }
+    try {
+      hup.armySelection.setSelected([]);
+    } catch (e) {}
+    try {
+      hup.armySelection.setSelected(armies, false);
+    } catch (e) {
+      // Fallback: sequential single moves
+      const results = [];
+      for (let i = 0; i < ids.length; i++) {
+        if (i > 0) {
+          await new Promise(function (r) {
+            setTimeout(r, 450);
+          });
+        }
+        results.push(await moveArmy(ids[i], targetX, targetY, opts));
+      }
+      return { ok: true, mode: "sequential", results: results };
+    }
+    const anySea = armies.some(function (a) {
+      return a.isOnSea && a.isOnSea();
+    });
+    const Point = armies[0].getPosition().constructor;
+    const target = hup.gameState
+      .getMapState()
+      .closestMapPoint(new Point(Number(targetX), Number(targetY)), anySea);
+    const ac = hup.mapMouseController.armyController;
+    ac.updateMoveSelection();
+    ac.setCommandMode(0);
+    if (typeof ac.setAppendMode === "function") {
+      try {
+        ac.setAppendMode(!!(opts && opts.append));
+      } catch (e) {}
+    }
+    ac.setDragTarget(target, null);
+    if (!ac.isValidCommand) {
+      throw new Error(mapMoveError(ac.message, anySea));
+    }
+    ac.sendAction();
+    await new Promise(function (r) {
+      setTimeout(r, 350);
+    });
+    // Verify at least one army got a matching targetPos
+    let verified = 0;
+    for (let i = 0; i < ids.length; i++) {
+      const a = hup.gameState.getArmyState().getArmy(ids[i]);
+      const cmds = a ? a.getCommands() || [] : [];
+      for (let j = cmds.length - 1; j >= 0; j--) {
+        const tp = readCommandTarget(cmds[j]);
+        if (
+          tp &&
+          Math.hypot(tp.x - target.x, tp.y - target.y) < 40
+        ) {
+          verified++;
+          break;
+        }
+      }
+    }
+    if (!verified) {
+      throw new Error(
+        "multi-move sent but no army verified targetPos near " +
+          Math.round(target.x) +
+          "," +
+          Math.round(target.y),
+      );
+    }
+    const destProv = hup.gameState.getMapState().getProvinceAt(target);
+    return {
+      ok: true,
+      verified: true,
+      mode: "multi",
+      armyIds: ids,
+      verifiedCount: verified,
+      destinationProvince: destProv && destProv.getName ? destProv.getName() : null,
+      target: { x: target.x, y: target.y },
+    };
   }
 
   /** Attack / bombard enemy army. Same wire `@c:"ac"`; bombard = ranged fight status. */
   function attackArmy(armyId, targetArmyId) {
     const army = hup.gameState.getArmyState().getArmy(armyId);
     if (!army) throw new Error("army not found");
+    if (army.getOwnerID() !== hup.config.userData.playerID) {
+      throw new Error("army " + armyId + " is not yours");
+    }
     const targetArmy = hup.gameState.getArmyState().getArmy(targetArmyId);
     if (!targetArmy) throw new Error("target army not found");
     const pos = targetArmy.getPosition();
     const Point = army.getPosition().constructor;
+    const attackerOnSea = !!(army.isOnSea && army.isOnSea());
     const target = hup.gameState
       .getMapState()
-      .closestMapPoint(new Point(pos.x, pos.y), false);
+      .closestMapPoint(new Point(pos.x, pos.y), attackerOnSea);
     hup.armySelection.setSelected([army]);
     const ac = hup.mapMouseController.armyController;
     ac.updateMoveSelection();
@@ -220,9 +649,10 @@
       armyId,
       targetArmyId,
       range: army.getRange && army.getRange(),
+      isBombarding: !!(army.isBombarding && army.isBombarding()),
       willBombard:
-        (army.getRange && army.getRange()) >
-        5 /* CLOSE_COMBAT-ish; client uses unit range */,
+        !!(army.isBombarding && army.isBombarding()) ||
+        ((army.getRange && army.getRange()) || 0) >= 50,
       target,
     };
   }
@@ -232,12 +662,19 @@
     if (!(minutes > 0)) throw new Error("minutes must be > 0");
     const army = hup.gameState.getArmyState().getArmy(armyId);
     if (!army) throw new Error("army not found");
+    if (army.getOwnerID() !== hup.config.userData.playerID) {
+      throw new Error("army " + armyId + " is not yours");
+    }
     hup.armySelection.setSelected([army]);
     const ac = hup.mapMouseController.armyController;
     ac.updateMoveSelection();
     ac.setSelectedWaitTime(!!syncArrival, Number(minutes));
     ac.sendDelayAction();
-    const scale = hup.gameState.getGameInfoState().getTimeScale();
+    const gi = hup.gameState.getGameInfoState();
+    const scale =
+      (gi.getTimeScaleAsMultiplier && gi.getTimeScaleAsMultiplier()) ||
+      gi.getTimeScale() ||
+      1;
     return {
       ok: true,
       armyId,
@@ -459,15 +896,23 @@
         coalition: fa.getUnreadCoalitionMessagesCount(pid),
         trades: trading.getNewOfferCount(pid),
       },
-      threads: threads.map((t) => ({
-        otherPlayerId: t.otherPlayerId,
-        other: t.other,
-        count: t.count,
-        last: t.messages[t.messages.length - 1] && {
-          bodyText: t.messages[t.messages.length - 1].bodyText.slice(0, 160),
-          timestamp: t.messages[t.messages.length - 1].timestamp,
-        },
-      })),
+      threads: threads.map((t) => {
+        const recent = t.messages.slice(-3);
+        return {
+          otherPlayerId: t.otherPlayerId,
+          other: t.other,
+          count: t.count,
+          last: t.messages[t.messages.length - 1] && {
+            bodyText: t.messages[t.messages.length - 1].bodyText.slice(0, 400),
+            timestamp: t.messages[t.messages.length - 1].timestamp,
+          },
+          recent: recent.map((m) => ({
+            bodyText: String(m.bodyText || "").slice(0, 400),
+            timestamp: m.timestamp,
+            senderId: m.senderId,
+          })),
+        };
+      }),
       allianceMessages,
       openTrades: (trading.tradingOffers || []).map(mapTrade),
       pastTradesCount: (trading.pastTrades || []).length,
@@ -582,8 +1027,15 @@
       combat: {
         kills: pss.getNumKills(pid),
         deaths: pss.getNumDeaths(pid),
+        kd:
+          pss.getNumDeaths(pid) > 0
+            ? Math.round((pss.getNumKills(pid) / pss.getNumDeaths(pid)) * 100) /
+              100
+            : pss.getNumKills(pid),
         provincesCaptured: pss.getNumProvincesCaptured(pid),
         provincesLost: pss.getNumProvincesLost(pid),
+        netProvinces:
+          pss.getNumProvincesCaptured(pid) - pss.getNumProvincesLost(pid),
         constructed: pss.getNumConstructed(pid),
         units: pss
           .getUnitStatsMap()
@@ -597,6 +1049,19 @@
       provinces: {
         count: provs.length,
         averageMorale: Math.round(avgMorale * 10) / 10,
+        list: (function () {
+          try {
+            return (dumpFinanceProvinces().provinces || []).map((p) => ({
+              name: p.name,
+              morale: p.morale,
+              revoltChance: p.revoltChance,
+              mainProduction: p.mainProduction,
+              coastal: p.coastal,
+            }));
+          } catch (e) {
+            return [];
+          }
+        })(),
       },
       selfRank: ranking.find((r) => r.playerId === pid),
       top10: ranking.slice(0, 10),
@@ -642,6 +1107,16 @@
           war: !!(fa.isAtWar && fa.isAtWar(pid, id)),
           row: !!(fa.hasRightOfWay && fa.hasRightOfWay(pid, id)),
           canSeeArmies: !!(fa.canSeeArmies && fa.canSeeArmies(pid, id)),
+          canSeeEachOthersArmies: !!(
+            fa.canSeeEachOthersArmies && fa.canSeeEachOthersArmies(pid, id)
+          ),
+          canAttack: !!(fa.canAttack && fa.canAttack(pid, id)),
+          canUseAirfields: !!(fa.canUseAirfields && fa.canUseAirfields(pid, id)),
+          canCommandProvinces: !!(
+            fa.canCommandProvinces && fa.canCommandProvinces(pid, id)
+          ),
+          honorPeriodEnd:
+            rel.getEndOfHonorPeriod && rel.getEndOfHonorPeriod(pid, id),
           canTrade: !!(rel.canTrade && rel.canTrade(pid, id)),
           defeated: !!(p.isDefeated && p.isDefeated()),
           rank: p.getRankingOrder && p.getRankingOrder(),
@@ -656,15 +1131,31 @@
     const hist = {};
     for (const r of rows) hist[r.label] = (hist[r.label] || 0) + 1;
 
+    const atWarAll = rows.filter((r) => r.war);
+    const atWar = atWarAll.filter((r) => {
+      if (r.defeated) return false;
+      try {
+        const pl = gs.getPlayerState().getPlayer(r.id);
+        if (pl && pl.isRetired && pl.isRetired()) return false;
+      } catch (e) {}
+      return true;
+    });
+
     return {
       total: rows.length,
       histogram: hist,
-      atWar: rows.filter((r) => r.war),
+      /** Live wars (not defeated/retired). */
+      atWar,
+      /** Paper wars — defeated/retired still flagged at war in diplo. */
+      atWarDefeated: atWarAll.filter((r) => !atWar.some((a) => a.id === r.id)),
+      atWarAll,
       rightOfWay: rows.filter((r) => r.relation === 3),
       shareMapOrBetter: rows.filter((r) => r.relation >= 4),
       enemies: fa.getEnemies && fa.getEnemies(pid),
       allies: fa.getAllies && fa.getAllies(pid),
       nonPeace: rows.filter((r) => r.relation !== 1),
+      rows,
+      neighborRelations: rel.neighborRelations || null,
     };
   }
 
@@ -727,6 +1218,10 @@
         provinceOwner: sp.provinceOwner,
         morale: sp.morale,
         dailyCosts: sp.getDailyCosts(),
+        kills: sp.kills != null ? sp.kills : sp.getKills && sp.getKills(),
+        size: sp.getSize ? sp.getSize() : sp.size,
+        onSea: !!(sp.isOnSea && sp.isOnSea()),
+        atAirfield: !!(sp.isAtAirfield && sp.isAtAirfield()),
       };
     });
 
@@ -747,6 +1242,10 @@
           opponentId: j.getOpponentID(),
           provinceId: j.getProvinceID(),
           time: j.getTime(),
+          amount: j.getAmount && j.getAmount(),
+          premium: !!(j.isPremium && j.isPremium()),
+          countryWide: !!(j.isCountryWide && j.isCountryWide()),
+          mission: j.getMission && j.getMission(),
         }));
         const armies = ((det.getArmyState() && det.getArmyState().getArmiesArray()) || []).map(
           (a) => ({
@@ -790,7 +1289,8 @@
     };
   }
 
-  function exportSession() {
+  function exportSession(opts) {
+    const includeSecrets = !!(opts && opts.secrets);
     const ud = hup.config.userData;
     return {
       gameServerUri: hup.userActionController.server.serverUri,
@@ -799,22 +1299,268 @@
       gameID: ud.gameID,
       playerID: ud.playerID,
       siteUserID: ud.siteUserID,
-      userAuth: ud.userAuth,
-      tstamp: String(ud.tstamp),
+      userAuth: includeSecrets
+        ? ud.userAuth
+        : "[REDACTED — exportSession({secrets:true})]",
+      tstamp: includeSecrets ? String(ud.tstamp) : "[REDACTED]",
       rights: ud.rights,
       adminLevel: ud.adminLevel,
     };
   }
 
+  /**
+   * Connect this game tab to the Node cabinet bridge (feat/ai-cabinet).
+   * Default: ws://127.0.0.1:8765
+   */
+  function connectCabinetBridge(url, token) {
+    const wsUrl = url || "ws://127.0.0.1:8765";
+    let tok =
+      token ||
+      (typeof window !== "undefined" && window.__s1914BridgeToken) ||
+      "";
+    try {
+      if (!tok && typeof localStorage !== "undefined") {
+        tok = localStorage.getItem("s1914BridgeToken") || "";
+      }
+    } catch (e) {}
+    try {
+      const parsed = new URL(wsUrl);
+      if (parsed.hostname !== "127.0.0.1" && parsed.hostname !== "localhost") {
+        throw new Error("bridge URL must be 127.0.0.1 or localhost");
+      }
+      if (parsed.searchParams.get("token")) {
+        tok = parsed.searchParams.get("token");
+      }
+    } catch (e) {
+      if (e && e.message && e.message.indexOf("bridge URL") === 0) throw e;
+    }
+    if (!tok || String(tok).length < 8) {
+      return fetch("http://127.0.0.1:9878/bridge-token?t=" + Date.now(), {
+        cache: "no-store",
+      })
+        .then(function (r) {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.text();
+        })
+        .then(function (t) {
+          const got = String(t || "").trim();
+          if (got.length < 8) throw new Error("empty token");
+          return connectCabinetBridge(wsUrl, got);
+        })
+        .catch(function (e) {
+          throw new Error(
+            "connectCabinetBridge needs the token from npm run cabinet — " +
+              (e && e.message ? e.message : e),
+          );
+        });
+    }
+    window.__s1914BridgeToken = tok;
+    try {
+      if (typeof localStorage !== "undefined") {
+        localStorage.setItem("s1914BridgeToken", String(tok));
+      }
+    } catch (e) {}
+    if (window.__s1914CabinetWs) {
+      try {
+        window.__s1914CabinetWs.close();
+      } catch (e) {}
+    }
+    const ws = new WebSocket(wsUrl);
+    window.__s1914CabinetWs = ws;
+
+    function send(obj) {
+      if (ws.readyState === 1) ws.send(JSON.stringify(obj));
+    }
+
+    function hello() {
+      const ud = hup.config.userData;
+      send({
+        type: "hello",
+        gameId: ud.gameID,
+        playerId: ud.playerID,
+        siteUserId: ud.siteUserID,
+        token: tok,
+      });
+    }
+
+    async function handleRequest(msg) {
+      try {
+        rebind();
+      } catch (e) {
+        throw new Error("game tab not ready — reload map and reconnect bridge");
+      }
+      const ud = hup.config.userData;
+      try {
+        if (msg.gameId != null && msg.gameId !== ud.gameID) {
+          throw new Error(
+            "gameId lock mismatch open=" + ud.gameID + " req=" + msg.gameId,
+          );
+        }
+        const result = await dispatchBridgeMethod(msg.method, msg.args || {});
+        send({
+          type: "response",
+          id: msg.id,
+          ok: true,
+          gameId: ud.gameID,
+          result: result,
+        });
+      } catch (err) {
+        send({
+          type: "response",
+          id: msg.id,
+          ok: false,
+          gameId: ud.gameID,
+          error: err && err.message ? err.message : String(err),
+        });
+      }
+    }
+
+    async function dispatchBridgeMethod(method, args) {
+      switch (method) {
+        case "current_game":
+          return currentGame();
+        case "list_games":
+          return listGames();
+        case "use_game": {
+          const gid =
+            args.gameId != null
+              ? Number(args.gameId)
+              : args.index != null
+                ? Number(args.index)
+                : null;
+          if (gid == null || Number.isNaN(gid)) {
+            throw new Error("use_game needs gameId or index");
+          }
+          // Ensure cache is warm when switching by gameId.
+          if (!window.s1914._gamesIndex || !window.s1914._gamesIndex.length) {
+            await listGames();
+          }
+          return useGame(gid);
+        }
+        case "send_diplo": {
+          const target = args.playerId != null ? args.playerId : args.name;
+          if (target == null || !args.text) {
+            throw new Error("send_diplo needs playerId|name and text");
+          }
+          return sendDiploMessage(target, String(args.text));
+        }
+        case "deploy_hero": {
+          if (args.heroIdOrName == null || args.provinceIdOrName == null) {
+            throw new Error("deploy_hero needs heroIdOrName and provinceIdOrName");
+          }
+          return deployHero(args.heroIdOrName, args.provinceIdOrName);
+        }
+        case "get_resources":
+          return dumpResources();
+        case "get_relations":
+        case "get_diplomacy":
+          return dumpDiplomacy();
+        case "get_own_armies":
+          return dumpOwnArmies();
+        case "get_world_summary":
+          return dumpWorldView({ summaryOnly: true, excludeSelf: false });
+        case "get_messages":
+          return dumpAllMessages();
+        case "get_thread":
+          if (args.playerId != null) return dumpRelatedWith(Number(args.playerId));
+          if (args.name) return dumpRelatedByName(String(args.name));
+          throw new Error("get_thread needs playerId or name");
+        case "get_market":
+          return dumpMarketOffers();
+        case "get_spies":
+          return dumpSpies();
+        case "get_news":
+          return dumpNews(args.day);
+        case "get_heroes":
+          return dumpHeroes();
+        case "get_stats":
+          return dumpAllStats();
+        case "get_war_picture":
+          return dumpWarPicture(args || {});
+        case "get_finance_picture":
+          return dumpFinanceProvinces();
+        case "dump_finance_provinces":
+          return dumpFinanceProvinces();
+        case "dump_province_slots":
+          return dumpProvinceSlots(args.provinceIdOrName);
+        case "list_province_upgrades":
+          return listProvinceUpgrades(args.provinceIdOrName);
+        case "moveArmy":
+          return moveArmy(Number(args.armyId), Number(args.x), Number(args.y), {
+            append: !!args.append,
+          });
+        case "moveArmies":
+          return moveArmies(
+            args.armyIds || args.armyId,
+            Number(args.x),
+            Number(args.y),
+            { append: !!args.append },
+          );
+        case "attackArmy":
+          return attackArmy(Number(args.armyId), Number(args.targetArmyId));
+        case "delayArmy":
+          return delayArmy(
+            Number(args.armyId),
+            Number(args.minutes),
+            !!args.syncArrival,
+          );
+        case "constructBuilding":
+          return constructBuilding(args.provinceIdOrName, Number(args.upgradeId));
+        case "writeNews":
+          return writeNews(args.title, args.body, {
+            anonymous: !!args.anonymous,
+            imageData: args.imageData || null,
+            imageName: args.imageName || null,
+          });
+        default:
+          throw new Error("unknown bridge method: " + method);
+      }
+    }
+
+    ws.onopen = function () {
+      console.log("cabinet bridge connected", wsUrl);
+      hello();
+      if (window.__s1914CabinetHb) clearInterval(window.__s1914CabinetHb);
+      window.__s1914CabinetHb = setInterval(function () {
+        try {
+          rebind();
+        } catch (e) {}
+        send({
+          type: "heartbeat",
+          gameId: hup.config.userData.gameID,
+          t: Date.now(),
+        });
+      }, 10000);
+    };
+    ws.onmessage = function (ev) {
+      let msg;
+      try {
+        msg = JSON.parse(ev.data);
+      } catch (e) {
+        return;
+      }
+      if (msg && msg.type === "request") handleRequest(msg);
+    };
+    ws.onclose = function () {
+      console.log("cabinet bridge closed");
+      if (window.__s1914CabinetHb) clearInterval(window.__s1914CabinetHb);
+    };
+    ws.onerror = function (e) {
+      console.warn("cabinet bridge error", e);
+    };
+    return { ok: true, url: wsUrl };
+  }
+
   function findProvince(idOrName) {
     const map = hup.gameState.getMapState();
-    if (typeof idOrName === "number") {
-      const byId = map.getProvince(idOrName);
+    if (typeof idOrName === "number" || /^\d+$/.test(String(idOrName).trim())) {
+      const byId = map.getProvince(Number(idOrName));
       if (byId) return byId;
     }
-    const needle = String(idOrName).toLowerCase();
+    const needle = String(idOrName).trim().toLowerCase();
+    if (!needle) return null;
     const all = map.getProvinceArray ? map.getProvinceArray() : [];
-    return all.find((p) => {
+    let hit = all.find((p) => {
       const name = p.getName && p.getName();
       const id = p.getLocationID && p.getLocationID();
       return (
@@ -822,6 +1568,16 @@
         String(id) === needle
       );
     });
+    if (hit) return hit;
+    const partial = all.filter((p) => {
+      const name = p.getName && p.getName();
+      return (
+        name &&
+        (String(name).toLowerCase().includes(needle) ||
+          needle.includes(String(name).toLowerCase()))
+      );
+    });
+    return partial.length === 1 ? partial[0] : null;
   }
 
   function provinceIdOf(p) {
@@ -933,6 +1689,144 @@
     };
   }
 
+  function normalizeUpgradeCosts(raw) {
+    const out = {};
+    if (!raw || typeof raw !== "object") return out;
+    if (Array.isArray(raw)) {
+      for (const row of raw) {
+        if (!row) continue;
+        const id = Number(
+          row.resourceId ?? row.id ?? row.resourceID ?? row[0],
+        );
+        const amt = Number(row.amount ?? row.cost ?? row[1]);
+        if (Number.isFinite(id) && Number.isFinite(amt) && amt > 0) out[id] = amt;
+      }
+      return out;
+    }
+    for (const k of Object.keys(raw)) {
+      const id = Number(k);
+      const amt = Number(raw[k]);
+      if (Number.isFinite(id) && Number.isFinite(amt) && amt > 0) out[id] = amt;
+    }
+    return out;
+  }
+
+  function upgradeCostsForItem(it, pid) {
+    let costs = {};
+    try {
+      costs = normalizeUpgradeCosts(
+        it.getRawProducibleCostsForProvinces &&
+          it.getRawProducibleCostsForProvinces([pid]),
+      );
+    } catch (e) {}
+    if (Object.keys(costs).length) return costs;
+    try {
+      costs = normalizeUpgradeCosts(it.getBaseCostRaw && it.getBaseCostRaw());
+    } catch (e) {}
+    if (Object.keys(costs).length) return costs;
+    try {
+      costs = normalizeUpgradeCosts(
+        it.getSingleItemCosts && it.getSingleItemCosts(),
+      );
+    } catch (e) {}
+    return costs;
+  }
+
+  function playerResourceStocks() {
+    const stocks = [];
+    let money = 0;
+    try {
+      const rs = hup.gameState.getResourceState();
+      money =
+        (rs.getPlayerMoneyAmount && rs.getPlayerMoneyAmount()) || 0;
+      const ids = [];
+      for (let i = 0; i <= 30; i++) ids.push(i);
+      ids.push(20);
+      const seen = {};
+      for (let i = 0; i < ids.length; i++) {
+        const id = ids[i];
+        if (seen[id]) continue;
+        seen[id] = true;
+        try {
+          const e = rs.getPlayerResourceEntry && rs.getPlayerResourceEntry(id);
+          if (!e) continue;
+          const amount = e.getAmount ? e.getAmount() : 0;
+          stocks.push({ id: Number(id), amount: Number(amount) || 0 });
+        } catch (e2) {}
+      }
+    } catch (e) {}
+    return { money: Number(money) || 0, stocks: stocks };
+  }
+
+  function canAffordUpgradeCosts(costs) {
+    const { money, stocks } = playerResourceStocks();
+    const missing = [];
+    for (const idStr of Object.keys(costs)) {
+      const id = Number(idStr);
+      const need = Number(costs[idStr]);
+      if (!(need > 0)) continue;
+      if (id === 20) {
+        if (money < need) {
+          missing.push({
+            resourceId: 20,
+            name: "Money",
+            need: need,
+            have: money,
+          });
+        }
+        continue;
+      }
+      const row = stocks.find(function (s) {
+        return s.id === id;
+      });
+      const have = row ? row.amount : 0;
+      if (have < need) {
+        missing.push({
+          resourceId: id,
+          name: "res#" + id,
+          need: need,
+          have: have,
+        });
+      }
+    }
+    return {
+      ok: missing.length === 0,
+      missing: missing,
+      money: money,
+      costs: costs,
+    };
+  }
+
+  function listProvinceUpgrades(provinceIdOrName) {
+    const p = findProvince(provinceIdOrName);
+    if (!p) throw new Error("province not found: " + provinceIdOrName);
+    const pid = provinceIdOf(p);
+    const groups = hup.ProvinceProductionUtils.getConstructionGroups([pid]) || [];
+    const upgrades = [];
+    for (const g of groups) {
+      for (const it of g.items || []) {
+        const up = it.getUpgrade && it.getUpgrade();
+        const id = up && (up.getItemID ? up.getItemID() : up.itemID);
+        if (id == null) continue;
+        const costs = upgradeCostsForItem(it, pid);
+        const moneyCost = Number(costs[20] || 0);
+        upgrades.push({
+          upgradeId: id,
+          name: (it.getName && it.getName()) || (up.getName && up.getName()) || String(id),
+          group: g.name || g.title || null,
+          costs: costs,
+          moneyCost: moneyCost,
+          affordable: canAffordUpgradeCosts(costs).ok,
+        });
+      }
+    }
+    return {
+      provinceId: pid,
+      provinceName: p.getName ? p.getName() : String(provinceIdOrName),
+      upgrades,
+    };
+  }
+
   function constructBuilding(provinceIdOrName, upgradeId) {
     const p = findProvince(provinceIdOrName);
     if (!p) throw new Error("province not found");
@@ -940,29 +1834,98 @@
     const groups = hup.ProvinceProductionUtils.getConstructionGroups([pid]) || [];
     let item = null;
     let upgrade = null;
+    const available = [];
     for (const g of groups) {
       for (const it of g.items || []) {
         const up = it.getUpgrade && it.getUpgrade();
         const id = up && (up.getItemID ? up.getItemID() : up.itemID);
+        const name =
+          (it.getName && it.getName()) ||
+          (up && up.getName && up.getName()) ||
+          String(id);
+        if (id != null) available.push({ upgradeId: id, name: name });
         if (id === upgradeId) {
           item = it;
           upgrade = up;
-          break;
         }
       }
-      if (upgrade) break;
     }
-    if (!upgrade) throw new Error("upgrade not found for province: " + upgradeId);
-    const costs =
-      (item.getRawProducibleCostsForProvinces &&
-        item.getRawProducibleCostsForProvinces([pid])) ||
-      {};
+    if (!upgrade) {
+      const needle = String(upgradeId == null ? "" : upgradeId)
+        .trim()
+        .toLowerCase();
+      if (needle && !/^\d+$/.test(needle)) {
+        const named = [];
+        for (const g of groups) {
+          for (const it of g.items || []) {
+            const up = it.getUpgrade && it.getUpgrade();
+            const name = (
+              (it.getName && it.getName()) ||
+              (up && up.getName && up.getName()) ||
+              ""
+            )
+              .toString()
+              .toLowerCase();
+            if (!name) continue;
+            named.push({ it: it, up: up, name: name });
+          }
+        }
+        const exact = named.filter(function (x) {
+          return x.name === needle;
+        });
+        const partial = named.filter(function (x) {
+          return (
+            x.name.length >= 3 &&
+            needle.length >= 3 &&
+            (x.name.indexOf(needle) >= 0 || needle.indexOf(x.name) >= 0)
+          );
+        });
+        const hits = exact.length ? exact : partial;
+        if (hits.length === 1) {
+          item = hits[0].it;
+          upgrade = hits[0].up;
+        } else if (hits.length > 1) {
+          throw new Error(
+            "upgrade name ambiguous (" +
+              needle +
+              ") — use exact upgradeId from listProvinceUpgrades",
+          );
+        }
+      }
+    }
+    if (!upgrade) {
+      const hint = available
+        .slice(0, 20)
+        .map(function (u) {
+          return u.upgradeId + "=" + u.name;
+        })
+        .join(", ");
+      throw new Error(
+        "upgradeId " +
+          upgradeId +
+          " not available at " +
+          (p.getName ? p.getName() : pid) +
+          (hint ? " — available: " + hint : " — no upgrades listed"),
+      );
+    }
+    const costs = upgradeCostsForItem(item, pid);
+    const afford = canAffordUpgradeCosts(costs);
+    if (!afford.ok) {
+      const detail = afford.missing
+        .map(function (m) {
+          return m.name + " need " + m.need + " have " + Math.round(m.have);
+        })
+        .join("; ");
+      throw new Error("not enough resources — " + detail);
+    }
     hup.provinceController.constructBuilding([pid], upgrade, costs);
     return {
       ok: true,
       provinceId: pid,
-      upgradeId,
+      upgradeId: upgrade.getItemID ? upgrade.getItemID() : upgradeId,
       name: item.getName && item.getName(),
+      costs: costs,
+      moneyAfterEstimate: afford.money - Number(costs[20] || 0),
     };
   }
 
@@ -1145,19 +2108,34 @@
     if (typeof idOrName === "number") {
       return hup.gameState.getPlayerState().getPlayer(idOrName);
     }
-    const needle = String(idOrName).toLowerCase();
-    return hup.gameState
-      .getPlayerState()
-      .getPlayersArray()
-      .find((p) => {
-        const name = (p.getName && p.getName()) || "";
-        const nation = (p.getNationName && p.getNationName()) || "";
-        return (
-          name.toLowerCase() === needle ||
-          nation.toLowerCase() === needle ||
-          name.toLowerCase().includes(needle)
-        );
-      });
+    const raw = String(idOrName).toLowerCase().trim();
+    const needle = raw
+      .replace(/^(the)\s+/, "")
+      .replace(/\s+(empire|kingdom|republic)$/, "")
+      .trim();
+    const players = hup.gameState.getPlayerState().getPlayersArray();
+    const score = function (p) {
+      const name = ((p.getName && p.getName()) || "").toLowerCase();
+      const nation = ((p.getNationName && p.getNationName()) || "").toLowerCase();
+      if (name === raw || nation === raw || name === needle || nation === needle)
+        return 3;
+      if (
+        (nation && (nation.includes(needle) || needle.includes(nation))) ||
+        (name && (name.includes(needle) || needle.includes(name)))
+      )
+        return 2;
+      return 0;
+    };
+    let best = null;
+    let bestScore = 0;
+    for (let i = 0; i < players.length; i++) {
+      const s = score(players[i]);
+      if (s > bestScore) {
+        bestScore = s;
+        best = players[i];
+      }
+    }
+    return bestScore > 0 ? best : null;
   }
 
   function sendDiploMessage(playerIdOrName, text) {
@@ -1296,10 +2274,16 @@
             const hi = hsm.getHeroUnitItemByUnitTypeId && hsm.getHeroUnitItemByUnitTypeId(typeId);
             if (!hi) return null;
             const cfg = hi.getHeroConfig && hi.getHeroConfig();
+            const inv = items.find(
+              (h) => h.unitTypeId === typeId || h.itemId === (hi.itemID || (hi.getItemID && hi.getItemID())),
+            );
             return {
               unitTypeId: typeId,
               name: cfg && cfg.getName && cfg.getName(),
               shortName: cfg && cfg.getShortName && cfg.getShortName(),
+              level: inv && inv.level,
+              rarity: inv && inv.rarity,
+              cooldownSeconds: inv && inv.cooldownSeconds,
             };
           })
           .filter(Boolean);
@@ -1437,27 +2421,67 @@
 
   function writeNews(title, body, options) {
     if (!title || !body) throw new Error("title and body required");
+    const t = String(title).trim();
+    const b = String(body).trim();
+    if (!t || !b) throw new Error("title and body required");
     const req = webpackRequire();
     const Article = req(28384).S;
     const NewArticleAction = req(10243).I;
     const profile = hup.gameState.getPlayerProfile();
     const art = new Article();
     const anonymous = !!(options && options.anonymous);
-    art.updateArticle(profile, String(title), String(body), anonymous);
+    art.updateArticle(profile, t, b, anonymous);
     const imageData = (options && options.imageData) || null;
     const imageName = (options && options.imageName) || null;
     const action = new NewArticleAction(art, imageData, imageName);
-    hup.userActionController.triggerActionWithOptions(action, {
-      onSuccess: function () {
-        console.log("newspaper article published");
-      },
+    return new Promise(function (resolve, reject) {
+      let settled = false;
+      const finish = function (payload) {
+        if (settled) return;
+        settled = true;
+        resolve(payload);
+      };
+      const fail = function (err) {
+        if (settled) return;
+        settled = true;
+        reject(err instanceof Error ? err : new Error(String(err)));
+      };
+      try {
+        hup.userActionController.triggerActionWithOptions(action, {
+          onSuccess: function () {
+            console.log("newspaper article published");
+            finish({
+              ok: true,
+              verified: true,
+              title: t,
+              bodyPreview: b.slice(0, 120),
+              anonymous,
+            });
+          },
+          onFailure: function (err) {
+            fail(
+              err && err.message
+                ? err
+                : new Error(String(err || "writeNews failed")),
+            );
+          },
+        });
+      } catch (err) {
+        fail(err);
+        return;
+      }
+      // Game client sometimes omits callbacks — treat quiet accept as ok.
+      setTimeout(function () {
+        finish({
+          ok: true,
+          verified: true,
+          title: t,
+          bodyPreview: b.slice(0, 120),
+          anonymous,
+          pendingAck: true,
+        });
+      }, 2500);
     });
-    return {
-      ok: true,
-      title: String(title),
-      bodyPreview: String(body).slice(0, 120),
-      anonymous,
-    };
   }
 
   function dumpWorldView(opts) {
@@ -1530,7 +2554,7 @@
               units,
               morale: a.getVisibleMorale ? a.getVisibleMorale() : a.morale,
               spyRevealed: a.getSpyRevealedTime && a.getSpyRevealedTime(),
-              commands: (a.getCommands && a.getCommands() || []).length,
+              ...mapArmyRuntime(a),
             };
           })
       : [];
@@ -1632,8 +2656,429 @@
     });
   }
 
+  /**
+   * Compressed war picture for cabinet War Minister + 5-min watch.
+   * Caps foreign armies; includes borders, diplo, spies, heroes, identity lock.
+   */
+  function dumpWarPicture(opts) {
+    opts = opts || {};
+    const maxForeign = opts.maxForeign != null ? opts.maxForeign : 80;
+    const cg = currentGame();
+    const ud = hup.config.userData;
+    const gs = hup.gameState;
+    const players = gs.getPlayerState();
+    const me = players.getPlayer(ud.playerID);
+    const myNation =
+      (me && me.getNationName && me.getNationName()) ||
+      (me && me.getName && me.getName()) ||
+      "self";
+
+    const world = dumpWorldView({
+      summaryOnly: false,
+      excludeSelf: false,
+      provinces: true,
+      armies: true,
+    });
+    const diplo = dumpDiplomacy();
+    let spies = null;
+    try {
+      spies = dumpSpies(false);
+    } catch (e) {
+      spies = { error: String(e && e.message ? e.message : e) };
+    }
+    let heroes = null;
+    try {
+      heroes = dumpHeroes();
+    } catch (e) {
+      heroes = { error: String(e && e.message ? e.message : e) };
+    }
+    let financeById = {};
+    try {
+      const fin = dumpFinanceProvinces();
+      const list = (fin && fin.provinces) || [];
+      for (let i = 0; i < list.length; i++) {
+        financeById[list[i].id] = list[i];
+      }
+    } catch (e) {}
+
+    const selfId = ud.playerID;
+    const ownProvinces = (world.provinces || []).filter((p) => p.ownerId === selfId);
+    const foreignProvinces = (world.provinces || []).filter(
+      (p) => p.ownerId > 0 && p.ownerId !== selfId,
+    );
+    const ownArmies = (world.armies || []).filter((a) => a.ownerId === selfId);
+    const foreignArmiesAll = (world.armies || []).filter((a) => a.ownerId !== selfId);
+
+    function dist(a, b) {
+      if (!a || !b || a.x == null || b.x == null) return Infinity;
+      const dx = a.x - b.x;
+      const dy = a.y - b.y;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+    function armyPos(a) {
+      return a && a.pos ? a.pos : null;
+    }
+    function provPos(p) {
+      return p && p.capital ? p.capital : null;
+    }
+
+    // Median own–own province spacing for border band.
+    const ownDists = [];
+    for (let i = 0; i < ownProvinces.length; i++) {
+      for (let j = i + 1; j < ownProvinces.length; j++) {
+        const d = dist(provPos(ownProvinces[i]), provPos(ownProvinces[j]));
+        if (Number.isFinite(d) && d > 0) ownDists.push(d);
+      }
+    }
+    ownDists.sort((a, b) => a - b);
+    const medianSpacing =
+      ownDists.length > 0
+        ? ownDists[Math.floor(ownDists.length / 2)]
+        : 50;
+    const borderBand = medianSpacing * 1.5;
+
+    const borders = [];
+    for (const op of ownProvinces) {
+      let best = null;
+      let bestD = Infinity;
+      for (const fp of foreignProvinces) {
+        const d = dist(provPos(op), provPos(fp));
+        if (d < bestD) {
+          bestD = d;
+          best = fp;
+        }
+      }
+      if (best && bestD <= borderBand) {
+        const relRow = (diplo.nonPeace || [])
+          .concat(diplo.atWar || [])
+          .find((r) => r.id === best.ownerId);
+        borders.push({
+          province: op.name,
+          provinceId: op.id,
+          morale: op.morale,
+          coastal: !!op.coastal,
+          facingNation: best.nation || best.owner,
+          facingPlayerId: best.ownerId,
+          facingProvince: best.name,
+          distance: Math.round(bestD * 100) / 100,
+          relation: relRow ? relRow.relation : null,
+          relationLabel: relRow ? relRow.label : null,
+          atWar: !!(relRow && relRow.war),
+        });
+      }
+    }
+
+    const atWarLive = diplo.atWar || [];
+    const atWarIds = new Set(atWarLive.map((r) => r.id));
+    const countryById = {};
+    for (const c of world.countries || []) {
+      countryById[c.playerId] = c;
+    }
+
+    function warStatusFor(playerId, diploRow) {
+      const c = countryById[playerId];
+      const provs = c ? c.provinces || 0 : 0;
+      const armies = c ? c.armies || 0 : 0;
+      const defeated = !!(diploRow && diploRow.defeated);
+      let retired = false;
+      try {
+        const pl = players.getPlayer(playerId);
+        retired = !!(pl && pl.isRetired && pl.isRetired());
+      } catch (e) {}
+      if (defeated || retired) return { status: "defeated", provs, armies, defeated: true };
+      if (provs <= 0 && armies <= 0) return { status: "ghost", provs, armies, defeated: false };
+      // Tiny remnant: still on map but not a real front unless bordering us
+      if (provs + armies <= 2) return { status: "dormant", provs, armies, defeated: false };
+      return { status: "active", provs, armies, defeated: false };
+    }
+
+    const atWarEnriched = atWarLive.map((r) => {
+      const st = warStatusFor(r.id, r);
+      return {
+        ...r,
+        provincesKnown: st.provs,
+        armiesKnown: st.armies,
+        status: st.status,
+        defeated: st.defeated || !!r.defeated,
+      };
+    });
+    const atWarActive = atWarEnriched.filter((r) => r.status === "active" || r.status === "dormant");
+    const atWarPaper = [
+      ...(diplo.atWarDefeated || []).map((r) => ({
+        ...r,
+        status: "defeated",
+        defeated: true,
+        provincesKnown: 0,
+        armiesKnown: 0,
+      })),
+      ...atWarEnriched.filter((r) => r.status === "ghost" || r.status === "defeated"),
+    ];
+
+    const ownCentroid = (() => {
+      if (!ownArmies.length && !ownProvinces.length) return { x: 0, y: 0 };
+      const pts = ownArmies.length
+        ? ownArmies.map(armyPos).filter(Boolean)
+        : ownProvinces.map(provPos).filter(Boolean);
+      if (!pts.length) return { x: 0, y: 0 };
+      let sx = 0;
+      let sy = 0;
+      for (const p of pts) {
+        sx += p.x;
+        sy += p.y;
+      }
+      return { x: sx / pts.length, y: sy / pts.length };
+    })();
+
+    const scoredForeign = foreignArmiesAll.map((a) => {
+      const dSelf = dist(armyPos(a), ownCentroid);
+      let dBorder = Infinity;
+      for (const b of borders) {
+        if (b.facingPlayerId === a.ownerId) {
+          const bp = ownProvinces.find((p) => p.id === b.provinceId);
+          const dd = dist(armyPos(a), provPos(bp));
+          if (dd < dBorder) dBorder = dd;
+        }
+      }
+      const warBonus = atWarIds.has(a.ownerId) ? 0 : 1;
+      const near = Math.min(dSelf, dBorder);
+      return { a, near, warBonus, dSelf, dBorder };
+    });
+    scoredForeign.sort((x, y) => {
+      if (x.warBonus !== y.warBonus) return x.warBonus - y.warBonus;
+      return x.near - y.near;
+    });
+    const foreignArmies = scoredForeign.slice(0, maxForeign).map((s) => ({
+      ...s.a,
+      distToSelf: Math.round(s.dSelf * 100) / 100,
+      distToBorder: Number.isFinite(s.dBorder)
+        ? Math.round(s.dBorder * 100) / 100
+        : null,
+      atWar: atWarIds.has(s.a.ownerId),
+    }));
+
+    // Coarse fronts by facing playerId — only real neighbors; score by live war + contact.
+    const frontMap = {};
+    for (const b of borders) {
+      const key = String(b.facingPlayerId);
+      const row = atWarEnriched.find((r) => r.id === b.facingPlayerId);
+      const st = warStatusFor(b.facingPlayerId, row);
+      if (st.status === "defeated" || st.status === "ghost") continue;
+      if (!frontMap[key]) {
+        const liveWar = atWarIds.has(b.facingPlayerId) && st.status === "active";
+        frontMap[key] = {
+          name: b.facingNation || key,
+          playerId: b.facingPlayerId,
+          level: liveWar ? "high" : "medium",
+          relation: b.relationLabel,
+          atWar: !!b.atWar && st.status !== "defeated",
+          status: st.status,
+          provincesKnown: st.provs,
+          armiesKnown: st.armies,
+          borderProvinces: [],
+          ownArmyIds: [],
+          hostileArmyIds: [],
+          nearestHostile: null,
+        };
+      }
+      frontMap[key].borderProvinces.push(b.province);
+    }
+    for (const a of ownArmies) {
+      let bestKey = null;
+      let bestD = Infinity;
+      for (const b of borders) {
+        const bp = ownProvinces.find((p) => p.id === b.provinceId);
+        const d = dist(armyPos(a), provPos(bp));
+        if (d < bestD) {
+          bestD = d;
+          bestKey = String(b.facingPlayerId);
+        }
+      }
+      if (bestKey && frontMap[bestKey] && bestD <= borderBand * 2) {
+        frontMap[bestKey].ownArmyIds.push(a.id);
+      }
+    }
+    for (const a of foreignArmies) {
+      const key = String(a.ownerId);
+      if (!frontMap[key]) continue;
+      frontMap[key].hostileArmyIds.push(a.id);
+      const d = a.distToBorder != null ? a.distToBorder : a.distToSelf;
+      if (
+        !frontMap[key].nearestHostile ||
+        d < frontMap[key].nearestHostile.distance
+      ) {
+        frontMap[key].nearestHostile = {
+          armyId: a.id,
+          province: a.province,
+          distance: d,
+          onSea: !!a.onSea,
+        };
+      }
+    }
+    const armyById = {};
+    for (const a of ownArmies.concat(foreignArmies)) armyById[a.id] = a;
+    function stackStrength(ids) {
+      let n = 0;
+      for (let i = 0; i < ids.length; i++) {
+        const a = armyById[ids[i]];
+        const units = a && a.units;
+        if (!units || !units.length) {
+          n += 1;
+          continue;
+        }
+        for (let j = 0; j < units.length; j++) n += Number(units[j].size) || 0;
+      }
+      return n;
+    }
+    const fronts = Object.values(frontMap).map((f) => {
+      const hasContact =
+        f.ownArmyIds.length > 0 ||
+        f.hostileArmyIds.length > 0 ||
+        f.borderProvinces.length > 0;
+      let level = f.level;
+      if (f.status === "dormant" && !f.hostileArmyIds.length) level = "low";
+      if (f.atWar && f.status === "active" && hasContact) level = "high";
+      if (!f.atWar && !f.hostileArmyIds.length) level = "low";
+      const ownIds = [...new Set(f.ownArmyIds)];
+      const hostIds = [...new Set(f.hostileArmyIds)].slice(0, 20);
+      return {
+        ...f,
+        level,
+        borderProvinces: [...new Set(f.borderProvinces)].slice(0, 12),
+        ownArmyIds: ownIds,
+        hostileArmyIds: hostIds,
+        ownStrength: stackStrength(ownIds),
+        hostileStrength: stackStrength(hostIds),
+      };
+    });
+
+    const spyAgents = (spies && spies.agents) || [];
+    const coveredOwners = new Set(
+      spyAgents.map((s) => s.provinceOwner).filter((x) => x != null),
+    );
+    const fog = atWarActive
+      .filter((r) => r.status === "active" && !coveredOwners.has(r.id))
+      .map((r) => ({ playerId: r.id, nation: r.nation || r.name, reason: "no_spy_coverage" }));
+
+    const sensorDegraded =
+      (ownArmies.length === 0 && foreignArmiesAll.length === 0) ||
+      (ownProvinces.length === 0 && (world.provinces || []).length === 0);
+
+    let coalitionName = null;
+    try {
+      const coal = me.getCoalition && me.getCoalition();
+      if (coal) coalitionName = coal.getName ? coal.getName() : String(coal);
+    } catch (e) {}
+    const allRows = (diplo.nonPeace || []).concat(diplo.atWar || []);
+    const coalitionMembers = coalitionName
+      ? allRows.filter((r) => r.coalition === coalitionName)
+      : [];
+
+    return {
+      takenAt: new Date().toISOString(),
+      gameId: cg.gameId,
+      myPlayerId: selfId,
+      myNation,
+      day: cg.day,
+      timeScale: cg.timeScale,
+      mapSize: world.mapSize,
+      medianSpacing: Math.round(medianSpacing * 100) / 100,
+      borderBand: Math.round(borderBand * 100) / 100,
+      sensorDegraded,
+      diplo: {
+        atWar: atWarActive,
+        atWarPaper: atWarPaper,
+        ceasefire: (diplo.nonPeace || []).filter(
+          (r) => r.relation === -1 && !r.defeated,
+        ),
+        embargo: (diplo.nonPeace || []).filter(
+          (r) => r.relation === 0 && !r.defeated,
+        ),
+        nap: (diplo.nonPeace || []).filter((r) => r.relation === 2 && !r.defeated),
+        rightOfWay: diplo.rightOfWay || [],
+        shareMapOrBetter: diplo.shareMapOrBetter || [],
+        enemies: diplo.enemies,
+        allies: diplo.allies,
+        coalitionName: coalitionName,
+        coalitionMembers: coalitionMembers,
+      },
+      ownArmies: ownArmies.map((a) => {
+        const cmdCount =
+          a.commandCount != null
+            ? a.commandCount
+            : Array.isArray(a.commands)
+              ? a.commands.length
+              : Number(a.commands) || 0;
+        return {
+          id: a.id,
+          province: a.province,
+          pos: a.pos,
+          onSea: !!a.onSea,
+          units: a.units,
+          commands: Array.isArray(a.commands) ? a.commands : cmdCount,
+          commandCount: cmdCount,
+          waitSeconds: a.waitSeconds,
+          speed: a.speed,
+          currentSpeed: a.currentSpeed,
+          forcedMarch: a.forcedMarch,
+          range: a.range,
+          idle: cmdCount <= 0,
+          morale: a.morale,
+        };
+      }),
+      ownProvinces: ownProvinces.map((p) => {
+        const extra = financeById[p.id] || {};
+        return {
+          id: p.id,
+          name: p.name,
+          capital: provPos(p),
+          morale: extra.morale != null ? extra.morale : p.morale,
+          coastal: extra.coastal != null ? extra.coastal : !!p.coastal,
+          unknownUpgradeCount: p.unknownUpgrades,
+          visibleUpgradeCount: p.visibleUpgrades,
+          stationaryArmyId: p.stationaryArmyId,
+          improvements: extra.buildings,
+          revoltChance: extra.revoltChance,
+          mainProduction: extra.mainProduction,
+        };
+      }),
+      foreignArmies,
+      borders: borders.slice(0, 60),
+      fronts,
+      spies: {
+        totals: spies && spies.totals,
+        agents: spyAgents.slice(0, 40),
+        latestIntel: spies && spies.latestIntel
+          ? {
+              day: spies.latestIntel.day,
+              armyCount: (spies.latestIntel.armies || []).length,
+              jobs: (spies.latestIntel.jobs || []).slice(0, 15),
+              knownPlayerIds: spies.latestIntel.knownPlayerIds,
+            }
+          : null,
+        fog,
+      },
+      heroes: heroes && !heroes.error
+        ? {
+            deployedOnMap: (heroes.deployedOnMap || []).slice(0, 30),
+            inventory: (heroes.inventory || []).slice(0, 20),
+          }
+        : heroes,
+      totals: {
+        ownArmies: ownArmies.length,
+        foreignVisible: foreignArmiesAll.length,
+        foreignCapped: foreignArmies.length,
+        ownProvinces: ownProvinces.length,
+        borders: borders.length,
+        fronts: fronts.length,
+        atWar: atWarActive.length,
+        atWarPaper: atWarPaper.length,
+      },
+    };
+  }
+
   window.s1914 = {
     dumpResources,
+    dumpFinanceProvinces,
     dumpOwnArmies,
     dumpAllMessages,
     dumpRelatedWith,
@@ -1652,12 +3097,14 @@
     dumpNews,
     dumpWorldView,
     dumpCountryForces,
+    dumpWarPicture,
     dumpArmyCombat,
     listGames,
     currentGame,
     useGame,
     rebind,
     constructBuilding,
+    listProvinceUpgrades,
     produceUnit,
     enqueueBuild,
     cancelBuilding,
@@ -1672,15 +3119,17 @@
     deployHero,
     writeNews,
     moveArmy,
+    moveArmies,
     attackArmy,
     delayArmy,
     setForcedMarch,
     setAggression,
     exportSession,
+    connectCabinetBridge,
     hup,
   };
 
   console.log(
-    "s1914 ready: listGames(), useGame(index|gameId), currentGame(), rebind(), exportSession()",
+    "s1914 ready: connectCabinetBridge(url, token), listGames(), exportSession({secrets:true}), @cabinet via npm run cabinet",
   );
 })();

@@ -1,0 +1,27 @@
+# Optional reverse proxy (if you prefer Caddy over Cloudflare Tunnel).
+# Default deploy uses cloudflared — see docs/DEPLOY.md.
+#
+#   MCP_DOMAIN=mcp.example.com caddy run --config deploy/Caddyfile
+
+{$MCP_DOMAIN:mcp.example.com} {
+	encode gzip
+
+	handle /health {
+		reverse_proxy mcp:8787
+	}
+
+	handle {
+		reverse_proxy mcp:8787
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+		-Server
+	}
+
+	log {
+		output stdout
+	}
+}

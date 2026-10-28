@@ -13,7 +13,12 @@ export interface HeroSnapshot {
   readonly cooldownSeconds: number;
   readonly limitReached: boolean;
   readonly locked: boolean;
-  /** Owned, not deployed, not on cooldown, not locked */
+  /** Scenario day when this hero unlocks (client getDayOfAvailability). */
+  readonly dayOfAvailability: number | null;
+  /** True when current game day >= dayOfAvailability. */
+  readonly dayReached: boolean;
+  readonly moraleThreshold?: number;
+  /** Owned, not deployed, not on cooldown, not locked, day gate passed */
   readonly canDeploy: boolean;
 }
 
@@ -26,6 +31,9 @@ export interface DeployedHeroArmy {
     readonly unitTypeId: number;
     readonly name: string | null;
     readonly shortName: string | null;
+    readonly level?: number;
+    readonly rarity?: string | null;
+    readonly cooldownSeconds?: number;
   }[];
 }
 

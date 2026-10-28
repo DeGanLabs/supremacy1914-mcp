@@ -21,6 +21,8 @@ export interface RawHeroItem {
   isHeroDeploymentOnCooldown?: () => boolean;
   isHeroLimitReached?: () => boolean;
   isLocked?: () => boolean;
+  isDayOfAvailabilityReached?: () => boolean;
+  getDayOfAvailability?: () => number;
   getHeroRecoveryCooldown?: () => number;
   getUnitType?: () => { getItemID?: () => number; itemID?: number } | null;
   baseUnitTypeId?: number;
@@ -44,6 +46,8 @@ export function mapHeroItem(it: RawHeroItem): HeroSnapshot {
   const obtained = !!it.isObtained?.();
   const deployed = !!it.isDeployed?.();
   const onCooldown = !!it.isHeroDeploymentOnCooldown?.();
+  const dayReached = !!it.isDayOfAvailabilityReached?.();
+  const dayOfAvailability = it.getDayOfAvailability?.();
   const locked = !!it.isLocked?.();
   return {
     itemId: heroItemId(it),
@@ -58,7 +62,11 @@ export function mapHeroItem(it: RawHeroItem): HeroSnapshot {
     cooldownSeconds: it.getHeroRecoveryCooldown?.() ?? 0,
     limitReached: !!it.isHeroLimitReached?.(),
     locked,
-    canDeploy: obtained && !deployed && !onCooldown && !locked,
+    dayOfAvailability: dayOfAvailability ?? null,
+    dayReached,
+    moraleThreshold: it.deploymentMoraleThreshold,
+    canDeploy:
+      obtained && !deployed && !onCooldown && !locked && dayReached,
   };
 }
 
@@ -100,14 +108,17 @@ export function readDeployedHeroArmiesFromHup(hup: {
           if (typeId == null) return null;
           const hi = hsm.getHeroUnitItemByUnitTypeId?.(typeId);
           if (!hi) return null;
-          const cfg = hi.getHeroConfig?.();
+          const mapped = mapHeroItem(hi);
           return {
             unitTypeId: typeId,
-            name: cfg?.getName?.() ?? null,
-            shortName: cfg?.getShortName?.() ?? null,
+            name: mapped.name,
+            shortName: mapped.shortName,
+            level: mapped.level,
+            rarity: mapped.rarity,
+            cooldownSeconds: mapped.cooldownSeconds,
           };
         })
-        .filter((x): x is { unitTypeId: number; name: string | null; shortName: string | null } => !!x);
+        .filter((x) => x != null);
       if (!heroes.length) return [];
       const pos = a.getPosition();
       const prov = map.getProvinceAt(pos);

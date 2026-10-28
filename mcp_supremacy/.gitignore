@@ -1,0 +1,15 @@
+node_modules/
+data/
+*.log
+tmp*
+*.tmp
+shots/
+data/shots/
+.env
+.env.production
+.DS_Store
+deploy/cloudflared/credentials.json
+deploy/cloudflared/credentials.json.bak*
+deploy/cloudflared/config.yml
+deploy/cloudflared/config.yml.bak*
+deploy/cloudflared/config.yml.local
