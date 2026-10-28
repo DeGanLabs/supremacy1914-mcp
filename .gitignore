@@ -7,3 +7,5 @@ tmp*
 *.tmp
 .DS_Store
 data/
+
+*.token
