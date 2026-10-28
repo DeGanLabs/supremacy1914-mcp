@@ -44,6 +44,25 @@ This is a **player vision / prototype**, not an official Bytro or Stillfront fea
 
 ---
 
+## ClawHub (OpenClaw)
+
+Install the skill / plugin from ClawHub, then self-host the game MCP locally:
+
+```bash
+# Skill (cabinet playbook)
+openclaw skills install supremacy1914-cabinet
+# or: clawhub install supremacy1914-cabinet
+
+# Plugin bundle (skill + MCP pointer to local HTTP)
+openclaw plugins install clawhub:@deganlabs/supremacy1914-mcp
+```
+
+Skill page: https://clawhub.ai/gan12003/skills/supremacy1914-cabinet  
+
+Then run `mcp_supremacy` on `127.0.0.1:8789` (see below). For loopback without Bearer headers in the bundle, set `S1914_MCP_ALLOW_ANON=1` in `.env.production` (local only).
+
+---
+
 ## Start here: self-hosted MCP
 
 Run tools against **your** browser session. Cursor, ChatGPT, or any MCP client can sit in as that interactive aide.
