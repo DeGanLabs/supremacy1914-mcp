@@ -171,6 +171,22 @@ export function buildConstructBuildingAction(
   });
 }
 
+/**
+ * Enable/disable a finished building (UI AKTIVIEREN / DEAKTIVIEREN).
+ * HAR: UltUpdateProvinceAction mode=0 (Province) with mu.e flipped.
+ */
+export function buildSetBuildingEnabledAction(
+  provinceIds: readonly ProvinceId[],
+  upgrade: WireMapUpgradeInput,
+  options?: { readonly slot?: number; readonly requestId?: string },
+): WireUpdateProvinceAction {
+  return buildUpdateProvinceAction(ProvinceActionMode.Province, provinceIds, {
+    upgrade: buildWireMapUpgrade(upgrade),
+    slot: options?.slot,
+    requestId: options?.requestId,
+  });
+}
+
 export function buildProduceUnitAction(
   provinceIds: readonly ProvinceId[],
   unitTypeId: UnitTypeId,

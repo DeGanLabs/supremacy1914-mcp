@@ -1,0 +1,16 @@
+# Copy to config.yml and fill your tunnel UUID + hostname.
+# credentials.json stays local (never commit).
+#
+#   cloudflared tunnel create mcp-supremacy
+#   cloudflared tunnel route dns mcp-supremacy mcp.example.com
+#
+tunnel: YOUR_TUNNEL_UUID
+credentials-file: /etc/cloudflared/credentials.json
+
+ingress:
+  - hostname: mcp.example.com
+    service: http://mcp:8787
+    originRequest:
+      connectTimeout: 30s
+      disableChunkedEncoding: true
+  - service: http_status:404

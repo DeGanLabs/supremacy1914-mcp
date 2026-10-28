@@ -1,0 +1,82 @@
+# mcp-supremacy — self-hosted Playwright MCP + optional Cloudflare Tunnel
+#
+#   docker compose -p mcp_supremacy --env-file .env.production up -d --build
+#   docker compose -p mcp_supremacy --env-file .env.production stop
+#
+# Always use -p mcp_supremacy so you do not affect other Compose projects.
+# Bind only loopback; expose HTTPS via your own tunnel (see docs/DEPLOY.md).
+
+name: mcp_supremacy
+
+networks:
+  mcp_supremacy_net:
+    name: mcp_supremacy_net
+    driver: bridge
+
+volumes:
+  mcp_supremacy_profile:
+    name: mcp_supremacy_profile
+  mcp_supremacy_shots:
+    name: mcp_supremacy_shots
+  mcp_supremacy_history:
+    name: mcp_supremacy_history
+
+services:
+  mcp:
+    build: .
+    image: mcp-supremacy:prod
+    container_name: mcp_supremacy_mcp
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    environment:
+      NODE_ENV: production
+      S1914_MCP_HTTP_HOST: "0.0.0.0"
+      S1914_MCP_HTTP_PORT: "8787"
+      S1914_PUBLIC_BASE_URL: "${S1914_PUBLIC_BASE_URL:-http://127.0.0.1:8789}"
+      S1914_MCP_REQUIRE_TOKEN: "${S1914_MCP_REQUIRE_TOKEN:-1}"
+      S1914_MCP_PROFILE: /data/profile
+      S1914_MCP_HEADLESS: "0"
+      S1914_SHOT_DIR: /data/shots
+      S1914_HISTORY_DIR: /data/history
+      DISPLAY: ":99"
+    volumes:
+      - mcp_supremacy_profile:/data/profile
+      - mcp_supremacy_shots:/data/shots
+      - mcp_supremacy_history:/data/history
+    networks:
+      - mcp_supremacy_net
+    ports:
+      - "127.0.0.1:8789:8787"
+    shm_size: "512mb"
+    mem_limit: 3072m
+    cpus: 2.0
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:8787/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: mcp_supremacy_cloudflared
+    restart: unless-stopped
+    profiles: ["tunnel"]
+    command: tunnel --no-autoupdate --config /etc/cloudflared/config.yml run
+    volumes:
+      - ./deploy/cloudflared/config.yml:/etc/cloudflared/config.yml:ro
+      - ./deploy/cloudflared/credentials.json:/etc/cloudflared/credentials.json:ro
+    networks:
+      - mcp_supremacy_net
+    depends_on:
+      mcp:
+        condition: service_healthy
+    mem_limit: 128m
+    cpus: 0.25

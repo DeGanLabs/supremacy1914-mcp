@@ -21,6 +21,8 @@ export interface RawHeroItem {
   isHeroDeploymentOnCooldown?: () => boolean;
   isHeroLimitReached?: () => boolean;
   isLocked?: () => boolean;
+  isDayOfAvailabilityReached?: () => boolean;
+  getDayOfAvailability?: () => number;
   getHeroRecoveryCooldown?: () => number;
   getUnitType?: () => { getItemID?: () => number; itemID?: number } | null;
   baseUnitTypeId?: number;
@@ -44,6 +46,8 @@ export function mapHeroItem(it: RawHeroItem): HeroSnapshot {
   const obtained = !!it.isObtained?.();
   const deployed = !!it.isDeployed?.();
   const onCooldown = !!it.isHeroDeploymentOnCooldown?.();
+  const dayReached = !!it.isDayOfAvailabilityReached?.();
+  const dayOfAvailability = it.getDayOfAvailability?.();
   const locked = !!it.isLocked?.();
   return {
     itemId: heroItemId(it),
@@ -58,8 +62,11 @@ export function mapHeroItem(it: RawHeroItem): HeroSnapshot {
     cooldownSeconds: it.getHeroRecoveryCooldown?.() ?? 0,
     limitReached: !!it.isHeroLimitReached?.(),
     locked,
+    dayOfAvailability: dayOfAvailability ?? null,
+    dayReached,
     moraleThreshold: it.deploymentMoraleThreshold,
-    canDeploy: obtained && !deployed && !onCooldown && !locked,
+    canDeploy:
+      obtained && !deployed && !onCooldown && !locked && dayReached,
   };
 }
 

@@ -13,8 +13,12 @@ export interface HeroSnapshot {
   readonly cooldownSeconds: number;
   readonly limitReached: boolean;
   readonly locked: boolean;
+  /** Scenario day when this hero unlocks (client getDayOfAvailability). */
+  readonly dayOfAvailability: number | null;
+  /** True when current game day >= dayOfAvailability. */
+  readonly dayReached: boolean;
   readonly moraleThreshold?: number;
-  /** Owned, not deployed, not on cooldown, not locked */
+  /** Owned, not deployed, not on cooldown, not locked, day gate passed */
   readonly canDeploy: boolean;
 }
 
