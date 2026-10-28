@@ -57,7 +57,8 @@ openclaw skills install supremacy1914-cabinet
 openclaw plugins install clawhub:@deganlabs/supremacy1914-mcp
 ```
 
-Skill page: https://clawhub.ai/gan12003/skills/supremacy1914-cabinet  
+- Skill: https://clawhub.ai/gan12003/skills/supremacy1914-cabinet  
+- Plugin: https://clawhub.ai/deganlabs/plugins/supremacy1914-mcp  
 
 Then run `mcp_supremacy` on `127.0.0.1:8789` (see below). For loopback without Bearer headers in the bundle, set `S1914_MCP_ALLOW_ANON=1` in `.env.production` (local only).
 
