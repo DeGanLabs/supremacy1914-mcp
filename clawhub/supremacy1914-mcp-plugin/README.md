@@ -6,7 +6,7 @@ Agent Plugins bundle for [OpenClaw](https://docs.openclaw.ai/) / ClawHub.
 
 A **self-play** vision: treat each Supremacy 1914 map like you have a living war cabinet — you are the president; the MCP aide briefs and acts only when you allow writes.
 
-Source: https://github.com/DeGanLabs/supremacy1914-mcp  
+Source: https://github.com/Pixel-Agents/supremacy1914-mcp  
 Unofficial. Not affiliated with Bytro / Stillfront.
 
 ## How users make it work
@@ -18,7 +18,7 @@ The plugin’s `mcp.json` points at **your local** HTTP MCP:
 `http://127.0.0.1:8789/mcp`
 
 ```bash
-git clone https://github.com/DeGanLabs/supremacy1914-mcp.git
+git clone https://github.com/Pixel-Agents/supremacy1914-mcp.git
 cd supremacy1914-mcp/mcp_supremacy
 cp .env.production.example .env.production
 # S1914_MCP_TOKEN=…   # still set a token for the API

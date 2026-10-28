@@ -1,10 +1,10 @@
 # Supremacy 1914 — War Cabinet & MCP
 
-[![GitHub stars](https://img.shields.io/github/stars/DeGanLabs/supremacy1914-mcp?style=flat&logo=github)](https://github.com/DeGanLabs/supremacy1914-mcp/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/DeGanLabs/supremacy1914-mcp?style=flat&logo=github)](https://github.com/DeGanLabs/supremacy1914-mcp/network/members)
-[![GitHub issues](https://img.shields.io/github/issues/DeGanLabs/supremacy1914-mcp)](https://github.com/DeGanLabs/supremacy1914-mcp/issues)
-[![License: MIT](https://img.shields.io/github/license/DeGanLabs/supremacy1914-mcp)](LICENSE)
-[![GitHub last commit](https://img.shields.io/github/last-commit/DeGanLabs/supremacy1914-mcp)](https://github.com/DeGanLabs/supremacy1914-mcp/commits/main)
+[![GitHub stars](https://img.shields.io/github/stars/Pixel-Agents/supremacy1914-mcp?style=flat&logo=github)](https://github.com/Pixel-Agents/supremacy1914-mcp/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/Pixel-Agents/supremacy1914-mcp?style=flat&logo=github)](https://github.com/Pixel-Agents/supremacy1914-mcp/network/members)
+[![GitHub issues](https://img.shields.io/github/issues/Pixel-Agents/supremacy1914-mcp)](https://github.com/Pixel-Agents/supremacy1914-mcp/issues)
+[![License: MIT](https://img.shields.io/github/license/Pixel-Agents/supremacy1914-mcp)](LICENSE)
+[![GitHub last commit](https://img.shields.io/github/last-commit/Pixel-Agents/supremacy1914-mcp)](https://github.com/Pixel-Agents/supremacy1914-mcp/commits/main)
 
 [![Node.js ≥20](https://img.shields.io/badge/node-%3E%3D20-brightgreen?logo=nodedotjs&logoColor=white)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -13,7 +13,7 @@
 [![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)](mcp_supremacy/docs/DEPLOY.md)
 [![Cursor](https://img.shields.io/badge/Cursor-MCP-000000)](mcp_supremacy/README.md)
 [![ChatGPT](https://img.shields.io/badge/ChatGPT-HTTP%20tools-10A37F?logo=openai&logoColor=white)](mcp_supremacy/README.md)
-[![Org](https://img.shields.io/badge/org-DeGanLabs-0A0A0A?logo=github)](https://github.com/DeGanLabs)
+[![Org](https://img.shields.io/badge/org-Pixel--Agents-0A0A0A?logo=github)](https://github.com/Pixel-Agents)
 
 [![Unofficial](https://img.shields.io/badge/status-unofficial-important)](#disclaimer)
 [![Self-play](https://img.shields.io/badge/use-self--play%20%2F%20own%20account-informational)](#the-vision)
@@ -54,11 +54,11 @@ openclaw skills install supremacy1914-cabinet
 # or: clawhub install supremacy1914-cabinet
 
 # Plugin bundle (skill + MCP pointer to local HTTP)
-openclaw plugins install clawhub:@deganlabs/supremacy1914-mcp
+openclaw plugins install clawhub:@pixel-agents/supremacy1914-mcp
 ```
 
-- Skill: https://clawhub.ai/gan12003/skills/supremacy1914-cabinet  
-- Plugin: https://clawhub.ai/deganlabs/plugins/supremacy1914-mcp  
+- Skill: https://clawhub.ai/pixel-agents/skills/supremacy1914-cabinet  
+- Plugin: https://clawhub.ai/pixel-agents/plugins/supremacy1914-mcp  
 
 Then run `mcp_supremacy` on `127.0.0.1:8789` (see below). For loopback without Bearer headers in the bundle, set `S1914_MCP_ALLOW_ANON=1` in `.env.production` (local only).
 
@@ -137,16 +137,16 @@ src/
 ## Disclaimer
 
 **Unofficial.** Not affiliated with Bytro Labs, Stillfront Supremacy GmbH, Twin Harbour Interactive, or Supremacy 1914.  
-Game names and trademarks belong to their owners. This project is a personal / DeGanLabs experiment toward a more interactive “cabinet & president” fantasy while we play the game ourselves.
+Game names and trademarks belong to their owners. This project is a Pixel Agents hobby / public agent tooling experiment toward a more interactive “cabinet & president” fantasy while we play the game ourselves.
 
 ---
 
 ## Contributing
 
-Issues and PRs welcome at [DeGanLabs/supremacy1914-mcp](https://github.com/DeGanLabs/supremacy1914-mcp). Keep secrets out of the tree. MCP tool changes → update `mcp_supremacy/docs/TOOLS.md`.
+Issues and PRs welcome at [Pixel-Agents/supremacy1914-mcp](https://github.com/Pixel-Agents/supremacy1914-mcp). Keep secrets out of the tree. MCP tool changes → update `mcp_supremacy/docs/TOOLS.md`.
 
 ---
 
 ## License
 
-[MIT](LICENSE) © DeGanLabs
+[MIT](LICENSE) © Pixel Agents

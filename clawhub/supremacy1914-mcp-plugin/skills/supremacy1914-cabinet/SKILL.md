@@ -15,7 +15,7 @@ It is **not** a hosted win-bot. Unofficial. Not affiliated with Bytro / Stillfro
 
 ## Source
 
-- GitHub: https://github.com/DeGanLabs/supremacy1914-mcp  
+- GitHub: https://github.com/Pixel-Agents/supremacy1914-mcp  
 - MCP package: `mcp_supremacy/`  
 - Agent rules: `mcp_supremacy/AGENTS.md`
 
@@ -24,7 +24,7 @@ It is **not** a hosted win-bot. Unofficial. Not affiliated with Bytro / Stillfro
 ### 1) Install the MCP (self-host)
 
 ```bash
-git clone https://github.com/DeGanLabs/supremacy1914-mcp.git
+git clone https://github.com/Pixel-Agents/supremacy1914-mcp.git
 cd supremacy1914-mcp/mcp_supremacy
 npm install
 npx playwright install chromium

@@ -2,7 +2,7 @@
   "name": "s1914-automation",
   "version": "0.1.0",
   "private": true,
-  "description": "Supremacy 1914 MCP and automation — live Ultimate client tools for Cursor/ChatGPT players (DeGanLabs)",
+  "description": "Supremacy 1914 MCP and automation — live Ultimate client tools for Cursor/ChatGPT players (Pixel Agents)",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

@@ -1,13 +1,13 @@
 {
-  "name": "@deganlabs/supremacy1914-mcp",
-  "version": "1.0.0",
+  "name": "@pixel-agents/supremacy1914-mcp",
+  "version": "1.0.2",
   "private": false,
   "description": "Unofficial Supremacy 1914 war-cabinet MCP plugin for OpenClaw / ClawHub (self-play).",
   "license": "MIT",
-  "homepage": "https://github.com/DeGanLabs/supremacy1914-mcp",
+  "homepage": "https://github.com/Pixel-Agents/supremacy1914-mcp",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DeGanLabs/supremacy1914-mcp.git"
+    "url": "https://github.com/Pixel-Agents/supremacy1914-mcp.git"
   },
   "keywords": [
     "supremacy1914",

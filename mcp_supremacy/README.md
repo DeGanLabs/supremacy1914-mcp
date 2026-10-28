@@ -1,6 +1,6 @@
 # mcp-supremacy
 
-[![License: MIT](https://img.shields.io/github/license/DeGanLabs/supremacy1914-mcp)](../LICENSE)
+[![License: MIT](https://img.shields.io/github/license/Pixel-Agents/supremacy1914-mcp)](../LICENSE)
 [![Node.js ≥20](https://img.shields.io/badge/node-%3E%3D20-brightgreen?logo=nodedotjs&logoColor=white)](https://nodejs.org)
 [![Playwright](https://img.shields.io/badge/browser-Playwright-45ba4b?logo=playwright&logoColor=white)](https://playwright.dev)
 [![MCP](https://img.shields.io/badge/protocol-MCP-111111)](https://modelcontextprotocol.io)
@@ -13,7 +13,7 @@
 
 **Self-hosted MCP for your Supremacy 1914 session** — so an AI aide can sit with you like staff in a war cabinet: see the map, brief the “president,” and only move when you allow it.
 
-Part of [DeGanLabs/supremacy1914-mcp](https://github.com/DeGanLabs/supremacy1914-mcp).
+Part of [Pixel-Agents/supremacy1914-mcp](https://github.com/Pixel-Agents/supremacy1914-mcp).
 
 ## Why this exists
 
